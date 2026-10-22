@@ -1,0 +1,9 @@
+step,name,d_detention_hr,ci,significant,d_demurrage
+M1,demand registration to wagon allotment,0.353,0.197,True,136996.0
+M2,advance stacking permission,-0.029,0.04,False,-14775.5
+M3,forwarding note acceptance,0.359,0.192,True,112404.0
+M4,placement advice and acknowledgment,-1.103,0.125,True,-452356.5
+M5,weighment and overload adjustment,-2.463,0.166,True,-1014565.0
+M6,release reporting,-4.461,0.234,True,-1844574.0
+M7,railway receipt and freight payment clearance,0.0,0.0,False,0.0
+ALL,full digitalisation,-8.545,0.271,True,-3214795.0

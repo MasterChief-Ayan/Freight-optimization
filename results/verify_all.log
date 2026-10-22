@@ -1,0 +1,85 @@
+
+=======================================================================================
+LAYER 0 VERIFICATION  -  physical model
+=======================================================================================
+  [PASS] conservation: every rake that arrives also leaves          50/50 completed
+  [PASS] event chain is monotonic for every rake                    0 violations
+  [PASS] no negative durations                                      0 negatives
+  [PASS] loading lines never over capacity                          peak 1 <= 1
+  [PASS] detention == release - placement (IR definition)           max err 0.00e+00
+  [PASS] demurrage charged iff free time exceeded                   0 mismatches
+  [PASS] graded demurrage reproduces the IR rate table              max err 0.00e+00 over 5 bands
+  [PASS] marginal demurrage never falls as detention grows          Rs150/wagon/h at 0h -> Rs450 at 89h
+  [PASS] free time = 5:00 base + 2:00 siding + 1:00 tarpaulin       8.0 h  [IR-COMP 2.2(a)(i), 2.2.1(a), 2.7]
+  [PASS] Little's Law L = lambda*W holds within 5%                  L_formula=0.292 L_obs=0.292 rel=0.0%
+  [PASS] same seed reproduces byte-identical event log              
+  [PASS] RNG sub-seeds are process-independent                      substream_seed(1000,'loading')=1948952355
+  [PASS] PHYSICAL durations identical under different policies      max diff 2.00e-06 h
+  [PASS] admin elapsed time DOES depend on the schedule (expected)  up to 8.0 h difference on the same rake
+  [PASS] common random numbers: scenario identical across runs      
+  [PASS] policy hook changes outcomes (congested variant)           wait: FCFS=38.72h, SPT=31.75h, LPT=45.26h
+  [PASS] SPT beats LPT on mean wait (scheduling theory)             SPT=31.75h < LPT=45.26h
+  [PASS] all policies serve the same number of rakes                counts={50}
+---------------------------------------------------------------------------------------
+  18/18 passed
+=======================================================================================
+
+=====================================================================================
+LAYER 1 VERIFICATION  -  administrative chain
+=====================================================================================
+  [PASS] all steps disabled reproduces Layer 0 exactly            500 vs 500 physical events
+  [PASS] calendar truncation: 1h task at 17:30 costs 17h          elapsed 17.000h
+  [PASS] 24/7 calendar: same task costs exactly 1h                elapsed 1.000h
+  [PASS] weekend skip: Saturday work waits for Monday             next_open=178.00 expected=178.00
+  [PASS] removing rework reduces mean detention                   13.63h < 15.60h
+  [PASS] ablating M6 (release reporting) cuts detention           9.40h < 15.60h
+  [PASS] ablating M7 cuts fleet cycle but not detention or dwell  d_detention=0.0e+00h d_dwell=0.0e+00h d_cycle=+16.45h
+  [PASS] digitalising M5+M6 reduces detention                     8.24h < 15.60h
+  [PASS] every admin event carries a party owner                  owners=['client', 'railway', 'terminal']
+  [PASS] event chain still monotonic with admin gates             0 violations
+  [PASS] Layer 1 is deterministic under a fixed seed              
+  [PASS] non-physical time is a majority of dwell                 non-physical = 88.5% of dwell
+  [PASS] detention lands inside TERI's 14-17 h benchmark band     15.90 h (calibrated, not validated - see admin.py header)
+-------------------------------------------------------------------------------------
+  13/13 passed
+=====================================================================================
+
+==========================================================================================
+LAYER 2 VERIFICATION  -  road side
+==========================================================================================
+  [PASS] rake chain unchanged when road side is added (A1 on)          304 vs 304 rake events
+  [PASS] every truck that arrives also exits                           1164 in, 1164 out
+  [PASS] one-way lane never holds two trucks at once                   peak occupancy 1
+  [PASS] queued lane (capacity 3) permits concurrent trucks            peak occupancy 3
+  [PASS] appointment quota respected in all but forced periods         peak 10 vs quota 10
+  [PASS] appointment system flattens the arrival peak                  peak 80 -> 10
+  [PASS] deviation cost is convex in periods deviated                  0.0 0.3 0.6 1.1 1.7 2.5 3.5 4.8
+  [PASS] MINMAX lowers the worst-off company's cost vs FCFS            FCFS max 698 -> MINMAX max 644
+  [PASS] hard infeasibility (truck vs stochastic rake) is measured     119/1164 trucks (10.2%)
+  [PASS] more gate servers shortens the gate queue                     1 server 6.73 -> 6 servers 0.73 trucks waiting
+  [PASS] switching assumption A1 off makes material availability bind  A1 on 15.45h -> A1 off 18.32h
+  [PASS] M8 gate verification fires for trucks                         2431 admin events on trucks
+------------------------------------------------------------------------------------------
+  12/12 passed
+==========================================================================================
+
+=============================================================================================
+LAYER 3 VERIFICATION  -  optimiser and coordination
+=============================================================================================
+  [PASS] CP-SAT returns a valid permutation of all rakes                  status=FEASIBLE, n=25
+  [PASS] no rake is placed before it arrives                              min slack 0.000 h
+  [PASS] single line schedule has no overlapping occupancy                0 overlaps
+  [PASS] solver reproduces SPT when all jobs are available at t=0         order [4, 2, 3, 1], expected [4, 2, 3, 1]
+  [PASS] offline optimum beats or matches every online rule               FCFS=12.57 SPT=10.62 COST=10.57 CNP=12.10 CPSAT=10.57
+  [PASS] Contract Net beats first-come-first-served on waiting            CNP=12.10h < FCFS=12.57h
+  [PASS] CNP bid depends only on the rake and the clock                   bid=-114,838
+  [PASS] ageing term reduces the worst rake's wait                        no ageing 90.6h -> with ageing 29.3h
+  [PASS] heavy ageing collapses Contract Net onto FCFS                    heavy-ageing CNP=12.57h vs FCFS=12.57h
+  [PASS] captured-gain scale is anchored at 0% and 100%                   FCFS=0.0%  CP-SAT=100.0%
+  [PASS] all policies serve identical rakes for identical revenue         revenues=1 distinct, counts={25}
+  [PASS] solver returns a usable schedule for 60 rakes in 20 s            status=FEASIBLE
+  [PASS] lower bound is not violated by any policy                        bound 37.59 h (OPTIMAL) vs min observed 91.05 h
+  [PASS] executing the relaxed plan is worse than the bound it came from  executed 89.48 h > bound 37.59 h - so the bound must be READ from the solver, not simulated
+---------------------------------------------------------------------------------------------
+  14/14 passed
+=============================================================================================

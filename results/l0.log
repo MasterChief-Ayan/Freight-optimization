@@ -1,0 +1,96 @@
+
+>>> STEP 1  verification
+
+=======================================================================================
+LAYER 0 VERIFICATION  -  physical model
+=======================================================================================
+  [PASS] conservation: every rake that arrives also leaves          50/50 completed
+  [PASS] event chain is monotonic for every rake                    0 violations
+  [PASS] no negative durations                                      0 negatives
+  [PASS] loading lines never over capacity                          peak 1 <= 1
+  [PASS] detention == release - placement (IR definition)           max err 0.00e+00
+  [PASS] demurrage charged iff free time exceeded                   0 mismatches
+  [PASS] graded demurrage reproduces the IR rate table              max err 0.00e+00 over 5 bands
+  [PASS] marginal demurrage never falls as detention grows          Rs150/wagon/h at 0h -> Rs450 at 89h
+  [PASS] free time = 5:00 base + 2:00 siding + 1:00 tarpaulin       8.0 h  [IR-COMP 2.2(a)(i), 2.2.1(a), 2.7]
+  [PASS] Little's Law L = lambda*W holds within 5%                  L_formula=0.292 L_obs=0.292 rel=0.0%
+  [PASS] same seed reproduces byte-identical event log              
+  [PASS] RNG sub-seeds are process-independent                      substream_seed(1000,'loading')=1948952355
+  [PASS] PHYSICAL durations identical under different policies      max diff 2.00e-06 h
+  [PASS] admin elapsed time DOES depend on the schedule (expected)  up to 8.0 h difference on the same rake
+  [PASS] common random numbers: scenario identical across runs      
+  [PASS] policy hook changes outcomes (congested variant)           wait: FCFS=38.72h, SPT=31.75h, LPT=45.26h
+  [PASS] SPT beats LPT on mean wait (scheduling theory)             SPT=31.75h < LPT=45.26h
+  [PASS] all policies serve the same number of rakes                counts={50}
+---------------------------------------------------------------------------------------
+  18/18 passed
+=======================================================================================
+
+>>> STEP 2  policy comparison, paired design
+
+================================================================================================
+SCENARIO: baseline   |   30 reps x 50 rakes, warm-up 5   |   lines=1 locos=1 crews=1
+NOTE: Layer 0. All rates ASSUMED. Coal always available (A1).
+================================================================================================
+  policy |      detention |           wait |     dwell |    demurrage |  breach |   util
+------------------------------------------------------------------------------------------------
+    FCFS |    4.05 +/-0.06 h |    0.74 +/-0.15 h |    6.79 h |       2.0 k |    0.3% |  21.8%
+     SPT |    4.05 +/-0.06 h |    0.73 +/-0.14 h |    6.78 h |       2.0 k |    0.3% |  21.8%
+    COST |    4.05 +/-0.06 h |    0.73 +/-0.14 h |    6.78 h |       2.0 k |    0.3% |  21.8%
+     LPT |    4.05 +/-0.06 h |    0.76 +/-0.15 h |    6.81 h |       2.0 k |    0.3% |  21.8%
+
+  paired difference vs FCFS (same scenarios):
+      SPT mean_detention_hr                 -0.00 +/-0.00 h   not significant
+      SPT mean_wait_hr                      -0.01 +/-0.01 h   not significant
+      SPT total_controllable_cost       -1,370.84 +/-2,012.08 Rs  not significant
+     COST mean_detention_hr                 -0.00 +/-0.00 h   not significant
+     COST mean_wait_hr                      -0.01 +/-0.01 h   not significant
+     COST total_controllable_cost       -1,641.03 +/-2,004.26 Rs  not significant
+      LPT mean_detention_hr                 -0.00 +/-0.00 h   not significant
+      LPT mean_wait_hr                      +0.02 +/-0.01 h   SIGNIFICANT
+      LPT total_controllable_cost       +2,634.32 +/-1,976.66 Rs  SIGNIFICANT
+
+>>> STEP 3  where the time actually goes
+           segment    owner  total_hr  mean_hr  share_pct
+           loading terminal    206.86     4.14      56.18
+ queueing_for_line terminal     62.11     1.24      16.87
+placement_shunting  railway     50.53     1.01      13.72
+  removal_shunting  railway     48.70     0.97      13.23
+  waiting_for_crew terminal      0.00     0.00       0.00
+ release_reporting terminal      0.00     0.00       0.00
+    rr_and_payment   client      0.00     0.00       0.00
+
+>>> STEP 3b  LOAD SWEEP: at what traffic does sequencing matter?
+  At the calibrated arrival rate (about 24 rakes/month, against
+  TERI's 15/month for an average one-line terminal) the PHYSICAL
+  model is lightly loaded and no sequencing rule can help. That is
+  itself the Layer 0 finding: the physical layer is not the
+  bottleneck at realistic Indian siding throughput. Sequencing only
+  earns its keep once the line is genuinely contended - which is
+  what the administrative layer causes, and Layer 1 shows.
+ arrival_gap_hr  rakes_per_month  line_util  wait_FCFS  wait_COST  gain_pct
+           5.00           146.00       0.97      37.36      30.07     19.51
+           8.00            91.25       0.77      10.20       8.53     16.37
+          12.00            60.83       0.53       3.65       3.25     10.74
+          18.00            40.56       0.36       1.56       1.48      4.64
+          30.00            24.33       0.22       0.74       0.73      1.63
+
+>>> STEP 4  scenario sweep: build capacity vs schedule better
+ lines policy  detention  detention_ci  wait  wait_ci         cost  util
+     1   FCFS       4.05          0.06  0.74     0.15 1,766,132.22  0.22
+     1   COST       4.05          0.06  0.73     0.14 1,764,491.19  0.22
+     2   FCFS       4.30          0.09  0.07     0.03 1,688,445.52  0.11
+     2   COST       4.30          0.08  0.07     0.03 1,688,445.52  0.11
+     3   FCFS       4.34          0.09  0.04     0.01 1,688,846.48  0.08
+     3   COST       4.34          0.09  0.04     0.01 1,688,846.48  0.08
+
+>>> STEP 5  free-time sensitivity (the commercial lever)
+ base_free_time_hr  effective_free_time_hr  demurrage  breach_rate
+              3.00                    6.00  31,320.00         0.06
+              4.00                    7.00   6,670.00         0.01
+              5.00                    8.00   2,030.00         0.00
+              6.00                    9.00     870.00         0.00
+              7.00                   10.00     290.00         0.00
+              9.00                   12.00       0.00         0.00
+
+Saved: layer0_results.png and four CSVs

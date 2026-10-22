@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# field data stays off GitHub (railway commercial data - share only with permission)
+data/raw/
+data/processed/
+*.rar
+*.xls
+*.xlsx
+
+# keep results/ committed so the charts and CSVs are viewable on GitHub

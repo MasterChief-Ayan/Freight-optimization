@@ -1,0 +1,8 @@
+step,name,owner,d_detention_hr,ci,significant,d_demurrage,d_cycle_hr
+M6,release reporting,terminal,-6.55,0.26,True,-2430432.0,-14.44
+M5,weighment and overload adjustment,terminal,-3.59,0.18,True,-1384431.0,-9.311
+M4,placement advice and acknowledgment,terminal,-1.411,0.12,True,-569458.5,-4.798
+M2,advance stacking permission,railway,-0.029,0.04,False,-14775.5,-0.093
+M7,railway receipt and freight payment clearance,client,0.0,0.0,False,0.0,-14.341
+M1,demand registration to wagon allotment,railway,0.385,0.205,True,158238.5,-2.031
+M3,forwarding note acceptance,client,0.48,0.202,True,158427.0,-15.2

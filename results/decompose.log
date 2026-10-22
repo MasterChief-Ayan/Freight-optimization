@@ -1,0 +1,18 @@
+
+==============================================================================
+WAITING-TIME DECOMPOSITION  (12 reps x 25 rakes, gap 22 h, FCFS)
+==============================================================================
+  as modelled (full admin)                 41.43 +/-12.37 h
+  office hours removed (24/7)              11.07 +/- 3.83 h
+  rework removed                           36.90 +/-10.61 h
+  both removed                              9.18 +/- 3.22 h
+  + optimal sequencing (LOWER BOUND)        5.84 +/- 2.18 h
+------------------------------------------------------------------------------
+  office hours alone         73.3% of all waiting
+  rework alone               10.9%
+  both together              77.8%
+  sequencing, at very best    8.1%
+  irreducible congestion     14.1%
+
+  line occupancy per rake: 17.9 h as modelled -> 12.2 h flat
+==============================================================================

@@ -1,0 +1,7 @@
+scenario,total_deviation_cost,total_deviation_cost_ci,max_company_cost,max_company_cost_ci,deviated_pct,deviated_pct_ci,truck_turnaround_hr,truck_turnaround_hr_ci
+"FCFS, quota 8",59677.995,37184.442,19958.983,11587.264,71.409,7.425,5.261,4.719
+"MINMAX, quota 8",60873.796,40419.548,23047.053,18294.453,71.409,7.425,5.266,4.727
+"FCFS, quota 12",17960.369,30156.101,5687.748,9391.835,53.557,6.443,7.133,3.588
+"MINMAX, quota 12",18290.743,30913.181,6025.849,10231.57,53.557,6.443,7.139,3.59
+"FCFS, quota 20",1135.22,372.114,379.997,112.577,41.04,4.285,8.746,5.098
+"MINMAX, quota 20",1119.69,360.797,364.876,108.165,41.04,4.285,8.74,5.098

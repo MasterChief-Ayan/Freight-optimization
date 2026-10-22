@@ -1,0 +1,5 @@
+scenario,hard_infeasible_pct,hard_infeasible_pct_ci,truck_turnaround_hr,truck_turnaround_hr_ci,mean_detention_hr,mean_detention_hr_ci,arrival_error_sd_hr,arrival_error_sd_hr_ci
+M1 sd x0.25,1.22,2.391,6.282,3.838,15.607,0.838,36.257,4.279
+M1 sd x1,7.577,3.289,6.282,3.838,16.137,0.812,53.596,12.377
+M1 sd x2,10.851,4.537,6.282,3.838,15.727,0.952,67.921,17.206
+M1 sd x3,14.064,5.991,6.282,3.838,15.504,0.855,74.336,21.773

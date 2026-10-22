@@ -1,0 +1,6 @@
+intervention,d_detention_hr,ci,significant
+remove the step entirely,-6.55,0.26,True
+halve the mean work time,-3.443,0.19,True
+remove office hours (24/7),-2.045,0.198,True
+remove rework (no rejections),-0.672,0.205,True
+halve the variance,0.09,0.144,False

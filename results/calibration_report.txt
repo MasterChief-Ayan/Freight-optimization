@@ -1,0 +1,46 @@
+
+====================================================================================================
+PARAMETER PROVENANCE
+====================================================================================================
+
+--- CITED  (18) ---
+  charges.demurrage_per_wagon_hr         = 150                           [[IR-COMP] 3.1]
+  charges.demurrage_grades               = 150/165/187.5/225/300/450     [[IR-COMP] 3.1]
+  charges.tarpaulin_free_time_hr         = 1:00                          [[IR-COMP] 2.7]
+  charges.coal_reduced_free_time_hr      = 3:00                          [[IR-COMP] 2.2(c)]
+  charges.penal_demurrage_multiplier     = up to 6x                      [[IR-COMP] 3.4.1]
+  charges.wagon_registration_fee         = 50,000 per rake               [[IR-FOIS]]
+  charges.wharfage_per_wagon_hr          = 150 (Group I)                 [[IR-COMP] Ch.II 4.0, 2.1]
+  charges.bunching_allowance_hr          = 3:00                          [[IR-COMP] 2.2.3]
+  admin.CAL_TERMINAL_SHIFT               = 06:00-22:00                   [[IR-COMP] 4.1]
+  admin.night_incentive                  = not applicable                [[IR-COMP] 4.3, 4.5]
+  accounting.sundays                     = counted                       [[IR-COMP] 8.2]
+  benchmark.detention_hr                 = 14-17                         [[TERI-1]]
+  benchmark.rakes_per_month_one_line     = 15                            [[TERI-1]]
+  benchmark.release_share                = 80-85%                        [[TERI-1]]
+  trucks.gate_service                    = Erlang                        [[GL-09]]
+  trucks.deviation_cost                  = exponential in periods deviated  [[PBS-25] Eq. 8]
+  rake.wagons                            = 58                            [[WAGON]]
+  rake.tonnes_per_wagon                  = 58.08                         [[WAGON]]
+
+--- DERIVED  (1) ---
+  charges.free_time_hr                   = 5:00 + 2:00 + 1:00 = 8:00     [[IR-COMP] 2.2(a)(i), 2.2.1(a) and 2.7]
+
+--- ASSUMED  (10) ---
+  charges.engine_hour_cost               = 6,000                       
+  charges.shunting_charge                = 25,000                      
+  charges.freight_per_tonne              = 1,400                       
+  charges.idle_cost_per_hr               = 3,000                       
+  rake.load_rate_tph                     = 900 +/- 250                 
+  shunting.placement / removal           = 1.0 +/- 0.3 h               
+  admin.M1..M8 service times             = various                     
+  admin.M1..M8 rework_prob               = 0.05-0.20                   
+  trucks.truck_capacity_t                = 35                          
+  trucks.slots_per_period                = 10                          
+
+----------------------------------------------------------------------------------------------------
+  CITED: 18 | ASSUMED: 10 | DERIVED: 1
+  Results that depend only on CITED/DERIVED values are quotable.
+  Anything touching an ASSUMED value must be reported as a
+  DIRECTION or a RANKING, never as an absolute figure.
+====================================================================================================

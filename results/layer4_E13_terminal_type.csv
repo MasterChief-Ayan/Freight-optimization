@@ -1,0 +1,4 @@
+terminal type,free_time_hr,demurrage,demurrage_ci,breach_rate,controllable_cost
+private siding (5+2+1),8.0,1770493.5,161058.948,0.868,5513013.855
+through-distance siding (5+1),6.0,2183395.5,162810.64,0.977,5660329.109
+public goods shed (5+1),6.0,2183395.5,162810.64,0.977,5925915.855

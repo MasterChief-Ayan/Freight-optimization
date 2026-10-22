@@ -1,0 +1,12 @@
+# Versions on which every result in results/ was regenerated and checked
+# (Python 3.13). Newer versions should give the same numbers; if a chart
+# differs by a pixel that is font rendering, compare the CSVs instead.
+simpy==4.1.2
+pandas==3.0.5
+numpy==2.5.3
+matplotlib==3.11.2
+ortools==9.15.6755
+pillow==12.3.0
+# only for tools/audit_rr_register.py (reading the FOIS .xls/.xlsx exports)
+xlrd>=2.0
+openpyxl>=3.1

@@ -1,0 +1,5 @@
+policy,mean_detention_hr,mean_detention_hr_ci,mean_wait_hr,mean_wait_hr_ci,mean_dwell_hr,mean_dwell_hr_ci,total_demurrage,total_demurrage_ci,breach_rate,breach_rate_ci,total_controllable_cost,total_controllable_cost_ci,line_utilisation,line_utilisation_ci,throughput_per_day,throughput_per_day_ci
+FCFS,4.051,0.065,0.745,0.146,6.791,0.172,2030.0,2113.622,0.003,0.003,1766132.221,20283.431,0.218,0.011,0.866,0.047
+SPT,4.051,0.065,0.735,0.141,6.781,0.166,2030.0,2113.622,0.003,0.003,1764761.379,19547.465,0.218,0.011,0.866,0.047
+COST,4.051,0.065,0.733,0.14,6.779,0.165,2030.0,2113.622,0.003,0.003,1764491.188,19432.416,0.218,0.011,0.866,0.047
+LPT,4.051,0.065,0.764,0.153,6.81,0.176,2030.0,2113.622,0.003,0.003,1768766.538,21114.159,0.218,0.011,0.866,0.047

@@ -1,0 +1,109 @@
+
+>>> VERIFICATION
+
+=======================================================================================
+LAYER 0 VERIFICATION  -  physical model
+=======================================================================================
+  [PASS] conservation: every rake that arrives also leaves          50/50 completed
+  [PASS] event chain is monotonic for every rake                    0 violations
+  [PASS] no negative durations                                      0 negatives
+  [PASS] loading lines never over capacity                          peak 1 <= 1
+  [PASS] detention == release - placement (IR definition)           max err 0.00e+00
+  [PASS] demurrage charged iff free time exceeded                   0 mismatches
+  [PASS] graded demurrage reproduces the IR rate table              max err 0.00e+00 over 5 bands
+  [PASS] marginal demurrage never falls as detention grows          Rs150/wagon/h at 0h -> Rs450 at 89h
+  [PASS] free time = 5:00 base + 2:00 siding + 1:00 tarpaulin       8.0 h  [IR-COMP 2.2(a)(i), 2.2.1(a), 2.7]
+  [PASS] Little's Law L = lambda*W holds within 5%                  L_formula=0.292 L_obs=0.292 rel=0.0%
+  [PASS] same seed reproduces byte-identical event log              
+  [PASS] RNG sub-seeds are process-independent                      substream_seed(1000,'loading')=1948952355
+  [PASS] PHYSICAL durations identical under different policies      max diff 2.00e-06 h
+  [PASS] admin elapsed time DOES depend on the schedule (expected)  up to 8.0 h difference on the same rake
+  [PASS] common random numbers: scenario identical across runs      
+  [PASS] policy hook changes outcomes (congested variant)           wait: FCFS=38.72h, SPT=31.75h, LPT=45.26h
+  [PASS] SPT beats LPT on mean wait (scheduling theory)             SPT=31.75h < LPT=45.26h
+  [PASS] all policies serve the same number of rakes                counts={50}
+---------------------------------------------------------------------------------------
+  18/18 passed
+=======================================================================================
+
+=====================================================================================
+LAYER 1 VERIFICATION  -  administrative chain
+=====================================================================================
+  [PASS] all steps disabled reproduces Layer 0 exactly            500 vs 500 physical events
+  [PASS] calendar truncation: 1h task at 17:30 costs 17h          elapsed 17.000h
+  [PASS] 24/7 calendar: same task costs exactly 1h                elapsed 1.000h
+  [PASS] weekend skip: Saturday work waits for Monday             next_open=178.00 expected=178.00
+  [PASS] removing rework reduces mean detention                   13.63h < 15.60h
+  [PASS] ablating M6 (release reporting) cuts detention           9.40h < 15.60h
+  [PASS] ablating M7 cuts fleet cycle but not detention or dwell  d_detention=0.0e+00h d_dwell=0.0e+00h d_cycle=+16.45h
+  [PASS] digitalising M5+M6 reduces detention                     8.24h < 15.60h
+  [PASS] every admin event carries a party owner                  owners=['client', 'railway', 'terminal']
+  [PASS] event chain still monotonic with admin gates             0 violations
+  [PASS] Layer 1 is deterministic under a fixed seed              
+  [PASS] non-physical time is a majority of dwell                 non-physical = 88.5% of dwell
+  [PASS] detention lands inside TERI's 14-17 h benchmark band     15.90 h (calibrated, not validated - see admin.py header)
+-------------------------------------------------------------------------------------
+  13/13 passed
+=====================================================================================
+
+==========================================================================================
+LAYER 2 VERIFICATION  -  road side
+==========================================================================================
+  [PASS] rake chain unchanged when road side is added (A1 on)          304 vs 304 rake events
+  [PASS] every truck that arrives also exits                           1164 in, 1164 out
+  [PASS] one-way lane never holds two trucks at once                   peak occupancy 1
+  [PASS] queued lane (capacity 3) permits concurrent trucks            peak occupancy 3
+  [PASS] appointment quota respected in all but forced periods         peak 10 vs quota 10
+  [PASS] appointment system flattens the arrival peak                  peak 80 -> 10
+  [PASS] deviation cost is convex in periods deviated                  0.0 0.3 0.6 1.1 1.7 2.5 3.5 4.8
+  [PASS] MINMAX lowers the worst-off company's cost vs FCFS            FCFS max 698 -> MINMAX max 644
+  [PASS] hard infeasibility (truck vs stochastic rake) is measured     119/1164 trucks (10.2%)
+  [PASS] more gate servers shortens the gate queue                     1 server 6.73 -> 6 servers 0.73 trucks waiting
+  [PASS] switching assumption A1 off makes material availability bind  A1 on 15.45h -> A1 off 18.32h
+  [PASS] M8 gate verification fires for trucks                         2431 admin events on trucks
+------------------------------------------------------------------------------------------
+  12/12 passed
+==========================================================================================
+
+
+>>> E4  ACCESS LANE: one-way passage vs organised queue
+                 scenario  truck_turnaround_hr  truck_turnaround_hr_ci  truck_p90_hr  gate_queue
+lane capacity 1 (ONE-WAY)                 6.28                    3.84         14.21        0.98
+          lane capacity 2                 1.06                    0.30          1.91        0.98
+          lane capacity 3                 0.86                    0.02          1.12        0.98
+          lane capacity 4                 0.85                    0.01          1.10        0.98
+
+>>> E5  APPOINTMENT SYSTEM and gate capacity
+            scenario  truck_turnaround_hr  truck_p90_hr  gate_queue
+NONE, 2 gate servers                10.41         24.73        7.15
+NONE, 4 gate servers                10.84         25.33        2.61
+NONE, 8 gate servers                10.96         25.25        1.41
+FCFS, 2 gate servers                 6.24         14.24        1.90
+FCFS, 4 gate servers                 6.28         14.21        0.98
+FCFS, 8 gate servers                 6.29         14.20        0.92
+
+>>> E6  FAIRNESS: who absorbs the reschedules?
+        scenario  total_deviation_cost  max_company_cost  deviated_pct
+   FCFS, quota 8              59,678.0          19,959.0          71.4
+ MINMAX, quota 8              60,873.8          23,047.1          71.4
+  FCFS, quota 12              17,960.4           5,687.7          53.6
+MINMAX, quota 12              18,290.7           6,025.8          53.6
+  FCFS, quota 20               1,135.2             380.0          41.0
+MINMAX, quota 20               1,119.7             364.9          41.0
+  quota 8: MINMAX moves the worst-off company by +15.5% at +2.0% total cost  (71% of trucks deviated)
+  quota 12: MINMAX moves the worst-off company by +5.9% at +1.8% total cost  (54% of trucks deviated)
+  quota 20: MINMAX moves the worst-off company by -4.0% at -1.4% total cost  (41% of trucks deviated)
+
+>>> E7  ADMIN VARIANCE PROPAGATES TO THE ROAD SIDE (the contribution)
+  Truck appointments are planned against the rake's EXPECTED arrival,
+  which depends on the administrative lead time M1. Widening M1's
+  spread - same mean - moves the rake away from the plan in BOTH
+  directions and the appointment schedule cannot absorb it.
+  The source paper assumes deterministic arrivals; this is the gap.
+   scenario  hard_infeasible_pct  hard_infeasible_pct_ci  arrival_error_sd_hr  truck_turnaround_hr  mean_detention_hr
+M1 sd x0.25                 1.22                    2.39                36.26                 6.28              15.61
+   M1 sd x1                 7.58                    3.29                53.60                 6.28              16.14
+   M1 sd x2                10.85                    4.54                67.92                 6.28              15.73
+   M1 sd x3                14.06                    5.99                74.34                 6.28              15.50
+
+Saved: layer2_results.png and four CSVs

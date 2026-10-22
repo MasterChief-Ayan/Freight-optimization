@@ -1,0 +1,5 @@
+scenario,truck_turnaround_hr,truck_turnaround_hr_ci,truck_p90_hr,truck_p90_hr_ci,gate_queue,gate_queue_ci,mean_detention_hr,mean_detention_hr_ci,hard_infeasible_pct,hard_infeasible_pct_ci
+lane capacity 1 (ONE-WAY),6.282,3.838,14.207,9.782,0.981,0.234,16.137,0.812,7.577,3.289
+lane capacity 2,1.058,0.3,1.909,1.48,0.981,0.234,16.137,0.812,4.467,2.165
+lane capacity 3,0.862,0.019,1.123,0.042,0.981,0.234,16.137,0.812,4.442,2.167
+lane capacity 4,0.849,0.01,1.103,0.02,0.981,0.234,16.137,0.812,4.433,2.168

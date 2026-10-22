@@ -1,0 +1,7 @@
+scenario,truck_turnaround_hr,truck_turnaround_hr_ci,truck_p90_hr,truck_p90_hr_ci,gate_queue,gate_queue_ci,mean_detention_hr,mean_detention_hr_ci,hard_infeasible_pct,hard_infeasible_pct_ci
+"NONE, 2 gate servers",10.412,5.238,24.732,13.754,7.152,4.833,16.137,0.812,10.232,3.225
+"NONE, 4 gate servers",10.837,5.492,25.33,13.742,2.61,1.421,16.137,0.812,10.747,3.637
+"NONE, 8 gate servers",10.961,5.542,25.254,13.754,1.407,0.548,16.137,0.812,10.825,3.694
+"FCFS, 2 gate servers",6.245,3.771,14.236,9.865,1.9,1.344,16.137,0.812,7.629,3.306
+"FCFS, 4 gate servers",6.282,3.838,14.207,9.782,0.981,0.234,16.137,0.812,7.577,3.289
+"FCFS, 8 gate servers",6.288,3.841,14.203,9.785,0.922,0.202,16.137,0.812,7.569,3.284

@@ -1,0 +1,8 @@
+segment,owner,total_hr,mean_hr,share_pct
+queueing_for_line,terminal,1772.631,35.453,51.02
+rr_and_payment,client,822.324,16.446,23.668
+release_reporting,terminal,488.762,9.775,14.068
+loading,terminal,206.856,4.137,5.954
+waiting_for_crew,terminal,84.577,1.692,2.434
+placement_shunting,railway,50.528,1.011,1.454
+removal_shunting,railway,48.698,0.974,1.402
