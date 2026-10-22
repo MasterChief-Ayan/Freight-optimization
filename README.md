@@ -33,6 +33,7 @@ python tools/dry_run_two_rakes.py   # watch one replication, event by event
 ## Read next
 - `docs/PROJECT_STORY.md`: how the project started, the mid-term, current work, the final target, the field-data plan, and which numbers to quote.
 - `docs/CODEBASE.md`: what every file does, how they connect, and where a new feature goes.
+- `docs/WORKFLOW.md`: how changes are saved, branched and tagged (GitHub + MTP project).
 
 ## Headline results (final code, `results/`)
 | Finding | Number |

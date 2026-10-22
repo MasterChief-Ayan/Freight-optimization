@@ -59,7 +59,8 @@ mtp-rtsim/
 ├── archive/prototypes/        Phase-1 siding_sim v1/v2/v3 (superseded, kept for the record)
 ├── docs/
 │   ├── PROJECT_STORY.md       history, current state, target, data plan, numbers to quote
-│   └── CODEBASE.md            this file
+│   ├── CODEBASE.md            this file
+│   └── WORKFLOW.md            saving, branching, tags, session routine
 └── data/
     └── README.md              where field data goes (raw/ and processed/ are git-ignored)
 ```
