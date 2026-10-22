@@ -8,7 +8,7 @@ two context docs (`MTP_PROJECT_STORY.md`, `MTP_CODEBASE.md`), refreshed at the e
 | Place | Holds | Updated by |
 |---|---|---|
 | GitHub repo | code, data, results (charts/CSVs), docs, full history | every Claude Code session commits and pushes |
-| claude.ai MTP project | `MTP_PROJECT_STORY.md`, `MTP_CODEBASE.md` (context for any new chat) | Claude, at the end of each session |
+| claude.ai MTP project | dated folders, each with `MTP_PROJECT_STORY.md`, `MTP_CODEBASE.md`, `MTP_WORKFLOW.md` (context for any new chat) | Claude, at the end of each session |
 | GitHub repo, `data/raw/` | ER RR register 2022–26 (not confidential) | add new monthly files there and commit |
 
 ## Every working session (Claude Code, attached to the MTP project)
