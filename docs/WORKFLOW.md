@@ -7,9 +7,9 @@ two context docs (`MTP_PROJECT_STORY.md`, `MTP_CODEBASE.md`), refreshed at the e
 ## The three places, and what lives where
 | Place | Holds | Updated by |
 |---|---|---|
-| GitHub repo | code, results (charts/CSVs), docs, full history | every Claude Code session commits and pushes |
+| GitHub repo | code, data, results (charts/CSVs), docs, full history | every Claude Code session commits and pushes |
 | claude.ai MTP project | `MTP_PROJECT_STORY.md`, `MTP_CODEBASE.md` (context for any new chat) | Claude, at the end of each session |
-| Your Drive / laptop | raw railway data (RAR), never on GitHub | you; attach it to a session when needed |
+| GitHub repo, `data/raw/` | ER RR register 2022–26 (not confidential) | add new monthly files there and commit |
 
 ## Every working session (Claude Code, attached to the MTP project)
 1. **Start:** say "continue the MTP work". Claude reads the two project docs, attaches the repo
@@ -28,7 +28,7 @@ Nothing is lost between sessions: the repo keeps every version, and the project 
 | `main` | verified state; what the thesis quotes | change only by merging a branch whose checks pass |
 | `feat/<topic>` | new capability, e.g. `feat/unloading-side`, `feat/scaling` | branch from `main`, merge back |
 | `exp/<topic>` | exploratory what-if that may be thrown away, e.g. `exp/time-indexed-bound` | merge only if it becomes a result |
-| `data/<source>` | wiring in a new field dataset (code only; data stays local) | merge after the decoding checks pass |
+| `data/<source>` | wiring in a new field dataset (raw files + decoding code) | merge after the decoding checks pass |
 | `thesis` | LaTeX thesis sources (if kept in this repo) | long-lived; merge `main` into it for new figures |
 
 ## Tags (frozen milestones you can always return to)
@@ -53,6 +53,6 @@ git checkout v1.0-midterm-model         # look at an old milestone (read-only)
 ```
 
 ## Never
-- commit `data/raw/` or `data/processed/` (railway data; `.gitignore` blocks it);
+- commit `data/processed/` (regenerable cache; `.gitignore` blocks it) or any dataset the owner calls confidential;
 - edit a number in `results/` by hand — change the code and re-run;
 - merge into `main` with a failing check.

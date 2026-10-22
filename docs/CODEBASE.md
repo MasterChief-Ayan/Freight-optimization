@@ -10,11 +10,11 @@ result in `results/` regenerates from `bash run_all.sh`.
 ## 1. Repository layout
 
 ```
-mtp-rtsim/
+Freight-optimization/
 ├── README.md                  overview, quick start, headline results
 ├── run_all.sh                 reproduce everything  (bash run_all.sh | bash run_all.sh quick)
 ├── requirements.txt           pinned versions used for the verified run
-├── .gitignore                 keeps field data (data/raw, data/processed) off GitHub
+├── .gitignore                 ignores only caches (data/processed, __pycache__)
 │
 ├── rtsim/                     THE MODEL (Python package) - 16 files
 │   ├── __init__.py            package docstring
@@ -62,7 +62,7 @@ mtp-rtsim/
 │   ├── CODEBASE.md            this file
 │   └── WORKFLOW.md            saving, branching, tags, session routine
 └── data/
-    └── README.md              where field data goes (raw/ and processed/ are git-ignored)
+    └── README.md              dataset description; raw/ committed, processed/ is a git-ignored cache
 ```
 
 **Layer → file map:** L0 physical = `config, distributions, eventlog, terminal, accounting,

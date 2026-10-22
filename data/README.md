@@ -1,16 +1,16 @@
 # data/
 
-Field data lives here **locally only** — `raw/` and `processed/` are in
-`.gitignore`, because the files are railway commercial records shared through
-the department. Ask your supervisor before putting any of it on a public repository.
+The raw field data **is committed** (`raw/`, 159 MB, 56 files; not confidential, confirmed by
+the owner 22-Oct-2026). `processed/` is a regenerable cache and stays in `.gitignore`:
+`python tools/analyse_rr_register.py` rebuilds it from `raw/` in about 1 minute.
 
     data/
     ├── raw/
-    │   └── RR_base_IN_freight_details/      ← extract the RAR here
+    │   └── RR_base_IN_freight_details/      ← committed (monthly FOIS exports)
     │       ├── 2022/ Jan 22.xls … Dec 22.xls
     │       ├── …
     │       └── 2026/ Jan 26.xls … Aug 26.xls
-    └── processed/
+    └── processed/                             ← git-ignored, rebuilt automatically
         ├── rr_clean.pkl                     ← cleaned + decoded cache (tools/rr_register.py)
         └── terminal_*.csv                   ← terminal-level detail (tools/analyse_rr_register.py)
 

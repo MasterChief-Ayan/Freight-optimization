@@ -3,12 +3,9 @@ __pycache__/
 .venv/
 .ipynb_checkpoints/
 
-# field data stays off GitHub (railway commercial data - share only with permission)
-data/raw/
+# regenerable cache (rebuilt by tools/analyse_rr_register.py from data/raw)
 data/processed/
 *.rar
-*.xls
-*.xlsx
-!results/field/*.xlsx
 
-# keep results/ committed so the charts and CSVs are viewable on GitHub
+# data/raw/ (ER RR register, not confidential) IS committed
+# results/ is committed so charts and CSVs are viewable on GitHub

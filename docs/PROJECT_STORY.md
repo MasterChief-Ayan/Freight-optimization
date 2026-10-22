@@ -243,6 +243,15 @@ export) and organised into this repo (`docs/CODEBASE.md`). Discovery during the 
 mid-term Layer 1–2 charts were produced before two later fixes** (BOXN 58.08 t and entity-keyed
 RNG). The final code therefore gives 15.53 h baseline detention instead of 15.70 h (§7.2).
 
+### 4.4 Where everything lives (from 22-Oct-2026)
+- **Code + data + results:** GitHub `MasterChief-Ayan/Freight-optimization` (private), branch
+  `main`, tags `v1.0-midterm-model`, `v1.1-sensitivity-commodities`. The raw RR register
+  (`data/raw/`, 56 files, 159 MB) is committed (the owner confirmed it is not confidential);
+  only the cache `data/processed/` is git-ignored. Branch/tag rules: `docs/WORKFLOW.md`.
+- **Context for new chats:** the claude.ai MTP project, in one dated folder per session
+  (e.g. `22October2026/MTP_PROJECT_STORY.md`, `22October2026/MTP_CODEBASE.md`). The latest dated
+  folder is the current state.
+
 ---
 
 ## 5. Final outcome we want to achieve

@@ -12,7 +12,7 @@ Reads the cleaned, decoded register (tools/rr_register.py) and writes
     F3_monthly_tonnes.csv          monthly tonnes per group (seasonality)
     F4_model_parameters.csv        data-derived values for the simulation, per group
     field_results.png              four-panel summary chart
-  data/processed/                  (git-ignored: terminal- and consignee-level detail)
+  data/processed/                  (git-ignored cache: terminal- and consignee-level detail)
     terminal_profiles.csv          top receiving terminals
     terminal_arrivals.csv          full-rake arrival process at the top terminals
 
