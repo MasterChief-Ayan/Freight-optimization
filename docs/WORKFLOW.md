@@ -55,4 +55,6 @@ git checkout v1.0-midterm-model         # look at an old milestone (read-only)
 ## Never
 - commit `data/processed/` (regenerable cache; `.gitignore` blocks it) or any dataset the owner calls confidential;
 - edit a number in `results/` by hand — change the code and re-run;
-- merge into `main` with a failing check.
+- merge into `main` with a failing check;
+- add AI co-author or session trailers (`Co-Authored-By: …`, `Claude-Session: …`) to commit
+  messages, or commit as any author other than Ayan Ahmed (owner's decision, 22-Oct-2026).
