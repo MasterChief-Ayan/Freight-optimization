@@ -1,0 +1,64 @@
+commodity,lever,d_detention_h,ci,significant,d_demurrage_per_rake,d_model_cost_per_rake,data_leak_saved_per_rake,total_saving_per_rake
+COAL (open BOXN),G1 terminal 24/7 (M4-M6),-5.3545,0.1606,True,-51943.8333,-94337.9582,0.0,94337.9582
+COAL (open BOXN),G2 digitalise M6 release reporting,-4.5907,0.2307,True,-43599.2444,-80773.4061,0.0,80773.4061
+COAL (open BOXN),G3 digitalise M5 weighment,-3.0353,0.2017,True,-28469.3,-53909.5959,0.0,53909.5959
+COAL (open BOXN),G4 2nd line + 2nd crew,-0.3998,0.1556,True,-3365.9333,-68384.1786,0.0,68384.1786
+COAL (open BOXN),S1 loading rate +50 % (labour/mechanisation),-2.386,0.1791,True,-21399.4222,-40360.9951,0.0,40360.9951
+COAL (open BOXN),S2 precise loading (no overload),-1.1772,0.1481,True,-11371.5444,-23199.7642,143914.4783,167114.2424
+COAL (open BOXN),R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)],0.0,0.0,False,19565.9778,19565.9778,0.0,-19565.9778
+COAL (hopper BOBRN),G1 terminal 24/7 (M4-M6),-5.4644,0.1615,True,-54237.4111,-99546.9524,0.0,99546.9524
+COAL (hopper BOBRN),G2 digitalise M6 release reporting,-4.521,0.2351,True,-44098.3667,-82786.8951,0.0,82786.8951
+COAL (hopper BOBRN),G3 digitalise M5 weighment,-3.8064,0.2177,True,-37137.7222,-70935.3244,0.0,70935.3244
+COAL (hopper BOBRN),G4 2nd line + 2nd crew,-0.4834,0.164,True,-4128.6333,-72602.9472,0.0,72602.9472
+COAL (hopper BOBRN),S1 loading rate +50 % (labour/mechanisation),-2.118,0.1311,True,-19858.5556,-36795.5063,0.0,36795.5063
+COAL (hopper BOBRN),S2 precise loading (no overload),-1.9616,0.1994,True,-19562.4333,-39703.6021,83479.4497,123183.0518
+COAL (hopper BOBRN),R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)],0.0,0.0,False,20070.9,20070.9,0.0,-20070.9
+IRON ORE,G1 terminal 24/7 (M4-M6),-4.9263,0.1565,True,-48285.0,-83951.3989,0.0,83951.3989
+IRON ORE,G2 digitalise M6 release reporting,-4.5251,0.2581,True,-44098.3667,-76856.9648,0.0,76856.9648
+IRON ORE,G3 digitalise M5 weighment,-1.9394,0.1701,True,-18753.3333,-34175.9844,0.0,34175.9844
+IRON ORE,G4 2nd line + 2nd crew,-0.4225,0.1935,True,-3625.9667,-59985.2755,0.0,59985.2755
+IRON ORE,S1 loading rate +50 % (labour/mechanisation),-2.3464,0.1584,True,-21732.9222,-38362.4977,0.0,38362.4977
+IRON ORE,S2 precise loading (no overload),-0.1114,0.0565,True,-1140.6667,-2932.1228,131742.7659,134674.8888
+IRON ORE,R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)],0.0,0.0,False,19752.5444,19752.5444,0.0,-19752.5444
+CLINKER,G1 terminal 24/7 (M4-M6),-5.1825,0.1592,True,-51024.2111,-91505.3046,0.0,91505.3046
+CLINKER,G2 digitalise M6 release reporting,-4.5517,0.2624,True,-44439.6,-80989.2271,0.0,80989.2271
+CLINKER,G3 digitalise M5 weighment,-2.5391,0.1691,True,-24527.8778,-46494.1767,0.0,46494.1767
+CLINKER,G4 2nd line + 2nd crew,-0.3983,0.1689,True,-3364.6444,-65703.0723,0.0,65703.0723
+CLINKER,S1 loading rate +50 % (labour/mechanisation),-2.3634,0.1779,True,-22081.2444,-41153.3559,0.0,41153.3559
+CLINKER,S2 precise loading (no overload),-0.7123,0.1071,True,-6962.5778,-15255.5806,62801.459,78057.0397
+"CEMENT (bagged, BCN)",G1 terminal 24/7 (M4-M6),-6.0471,0.1448,True,-43468.3667,-116816.7171,0.0,116816.7171
+"CEMENT (bagged, BCN)",G2 digitalise M6 release reporting,-4.3226,0.2075,True,-31167.0333,-92093.9273,0.0,92093.9273
+"CEMENT (bagged, BCN)",G3 digitalise M5 weighment,-1.7049,0.1789,True,-12291.7667,-38552.6481,0.0,38552.6481
+"CEMENT (bagged, BCN)",G4 2nd line + 2nd crew,0.1847,0.1702,True,1254.4,-108150.9389,0.0,108150.9389
+"CEMENT (bagged, BCN)",S1 loading rate +50 % (labour/mechanisation),-3.6432,0.2301,True,-25315.5,-72787.6676,0.0,72787.6676
+"CEMENT (bagged, BCN)",S2 precise loading (no overload),-0.0247,0.0386,False,-198.5667,-609.8589,2355.8375,2965.6964
+FOODGRAINS,G1 terminal 24/7 (M4-M6),-5.8606,0.1242,True,-42498.1667,-129384.8378,0.0,129384.8378
+FOODGRAINS,G2 digitalise M6 release reporting,-3.6527,0.2667,True,-26566.8667,-90657.8111,0.0,90657.8111
+FOODGRAINS,G3 digitalise M5 weighment,-1.4605,0.1919,True,-10556.4667,-42513.0346,0.0,42513.0346
+FOODGRAINS,G4 2nd line + 2nd crew,0.1309,0.1523,False,902.0667,-131343.05,0.0,131343.05
+FOODGRAINS,S1 loading rate +50 % (labour/mechanisation),-3.5176,0.1919,True,-24794.2333,-83806.3687,0.0,83806.3687
+FOODGRAINS,S2 precise loading (no overload),-0.0011,0.0016,False,-8.4,-41.6863,153.1702,194.8565
+FERTILISER,G1 terminal 24/7 (M4-M6),-5.8698,0.1404,True,-42382.6667,-126052.8603,0.0,126052.8603
+FERTILISER,G2 digitalise M6 release reporting,-3.7459,0.2684,True,-27094.9,-90043.5341,0.0,90043.5341
+FERTILISER,G3 digitalise M5 weighment,-1.3984,0.159,True,-10087.0,-38957.5615,0.0,38957.5615
+FERTILISER,G4 2nd line + 2nd crew,0.1816,0.1841,False,1376.6667,-126333.5596,0.0,126333.5596
+FERTILISER,S1 loading rate +50 % (labour/mechanisation),-3.4675,0.1905,True,-24191.5333,-79489.0102,0.0,79489.0102
+FERTILISER,S2 precise loading (no overload),-0.002,0.0022,False,-6.3,-38.8356,43833.6491,43872.4847
+"IRON & STEEL (flat, crane)",G1 terminal 24/7 (M4-M6),-6.0915,0.1335,True,-60828.4667,-138392.561,0.0,138392.561
+"IRON & STEEL (flat, crane)",G2 digitalise M6 release reporting,-4.1327,0.2557,True,-41163.5667,-102308.1181,0.0,102308.1181
+"IRON & STEEL (flat, crane)",G3 digitalise M5 weighment,-1.8172,0.1763,True,-18086.6556,-48764.1411,0.0,48764.1411
+"IRON & STEEL (flat, crane)",G4 2nd line + 2nd crew,0.1167,0.1919,False,830.3667,-115251.7931,0.0,115251.7931
+"IRON & STEEL (flat, crane)",S1 loading rate +50 % (labour/mechanisation),-3.6861,0.2567,True,-35635.2,-84503.4449,0.0,84503.4449
+"IRON & STEEL (flat, crane)",S2 precise loading (no overload),-0.0743,0.0523,True,-854.5333,-1935.3532,91279.0476,93214.4007
+CONTAINERS,G1 terminal 24/7 (M4-M6),-4.0962,0.2063,True,-31530.0,-55078.3919,0.0,55078.3919
+CONTAINERS,G2 digitalise M6 release reporting,-4.1518,0.2456,True,-31389.75,-54575.3812,0.0,54575.3812
+CONTAINERS,G3 digitalise M5 weighment,-1.6735,0.1247,True,-12724.25,-23720.6871,0.0,23720.6871
+CONTAINERS,G4 2nd line + 2nd crew,-0.9398,0.1391,True,-6767.0,-46066.8386,0.0,46066.8386
+CONTAINERS,S1 loading rate +50 % (labour/mechanisation),-1.3992,0.1109,True,-10486.0,-18926.5416,0.0,18926.5416
+CONTAINERS,S2 precise loading (no overload),-0.0507,0.0405,True,-395.0,-789.9391,162.4415,952.3807
+POL (tank),G1 terminal 24/7 (M4-M6),-4.8865,0.1429,True,-37167.3167,-71553.6424,0.0,71553.6424
+POL (tank),G2 digitalise M6 release reporting,-4.5387,0.2558,True,-32660.4056,-64600.8732,0.0,64600.8732
+POL (tank),G3 digitalise M5 weighment,-1.8302,0.1571,True,-12799.8889,-26315.5842,0.0,26315.5842
+POL (tank),G4 2nd line + 2nd crew,-0.3898,0.1972,True,-1989.4,-56855.733,0.0,56855.733
+POL (tank),S1 loading rate +50 % (labour/mechanisation),-2.3683,0.1548,True,-14641.4722,-30800.9499,0.0,30800.9499
+POL (tank),S2 precise loading (no overload),-0.0105,0.0164,False,-71.3222,-137.484,15.2513,152.7353

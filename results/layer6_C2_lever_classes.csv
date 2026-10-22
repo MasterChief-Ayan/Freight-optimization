@@ -1,0 +1,8 @@
+lever,mean_d_detention_h,min,max,relative_spread,n_commodities,class
+G1 terminal 24/7 (M4-M6),-5.3779,-6.0915,-4.0962,0.371,10,"GENERAL, uniform"
+G2 digitalise M6 release reporting,-4.2733,-4.5907,-3.6527,0.2195,10,"GENERAL, uniform"
+S1 loading rate +50 % (labour/mechanisation),-2.7296,-3.6861,-1.3992,0.8378,10,"GENERAL, size depends on material"
+G3 digitalise M5 weighment,-2.1205,-3.8064,-1.3984,1.1356,10,"GENERAL, size depends on material"
+S2 precise loading (no overload),-0.4126,-1.9616,-0.0011,4.7516,10,MATERIAL-SPECIFIC
+G4 2nd line + 2nd crew,-0.242,-0.9398,0.1847,4.6477,10,MATERIAL-SPECIFIC
+R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)],0.0,0.0,0.0,0.0,3,"PRICING (moves money, not time)"

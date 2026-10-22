@@ -15,15 +15,18 @@ charge rules are taken from the MoR Demurrage/Wharfage Compendium (03.04.2024).
 | 2 Road side | trucks, gate, one-way lane, truck appointment system, fairness, M8 | `rtsim/trucks.py` |
 | 3 Decision | Contract-Net dispatch, CP-SAT sequence, valid lower bound, decomposition | `rtsim/optimiser.py` |
 | 4 Scenarios | ten interventions, terminal type, pricing levers (config only) | `experiments/run_layer4.py` |
+| 5 Sensitivity | every parameter and condition alone: bounds, Morris, envelope | `experiments/run_layer5_sensitivity.py` |
+| 6 Commodities | 10 commodity profiles from field data; general vs material-specific levers | `experiments/run_layer6_commodities.py` |
+| Field data | ER RR register 2022–26 decoded (220,395 RRs) | `tools/rr_register.py`, `tools/analyse_rr_register.py` |
 
-**Status:** Layers 0–4 complete, **57/57 integrity checks pass**. Next: field-data recalibration,
-per-parameter bounds, cost–benefit, scaling (see `docs/PROJECT_STORY.md` §5–6).
+**Status:** Layers 0–6 complete, **76/76 integrity checks pass**. Next: selection-provenance table,
+scaling, validation once placement–release logs arrive, LaTeX thesis (see `docs/PROJECT_STORY.md` §5–8).
 
 ## Quick start
 ```bash
 pip install -r requirements.txt
 bash run_all.sh quick        # 57 checks + provenance table (~1 min)
-bash run_all.sh              # every chart/CSV/log into results/ (~6 min on 2 cores)
+bash run_all.sh              # every chart/CSV/log into results/ (~15 min on 2 cores)
 python tools/dry_run_two_rakes.py   # watch one replication, event by event
 ```
 
@@ -40,6 +43,8 @@ python tools/dry_run_two_rakes.py   # watch one replication, event by event
 | Procedure vs capital | ≈ **15×** |
 | Contract-Net ageing (E10) | worst-case wait −33% (161 → 108 h) at ≈ 0 cost to the mean |
 | Pricing (E13/E14) | free time / penal rate move the bill (₹1.77 M → ₹3.54 M), not detention (16.07 h) |
+| Single biggest factor (L5) | terminal working hours 8 → 24 h/day: detention 31.86 → 10.69 h; all factors together: 4.52–52.46 h |
+| Per mineral (L6) | general levers (24/7, release reporting) work for all 10 commodities (−4 to −6 h); loading accuracy matters for coal/clinker (overload 21–41 %), loading rate for bagged cargo |
 | Attribution (L1) | of a rake's time from arrival to departure: terminal 73.5%, client 23.7%, railway 2.9%; yet the client pays the demurrage |
 
 Rule for the thesis: results depending only on CITED/DERIVED parameters are quotable as figures.

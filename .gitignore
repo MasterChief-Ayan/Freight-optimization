@@ -9,5 +9,6 @@ data/processed/
 *.rar
 *.xls
 *.xlsx
+!results/field/*.xlsx
 
 # keep results/ committed so the charts and CSVs are viewable on GitHub

@@ -1,0 +1,63 @@
+RRs 220,395  (Jan-2022 to Aug-2026), 509 Mt, 220 commodity codes
+
+>>> F1c  COAL FULL RAKES BY WAGON TYPE
+wagon_type_filled  full_rakes  wagons  t_per_wagon  overload_incidence  private_siding_share  freight_per_t          tonnes
+    COVERED WAGON           8  42.000       61.944               0.125                 0.000      2,112.878      20,487.200
+     HOPPER WAGON       43212  58.000       61.291               0.405                 0.957        517.408 149,978,750.700
+       OPEN WAGON       34533  58.000       67.211               0.304                 0.810        899.719 131,399,963.600
+
+>>> F1  COMMODITY PROFILES
+                                group     Mt  full_rakes_per_month_ER  median_wagons_full_rake  t_per_wagon_median  overload_incidence  paid_unused_capacity_pct  paid_unused_t_per_full_rake dominant_wagon  private_siding_share  mini_or_piecemeal_share  median_lead_km  freight_per_t_median
+                                 COAL 308.73                 1,431.48                    58.00               63.25                0.37                      0.04                       158.90   HOPPER WAGON                  0.90                     0.00          136.00                528.09
+                             IRON ORE  57.04                   254.38                    58.00               68.21                0.04                      0.04                       162.40     OPEN WAGON                  0.74                     0.00          318.00                807.64
+                              CLINKER  31.78                   144.64                    58.00               68.65                0.21                      0.01                        47.30     OPEN WAGON                  0.96                     0.00          813.00              1,316.91
+                               CEMENT  26.90                    62.00                    42.00               65.66                0.01                      0.00                         4.20  COVERED WAGON                  0.01                     0.14          274.00                546.93
+                           FOODGRAINS  11.91                    60.29                    42.00               64.93                0.01                      0.00                         0.00  COVERED WAGON                  0.32                     0.04        1,474.00              2,032.55
+                           FERTILISER   8.72                    17.36                    42.00               63.80                0.01                      0.00                        37.40  COVERED WAGON                  0.00                     0.19          680.00              1,171.16
+                         IRON & STEEL   6.52                     9.20                    58.00               63.00                0.05                      0.03                       123.20     FLAT WAGON                  0.96                     0.04          291.00                740.57
+                                 SLAG   6.19                    28.96                    58.00               67.77                0.21                      0.02                        87.05     OPEN WAGON                  0.99                     0.00          373.00                723.62
+STEEL-PLANT FLUX (limestone/dolomite)   6.19                    28.57                    58.00               67.46                0.20                      0.02                        80.20     OPEN WAGON                  0.88                     0.00          569.00                961.10
+                                 SALT   5.19                    12.55                    42.00               63.70                0.00                      0.00                         2.10  COVERED WAGON                  0.00                     0.49        1,387.00              1,982.83
+                           CONTAINERS   4.04                    44.25                    45.00               36.91                0.02                      0.00                         0.00     FLAT WAGON                  0.75                     0.24          975.00              1,715.57
+                                  POL   4.06                    16.66                    49.00               54.28                0.00                      0.00                         0.00     TANK WAGON                  0.98                     0.01          509.00              1,174.68
+                     RAILWAY MATERIAL  13.07                    78.05                    52.00               60.20                0.14                      0.07                       226.20  COVERED WAGON                  0.04                     0.18           45.00                366.07
+                        MANGANESE ORE   1.95                    10.77                    46.00               63.50                0.11                      0.05                       181.10     OPEN WAGON                  0.19                     0.02          323.00                781.72
+                               GYPSUM   1.05                     5.35                    57.00               66.57                0.25                      0.02                        90.00     OPEN WAGON                  0.81                     0.00          599.00              1,289.93
+                                OTHER  15.19                    53.88                    45.00               62.30                0.06                      0.02                        65.40  COVERED WAGON                  0.34                     0.27          767.00              1,607.27
+
+>>> F1b  CHARGES AS % OF BASIC FREIGHT
+                                group  surcharge_pct_basic  terminal_pct_basic  siding_pct_basic  punitive_pct_basic  levy_pct_basic  rebate_pct_basic  punitive_per_overloaded_RR
+                                 COAL               0.0014              0.0104            0.0079              0.0056          0.0025            0.0013                  3,116.8000
+                             IRON ORE               0.2133              0.0287            0.0011              0.0173          0.0126            0.0279                 15,685.9500
+                              CLINKER               0.1739              0.0012            0.0012              0.0007          0.0013            0.0022                  2,385.8400
+                               CEMENT               0.1792              0.0328            0.0028              0.0021          0.0063            0.0101                  4,224.0800
+                           FOODGRAINS               0.1593              0.0187            0.0003              0.0004          0.0001            0.0002                 18,909.9000
+                           FERTILISER               0.1905              0.0196            0.0017              0.0007          0.0001            0.0015                  3,095.9400
+                         IRON & STEEL               0.1861              0.0110            0.0616              0.0044          0.0155            0.0316                    768.7400
+                                 SLAG               0.1850              0.0001            0.0163              0.0022          0.0014            0.0254                    736.9600
+STEEL-PLANT FLUX (limestone/dolomite)               0.1707              0.0115            0.0008              0.0019          0.0017            0.0606                  1,754.7400
+                                 SALT               0.1783              0.0221            0.0000              0.0003          0.0000            0.0011                 44,683.9200
+                           CONTAINERS               0.1089              0.0102            0.0022              0.0024          0.0005            0.0031                  8,460.4950
+                                  POL               0.1845              0.0001            0.0036              0.0003          0.0000            0.0001                  3,719.8200
+                     RAILWAY MATERIAL               0.1963              0.1226            0.0578              0.0023          0.0020            0.0012                  1,923.4950
+                        MANGANESE ORE               0.1619              0.0215            0.0160              0.0036          0.0080            0.0018                  2,921.8500
+                               GYPSUM               0.1856              0.0022            0.0000              0.0053          0.0001            0.0005                  2,615.8000
+                                OTHER               0.1670              0.0211            0.0064              0.0031          0.0010            0.0258                  2,797.9800
+
+>>> F5  TOP RECEIVING TERMINALS (full rakes)
+station_to  full_rakes main_consignee main_group             wagon_mix    siding_type  rakes_per_day_mean  rakes_per_month_mean  daily_dispersion_index  implied_mean_gap_h  overload_incidence
+      MTPS       14603            DVC       COAL   hopper 95%; open 5% PRIVATE SIDING                8.57                260.87                    1.01                2.80                0.56
+      PSPM       10832           WBPD       COAL  hopper 87%; open 13% PRIVATE SIDING                6.36                193.50                    0.71                3.78                0.23
+      DSEY        9507           SAIL   IRON ORE  open 100%; hopper 0% PRIVATE SIDING                5.58                169.83                    0.80                4.30                0.12
+      FSTP        8315           NTPC       COAL  hopper 69%; open 31% PRIVATE SIDING                4.88                148.54                    1.04                4.92                0.37
+      BTPC        7098           WBPD       COAL  hopper 63%; open 37% PRIVATE SIDING                4.17                126.80                    0.85                5.76                0.27
+      DSTP        6602            DVC       COAL  hopper 57%; open 43% PRIVATE SIDING                3.88                118.01                    1.13                6.19                0.38
+      NTKS        6566           NTPC       COAL  open 67%; hopper 33% PRIVATE SIDING                3.85                117.29                    1.68                6.23                0.24
+      SSPL        4921            SSP   IRON ORE     open 99%; flat 1% PRIVATE SIDING                2.89                 87.91                    1.33                8.31                0.14
+      MCES        4129           CESC       COAL  hopper 51%; open 49% PRIVATE SIDING                2.42                 73.76                    0.72                9.90                0.47
+      APJG        4126           APJL       COAL             open 100%     GOODS SHED                2.97                 90.55                    1.53                8.07                0.12
+      MSSL        2818           SUPR   IRON ORE open 100%; covered 0% PRIVATE SIDING                1.65                 50.34                    1.06               14.51                0.18
+      DKAE        2516           BPSL     CEMENT covered 67%; open 13%     GOODS SHED                1.48                 44.97                    1.10               16.24                0.09
+       TOP        2370            SSP       COAL     open 97%; flat 2%     GOODS SHED                1.39                 42.39                    1.58               17.24                0.27
+      MCCS        2361           UTCL    CLINKER  open 97%; covered 3% PRIVATE SIDING                1.39                 42.18                    0.89               17.32                0.13
+      DCOP        2300           DPLT       COAL  open 53%; hopper 47% PRIVATE SIDING                1.35                 41.09                    1.10               17.78                0.51

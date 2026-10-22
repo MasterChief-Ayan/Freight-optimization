@@ -1,0 +1,25 @@
+
+==========================================================================================
+EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, field decoding
+==========================================================================================
+  [PASS] Layer 5 base reproduces the Layer 1 calibrated baseline          L5 15.53 h vs L1 15.53 h
+  [PASS] every parameter at its base value reproduces the base exactly    max |diff| 0.0e+00 h over 39 params
+  [PASS] commercial parameters move money but never time                  6 params, max detention swing 0.0e+00 h
+  [PASS] demurrage is linear in the base rate (x0.5 -> x1.5 = 3x)         ratio 3.0000
+  [PASS] M7 (after removal) never touches detention                       max swing 0.0e+00 h
+  [PASS] longer terminal hours never increase detention (monotone)        8 h 31.86 -> 24 h 10.69
+  [PASS] envelope brackets the base (best < base < worst)                 4.52 < 15.53 < 52.46
+  [PASS] Morris and OAT agree on the top-3 factors                        Morris ['hours_terminal_shift', 'M6_mean', 'load_rate']
+  [PASS] free time per commodity matches the IR rule built into the profile coal open 8, cement (goods shed) 9, containers 3+2
+  [PASS] free-time cut changes the bill, never the time                   3 commodities
+  [PASS] precise loading helps most where overloading is most frequent    largest gain: COAL (hopper BOBRN)
+  [PASS] faster loading helps more where loading takes longer             corr(loading hours, gain) = 0.96
+  [PASS] no sub-total rows remain                                         220,395 RRs
+  [PASS] tonnage conserved when grouped                                   508.5 Mt
+  [PASS] OTC is the Rs 20/t terminal charge                               median 20.000 Rs/t on 44,496 RRs
+  [PASS] DTC is the Rs 20/t terminal charge                               median 20.000 Rs/t on 55,322 RRs
+  [PASS] DPO is the 15 % busy-season charge                               98.8% of 84,950 RRs within 0.2 pp
+  [PASS] coal pays no busy-season charge after 01.10.2022 (exemption)     80,286 coal RRs
+  [PASS] commodity groups cover >= 95 % of tonnes                         97.0%
+------------------------------------------------------------------------------------------
+  19/19 passed

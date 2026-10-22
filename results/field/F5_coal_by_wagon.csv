@@ -1,0 +1,4 @@
+wagon_type_filled,full_rakes,wagons,t_per_wagon,overload_incidence,private_siding_share,freight_per_t,tonnes
+COVERED WAGON,8,42.0,61.944,0.125,0.0,2112.8778,20487.2
+HOPPER WAGON,43212,58.0,61.2915,0.4053,0.957,517.4085,149978750.7
+OPEN WAGON,34533,58.0,67.2109,0.3045,0.8104,899.7194,131399963.6

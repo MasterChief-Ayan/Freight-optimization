@@ -2,8 +2,8 @@
 
 Companion to `docs/PROJECT_STORY.md`. This file answers four questions:
 which file does what, how they connect, how to run and verify, and where a new feature goes.
-**Last verified:** 22-Oct-2026. 57/57 integrity checks pass, and every result in `results/`
-regenerates from `bash run_all.sh`.
+**Last verified:** 22-Oct-2026. 76/76 integrity checks pass (57 model + 19 extension), and every
+result in `results/` regenerates from `bash run_all.sh`.
 
 ---
 
@@ -41,15 +41,20 @@ mtp-rtsim/
 │   ├── run_layer2.py      L2  E4 lane, E5 appointments vs gates, E6 fairness, E7 admin variance -> road side
 │   ├── run_layer3.py      L3  E8a control, E8b ladder, E9 disruption, E10 ageing/fairness
 │   ├── run_layer4.py      L4  E12 interventions, E13 terminal type, E14 pricing, E15 break-even
-│   └── decompose.py       L3  E11 waiting-time decomposition with the valid lower bound
+│   ├── decompose.py       L3  E11 waiting-time decomposition with the valid lower bound
+│   ├── run_layer5_sensitivity.py  L5  every parameter/condition alone: OAT bounds, conditions, Morris, envelope
+│   └── run_layer6_commodities.py  L6  10 commodity profiles x 7 levers, per-commodity tornado, labour break-even
 │
 ├── tools/                     HELPERS (not part of the model)
 │   ├── compare_outputs.py     regression check: are two results folders numerically identical?
 │   ├── dry_run_two_rakes.py   prints a 2-rake trace with the file/function behind every event
 │   ├── make_slide_charts.py   slide_decomposition / slide_calibration / slide_procedural_vs_capital
-│   └── audit_rr_register.py   step-0 audit of the FOIS RR-base freight register (field data)
+│   ├── rr_register.py         FIELD DATA: load + clean + DECODE the FOIS RR register (code tables, confidence grades)
+│   ├── analyse_rr_register.py FIELD DATA: commodity profiles, charge structure, terminals, arrivals -> results/field/
+│   └── verify_extensions.py   19 integrity checks for Layers 5-6 and the decoding
 │
 ├── results/                   GENERATED - charts (layer*_results.png), CSVs (layer*_E*.csv), logs (l*.log)
+│   └── field/                 GENERATED from field data - commodity-level aggregates only (F0-F5, field_results.png)
 ├── archive/prototypes/        Phase-1 siding_sim v1/v2/v3 (superseded, kept for the record)
 ├── docs/
 │   ├── PROJECT_STORY.md       history, current state, target, data plan, numbers to quote
@@ -61,7 +66,9 @@ mtp-rtsim/
 **Layer → file map:** L0 physical = `config, distributions, eventlog, terminal, accounting,
 policies, experiment` · L1 administrative = `admin` · L2 road side = `trucks` · L3 decision =
 `optimiser` (+ `policies.cnp`) · L4 scenarios = `experiments/run_layer4.py` only (config changes,
-no new model code) · cross-cutting = `calibration`, `verify_*`.
+no new model code) · L5 sensitivity and L6 commodities = experiment scripts only (no model change) ·
+field data = `tools/rr_register.py`, `tools/analyse_rr_register.py` · cross-cutting = `calibration`,
+`verify_*`, `tools/verify_extensions.py`.
 
 ---
 
@@ -145,7 +152,11 @@ confounded all paired comparisons once (`verify.py` check 8c guards it).
 ```bash
 pip install -r requirements.txt
 bash run_all.sh quick          # 57 integrity checks + provenance table  (~1 min)
-bash run_all.sh                # everything into results/                (~6 min on 2 cores)
+bash run_all.sh                # everything into results/                (~15 min on 2 cores)
+python experiments/run_layer5_sensitivity.py [quick]   # per-parameter bounds (~10 min)
+python tools/analyse_rr_register.py                    # field data (needs data/raw)
+python experiments/run_layer6_commodities.py [quick]   # multi-commodity (~6 min)
+python tools/verify_extensions.py                      # 19 extension checks
 python experiments/run_layer1.py   # any single layer (works from any folder)
 python tools/dry_run_two_rakes.py  # see one replication event by event
 python -m rtsim.calibration        # parameter provenance
@@ -156,6 +167,7 @@ python -m rtsim.calibration        # parameter provenance
 | `verify.py` | 18 | conservation; monotone event chain; no negative durations; line capacity; detention = release − placement; demurrage iff free time exceeded; graded table reproduced; marginal rate non-decreasing; free time = 5 + 2 + 1; Little's Law within 5%; byte-identical log for a seed; process-independent sub-seeds (`substream_seed(1000,'loading')=1948952355`); **physical durations identical across policies**; **admin time schedule-dependent (up to 8 h)**; CRN across runs; policy hook changes outcomes; SPT < LPT; all policies serve the same rakes |
 | `verify_admin.py` | 13 | all steps disabled reproduces L0 exactly; calendar truncation (1 h task at 17:30 → 17 h); 24/7 costs exactly 1 h; weekend skip; removing rework reduces detention; ablating M6 cuts detention; M7 changes cycle but not detention/dwell; digitalising M5 + M6 reduces detention; every admin event has an owner; chain monotone with gates; deterministic; non-physical time is the majority of dwell (88.5%); **detention inside TERI 14–17 h** |
 | `verify_trucks.py` | 12 | rake chain unchanged when road side added (A1 on); truck conservation; one-way lane never holds two trucks; queued lane allows concurrency; quota respected; appointments flatten the peak (80 → 10); deviation cost convex; MINMAX lowers worst-off company cost at the test point; hard infeasibility measured; more gate servers shorten the queue; A1 off makes material bind; M8 fires for trucks |
+| `tools/verify_extensions.py` | 19 | Layer 5 base = Layer 1 baseline; every parameter at base reproduces base; commercial parameters never move time; demurrage linear in rate; M7 never touches detention; terminal hours monotone; envelope brackets base; Morris top-3 = OAT top-3; Layer 6 free time per IR rule; free-time cut moves bill not time; precise loading helps most where overload is highest; loading-rate gain correlates with loading hours; field: no sub-totals, tonnage conserved, OTC/DTC = ₹20/t, DPO = 15 %, coal exempt, groups cover ≥ 95 % (field checks SKIP without data/raw) |
 | `verify_optimiser.py` | 14 | CP-SAT returns a valid permutation; no placement before arrival; no line overlap; reproduces SPT when all jobs are at t = 0; offline optimum ≤ every online rule (checks 1–12 run on the physical model, no admin); CNP < FCFS on waiting; CNP bid uses only rake + clock; ageing reduces worst wait; heavy ageing collapses onto FCFS; captured-gain scale anchored; identical rakes/revenue across policies; 60-rake solve within 20 s; **13: lower bound never violated by any policy**; **14: executing the relaxed plan (89.48 h) is worse than the bound (37.59 h), so the bound must be read, not simulated** |
 
 **Regression rule.** Before trusting any change, run the experiments into a fresh folder and run
@@ -174,6 +186,9 @@ This repo was itself checked this way against the replayed original code (§7).
 | `run_layer3.py` | E8a control (calendars off); E8b ladder FCFS/SPT/COST/CNP/CP-SAT; E9 disruption; E10 ageing weight | `layer3_results.png`, `layer3_E8_ladder.csv`, `layer3_E9_disruption.csv`, `layer3_E10_fairness.csv`, `l3.log` |
 | `decompose.py` | E11 decomposition with the valid lower bound | `layer3_E11_decomposition.csv`, `decompose.log` |
 | `run_layer4.py` | E12 ten interventions; E13 terminal type; E14 free time × penal; E15 break-even | `layer4_results.png`, `layer4_E12_interventions.csv`, `layer4_E13_terminal_type.csv`, `layer4_E14_pricing.csv`, `l4.log` |
+| `run_layer5_sensitivity.py` | S1 OAT bounds (39 params x 5 levels); S2 27 conditions; S3 Morris (20 trajectories); S4 envelope | `layer5_results.png`, `layer5_tornado_cost.png`, `layer5_S1_oat_levels.csv`, `layer5_S1_bounds.csv`, `layer5_S2_conditions.csv`, `layer5_S3_morris.csv`, `layer5_S4_envelope.csv`, `l5.log` |
+| `tools/analyse_rr_register.py` | F0 code tables; F1 commodity profiles; F2 charges; F3 monthly tonnes; F4 model parameters; F5 coal by wagon type | `results/field/*` + `data/processed/terminal_*.csv` (git-ignored) |
+| `run_layer6_commodities.py` | C1 baseline per commodity; C2 7 levers x 10 commodities + classes; C3 per-commodity tornado; C4 labour break-even | `layer6_results.png`, `layer6_C1_..C4_*.csv`, `l6.log` |
 | `tools/make_slide_charts.py` | slide figures | `slide_decomposition.png`, `slide_calibration.png`, `slide_procedural_vs_capital.png` |
 
 Operating points: L0/L1 use the default 50 rakes, 30 reps, arrival gap exp(30 h).
@@ -188,11 +203,11 @@ L3, L4 and E11 use 25 rakes, gap 22 h (ρ ≈ 0.7, contended but stable). At 18 
 | change a rate or duration | edit `config.py` / `admin.default_steps()`, update `calibration.py` status, re-run `run_all.sh quick` | hard-code a number in a runner |
 | add a dispatch rule | write `def myrule(cfg): def f(rake, ctx): return score` in `policies.py`, add to `REGISTRY` | use `simpy.PriorityResource` (freezes bids) |
 | add a scenario | in a runner: `scenario(cfg, "label", **{"resources.crews": 2})` or an admin helper (`digitalise([...])`) | copy the model |
-| **per-parameter bounds (pending ask)** | new `experiments/run_layer5_sensitivity.py`: for each parameter, sweep low/base/high (from `calibration.py` ranges) with the same seeds; record Δdetention, Δdemurrage, Δcost; plot a tornado; then Morris/Sobol if time allows | vary two things at once in the one-at-a-time stage |
+| add a parameter to the sensitivity | one `add(...)` line in `catalogue()` of `run_layer5_sensitivity.py` (id, group, label, unit, status, base, 5 levels, apply-function, range basis) | forget to include the base value among the levels (check 2 relies on it) |
 | **cost–benefit / labour vs demurrage** | add cost fields (crew cost/h, capital annuities) to `ChargeConfig` tagged ASSUMED; compute net = Δdemurrage + Δidle − Δlabour in `accounting` or the runner; report break-even cost per lever | invent a capital cost without tagging it |
 | **scaling (more ore)** | sweep `rake.arrival_gap` mean (×1.0 → ×2.0 volume) × resources; log utilisation of line/loco/crew/gate/stockyard/admin offices; report which saturates first | read "more rakes" as the only change; commodity mix shifts too |
-| **multiple commodities** | add `commodity` to `Rake` + a per-commodity table (wagon type, payload, free time rule, admin step set) in `config.py`; `generate_rakes` draws commodity from the field mix | branch on commodity inside `terminal.handle` with magic numbers |
-| **field data** | `tools/audit_rr_register.py` → fit distributions → write them into `config.py`/`admin.py` with status EMPIRICAL in `calibration.py`; keep the TERI guard until detention data exists | commit raw railway data to GitHub |
+| add / change a commodity | one dict in `PROFILES` of `run_layer6_commodities.py` (data fields refresh from `results/field/` automatically); for a MIXED terminal later: add `commodity` to `Rake` and draw it from the field mix | branch on commodity inside `terminal.handle` with magic numbers |
+| **field data** | `tools/rr_register.py` (decode; fix a code by editing its table) → `tools/analyse_rr_register.py` → use `results/field/F4_model_parameters.csv` values in profiles/config with status EMPIRICAL in `calibration.py`; keep the TERI guard until detention data exists | commit raw railway data to GitHub |
 
 ---
 

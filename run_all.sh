@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Reproduce every result of the project, in dependency order.
-#   bash run_all.sh            full run  (~6 min on a 2-core cloud machine; Layer 3 is the slowest)
+#   bash run_all.sh            full run  (~15 min on a 2-core cloud machine; Layers 5-6 are the slowest)
 #   bash run_all.sh quick      integrity checks + calibration report only (~1 min)
 # All outputs (charts, CSVs, logs) are written to results/.
 set -euo pipefail
@@ -24,4 +24,14 @@ done
 echo ">>> decomposition"
 python3 experiments/decompose.py > results/decompose.log 2>&1
 python3 tools/make_slide_charts.py > /dev/null
+echo ">>> Layer 5 (per-parameter sensitivity and bounds)"
+python3 experiments/run_layer5_sensitivity.py > results/l5.log 2>&1
+if [ -d data/raw/RR_base_IN_freight_details ]; then
+  echo ">>> field data (decode + commodity profiles)"
+  python3 tools/analyse_rr_register.py > results/field.log 2>&1
+fi
+echo ">>> Layer 6 (multi-commodity levers)"
+python3 experiments/run_layer6_commodities.py > results/l6.log 2>&1
+echo ">>> extension checks"
+python3 tools/verify_extensions.py | tee results/verify_extensions.log
 echo ">>> done - see results/"
