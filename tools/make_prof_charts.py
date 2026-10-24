@@ -204,4 +204,43 @@ finish(fig, ax, "Fig. 5  Extra labour for 50 % faster loading: does it pay once 
        "Handling rates: CWC Railside Warehouse handling tariff (bagged, median of 14 terminals); BCCL Schedule of "
        "Rates 2025 (coal by payloader, order of magnitude).\nMinimum wage ₹827/day (loading & unloading, Area A, "
        "from 01.04.2026): the break-even pays for 24–31 extra labourer-days per rake.")
+# ---------------------------------------------------------------- Fig 6
+o1 = pd.read_csv(os.path.join(RES, "layer7_O1_sufficiency.csv"))
+o2 = pd.read_csv(os.path.join(RES, "layer7_O2_rank_stability.csv"))
+cols = list(o2.omitted_factor)
+short = {"model as built": "Model\nas built", "O1 +1 h physical delay in free time": "+1 h physical\ndelay",
+         "O1 +3 h physical delay in free time": "+3 h physical\ndelay", "O2 +1 h unmodelled paperwork (M4)": "+1 h extra\npaperwork",
+         "O2 +3 h unmodelled paperwork (M4)": "+3 h extra\npaperwork", "O3 +50 % traffic (gap 20 h)": "+50 %\ntraffic",
+         "O4 loading disruptions (-20 %, sd x2)": "Loading\ndisruptions", "O5 error rates x2": "Error rates\nx2",
+         "O6 O1+O2 (+1 h each), O4, O5 together": "All of these\ntogether"}
+piv = o1.pivot(index="intervention", columns="omitted_factor", values="saving_h").reindex(columns=cols)
+piv = piv.loc[piv["model as built"].sort_values(ascending=False).index]
+rank = piv.rank(ascending=False).astype(int)
+fig, ax = plt.subplots(figsize=(12, 5.6))
+cm6 = LinearSegmentedColormap.from_list("seq", ["#f0efec", "#86b6ef", "#1c5cab"])
+cm6.set_under("#f2a6a5")
+im = ax.imshow(piv.values, cmap=cm6, vmin=0, vmax=np.nanmax(piv.values), aspect="auto")
+for i in range(piv.shape[0]):
+    for j in range(piv.shape[1]):
+        v = piv.values[i, j]
+        ax.text(j, i, f"{v:+.1f} h\n#{rank.values[i, j]}", ha="center", va="center", fontsize=8.5,
+                color="white" if v > 6 else INK)
+ax.set_xticks(range(len(cols))); ax.set_xticklabels([short[c] for c in cols], fontsize=8.5)
+nice6 = {"digitalise all admin": "Digitalise all paperwork", "digitalise M5+M6": "Digitalise weighment + release",
+         "terminal 24/7": "Terminal paperwork 24/7", "+50% loading rate": "Loading 50 % faster",
+         "2nd line + 2nd crew": "2nd line + 2nd crew", "2nd line alone": "2nd line alone (no crew)"}
+ax.set_yticks(range(piv.shape[0])); ax.set_yticklabels([nice6[k] for k in piv.index], fontsize=10)
+ax.grid(False)
+for sp in ax.spines.values():
+    sp.set_visible(False)
+ax.axvline(0.5, color=SURF, lw=4)
+fig.subplots_adjust(top=0.82, bottom=0.2)
+finish(fig, ax, "Fig. 6  Are the model's variables enough? Add what it leaves out and re-rank",
+       f"Detention saved per rake (h) and rank (#) of each improvement. The order is identical in all "
+       f"{len(o2)} cases (Kendall τ = {o2.kendall_tau_vs_built.min():.2f})",
+       "Fig6_sufficiency_rank_stability.png",
+       f"Omitted factors are applied after each improvement, so none can remove them. Base detention rises "
+       f"{o2.base_detention_h.min():.1f} → {o2.base_detention_h.max():.1f} h; the best paperwork fix beats the best "
+       f"capital fix by {o2.procedure_over_capital.min():.1f}–{o2.procedure_over_capital.max():.1f}× in every case. "
+       "30 paired replications × 50 rakes.")
 print("saved:", sorted(os.listdir(OUT)))
