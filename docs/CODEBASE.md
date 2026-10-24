@@ -50,7 +50,7 @@ Freight-optimization/
 │   ├── compare_outputs.py     regression check: are two results folders numerically identical?
 │   ├── dry_run_two_rakes.py   prints a 2-rake trace with the file/function behind every event
 │   ├── make_slide_charts.py   slide_decomposition / slide_calibration / slide_procedural_vs_capital
-│   ├── make_prof_charts.py    results/prof/Fig1-4: one-message figures for supervisor updates
+│   ├── make_prof_charts.py    results/prof/Fig1-6: one-message figures for supervisor updates
 │   ├── rr_register.py         FIELD DATA: load + clean + DECODE the FOIS RR register (code tables, confidence grades)
 │   ├── analyse_rr_register.py FIELD DATA: commodity profiles, charge structure, terminals, arrivals -> results/field/
 │   └── verify_extensions.py   23 integrity checks for Layers 5-7 and the decoding
