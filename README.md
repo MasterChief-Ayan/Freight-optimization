@@ -22,11 +22,12 @@ register: 220,395 consignments, 2022–26.
 | 2 | Paperwork is the main cause, not track or equipment | admin **78%** of waiting (office hours 73%, rework 11%), sequencing ≤ 8%, irreducible 14% | `layer3_E11_decomposition.csv` |
 | 3 | Procedure beats capital | digitalising admin saves 8.98 h/rake; a 2nd line saves ≈ 0 h (−0.28 h) → **≈ 15×** | `layer4_E12_interventions.csv` |
 | 4 | The client pays for others' delay | rake time: terminal 73.5%, client 23.7%, railway 2.9%, yet the client pays the demurrage | `layer1_attribution.csv` |
-| 5 | Single biggest factor | terminal hours 8 → 24 h/day: **31.9 → 10.7 h**; all factors together: 4.5–52.5 h | `layer5_S1_bounds.csv` |
+| 5 | Single biggest factor | terminal hours 8 → 24 h/day: **31.9 → 10.7 h**; loading rate over its published range (payloader → silo) 17.7 → 11.1 h; all factors together: 3.5–51.4 h | `layer5_S1_bounds.csv` |
 | 6 | Pricing changes the bill, not the time | free time / penal rate: ₹1.77 → 3.54 M, detention unchanged (0 h) | `layer4_E14_pricing.csv` |
-| 7 | General vs material-specific levers | 24/7 terminal and digital release help **all 10 materials** (−4 to −6 h); precise loading matters only for bulk (coal overload 37%) | `layer6_C2_levers.csv` |
-| 8 | When extra labour pays | 50% faster loading is worth **₹10.5k–35.6k per rake** in demurrage | `layer6_C4_labour_breakeven.csv` |
+| 7 | General vs material-specific levers | 24/7 terminal and digital release help **all 10 materials** (−4 to −6 h); precise loading and silo loading (−4.3 to −5.0 h) matter only for bulk | `layer6_C2_levers.csv` |
+| 8 | When extra labour pays | 50% faster loading is worth **₹10.5k–35.6k per rake** in demurrage = ₹5.5/t (bulk), ₹9/t (bagged): pays if labour is paid per tonne; per full shift only bulk ≈ breaks even | `layer6_C4_…`, `layer6_C5_labour_vs_demurrage.csv` |
 | 9 | Fair dispatch is free | Contract-Net ageing cuts the worst-case wait by 33% (161 → 108 h) at ≈ 0 cost to the mean | `layer3_E10_fairness.csv` |
+| 10 | The variable set is sufficient for ranking | adding 9 omitted-factor scenarios (extra delays, +50% traffic, disruptions, errors ×2): ranking of all 6 interventions unchanged (Kendall τ = 1.00) | `layer7_O2_rank_stability.csv`, `docs/VARIABLE_SELECTION.md` |
 
 Rule for quoting: a number that depends only on CITED or DERIVED parameters is a figure. A number
 that touches an ASSUMED parameter (admin durations, truck volumes) is a direction or ranking only.
@@ -73,7 +74,8 @@ archive/        Phase-1 prototypes (history only, not used)
 | `run_layer3.py` + `decompose.py` | Optimiser ladder, disruption, fairness, waiting decomposition (E11) |
 | `run_layer4.py` | Ten interventions, terminal types, pricing levers (E12–E14) |
 | `run_layer5_sensitivity.py` | Each of 39 parameters and 27 conditions alone: bounds, Morris screening, envelope |
-| `run_layer6_commodities.py` | 10 materials from field data: which levers are general vs material-specific; labour break-even |
+| `run_layer6_commodities.py` | 10 materials from field data: which levers are general vs material-specific; labour break-even and labour cost (C5) |
+| `run_layer7_sufficiency.py` | Are the variables enough? Adds omitted factors and checks whether the ranking of interventions changes |
 | `_bootstrap.py` | Path helper (repo root on `sys.path`, output to `results/`) |
 
 ### `tools/`: data and figures
@@ -82,7 +84,7 @@ archive/        Phase-1 prototypes (history only, not used)
 |---|---|
 | `rr_register.py` | Loads, cleans (rules C1–C5) and decodes the FOIS register; code tables graded A/B/C |
 | `analyse_rr_register.py` | Per-commodity profiles and model parameters → `results/field/F0–F5` |
-| `verify_extensions.py` | 19 checks on Layers 5–6 and the field data |
+| `verify_extensions.py` | 23 checks on Layers 5–7 and the field data |
 | `make_slide_charts.py` | Mid-term slide figures |
 | `make_prof_charts.py` | Four supervisor figures → `results/prof/` |
 | `compare_outputs.py` | Proves a refactor changed no number (`ALL IDENTICAL`) |
@@ -107,7 +109,7 @@ bash run_all.sh                     # regenerate everything in results/ (~15 min
 python tools/dry_run_two_rakes.py   # watch one simulation, event by event
 ```
 
-Integrity: **76/76 checks pass** (57 model + 19 extensions).
+Integrity: **80/80 checks pass** (57 model + 23 extensions).
 
 ## Data
 
@@ -120,6 +122,7 @@ calibrate detention hours; for that we are waiting on terminal time logs. See `d
 
 - `docs/PROJECT_STORY.md`: how the project started, the mid-term, current state, next steps, numbers to quote.
 - `docs/CODEBASE.md`: every file in detail, event chain, recipes for adding features.
+- `docs/VARIABLE_SELECTION.md`: why these variables, where each candidate factor is, and the sufficiency test.
 - `docs/WORKFLOW.md`: branches, tags, how to save changes.
 
 Milestone tags: `v1.0-midterm-model` (Layers 0–4) · `v1.1-sensitivity-commodities` (Layers 5–6 + field data).

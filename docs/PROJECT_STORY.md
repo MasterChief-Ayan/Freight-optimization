@@ -4,7 +4,7 @@
 terminal, and solutions for quick release of rolling stock.*
 **Student:** Ayan Ahmed (22MF3IM04) · **Supervisor:** Prof. Biswajit Mahanty · M.Tech, Industrial & Systems Engineering
 **Context:** Indian Railways coal rakes at a **private siding** (Eastern Railway context).
-**This file last updated:** 22-Oct-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
+**This file last updated:** 24-Oct-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
 
 > **How to use this file (future sessions / Claude Code).** Read §0 first. It is the
 > state of the project in a dozen lines. §1–§3 are history, so you know *why* things are the way they are.
@@ -29,7 +29,8 @@ terminal, and solutions for quick release of rolling stock.*
 6. The mid-term presentation (16-Sep-2026) went well. The supervisor said **"good"**.
 7. Mid-term ask (a), **individual effect of every parameter/condition with lower/upper bounds**,
    is **done** (Layer 5, 22-Oct-2026): 39 parameters swept over stated ranges, 27 conditions,
-   Morris screening and a best/worst envelope. Ask (b), selection provenance, is still open.
+   Morris screening and a best/worst envelope. Ask (b), selection provenance, is **done** (24-Oct-2026):
+   `docs/VARIABLE_SELECTION.md` (selection filters, 23-factor traceability table) + Layer 7 sufficiency test.
 8. Post-mid-sem asks (8–9 Oct): capacity scaling ("more ore → what else must grow"), wagon
    condition/commodity-wise needs, a **cost analysis** (labour vs demurrage), qualitative +
    hypothesis/reverse-engineering methods, and multiple commodities.
@@ -37,12 +38,17 @@ terminal, and solutions for quick release of rolling stock.*
    508.5 Mt** (after removing 338 sub-total rows). It has money, volume, wagons, wagon type and
    overloading, but **no placement/release timestamps**. It is **decoded** (`tools/rr_register.py`) and
    used for commodity profiles; the multi-commodity analysis (Layer 6) is done.
-10. Integrity: **76 checks** pass (57 model + 19 for Layers 5–6 and the data decoding,
+10. Integrity: **80 checks** pass (57 model + 23 for Layers 5–7 and the data decoding,
     `tools/verify_extensions.py`).
 11. Code base consolidated and re-verified on 22-Oct-2026 (this repo). Layers 3, 4 and E11
     reproduce the chat-era numbers exactly. 19/20 result tables are bit-identical between the
     replayed original and this repo; the exception is CP-SAT timing, §7.3. Layers 1–2 regenerate
     slightly differently from the mid-term charts (see §7.2).
+12. 24-Oct-2026 (§6E–6G): loading-rate range taken from published norms (payloader ~5 h/rake →
+    silo/RLS ~1 h/rake); silo lever added for bulk; labour cost compared with published handling
+    rates and the 2026 minimum wage (C5); **sufficiency test (Layer 7): the ranking of all six
+    interventions is unchanged under 9 omitted-factor scenarios (Kendall τ = 1.00)**. All 56 months
+    of field data verified present, no gaps, no duplicate RRs.
 
 ---
 
@@ -220,13 +226,15 @@ M1–M8 service times; M1–M8 rework 0.05–0.20; truck capacity 35 t; slots/pe
 6. **Multiple materials**, each with its own approvals/formalities and wagon type.
 7. Wagon/train information source: FOIS **RailSAHAY** (https://www.fois.indianrail.gov.in/RailSAHAY/Home.jsp).
 
-### 4.2 Status against those asks (updated 22-Oct-2026, second session)
+### 4.2 Status against those asks (updated 24-Oct-2026)
 | Ask | Status | Where |
 |---|---|---|
 | Per-parameter bounds (mid-term ask 1) | **Done** — Layer 5: 39 parameters × 5 levels, 27 conditions, Morris, envelope (§6A) | `experiments/run_layer5_sensitivity.py` |
-| Selection provenance (mid-term ask 2) | **Partly documented** (`calibration.py`, §3); a source → model-element traceability table is still to write | thesis chapter |
+| Selection provenance (mid-term ask 2) and sufficiency ("are the variables enough?") | **Done** — four selection filters, 23-factor traceability table, four kinds of evidence, Layer 7 stress test (§6G) | `docs/VARIABLE_SELECTION.md`, `experiments/run_layer7_sufficiency.py` |
 | Multiple minerals: material-specific vs general features | **Done** — Layer 6: 10 commodity profiles from the field data + IR rules, 7 levers each, per-commodity tornado (§6B) | `experiments/run_layer6_commodities.py` |
-| Cost analysis labour vs demurrage | **Done as break-even** (no labour cost invented): max spend per rake for +50 % loading rate, cash-only and incl. rake idle cost, per commodity (§6B) | Layer 6 C4 |
+| Cost analysis labour vs demurrage | **Done** — break-even per rake (C4), then set against published handling rates (CWC tariff, BCCL SOR) and the 2026 minimum wage under two pay models (C5, §6F) | Layer 6 C4, C5 |
+| Loading-rate limits | **Done** — published norms (PIB 2024, bulk-handling sources, IR free times); Layer 5 range now 675–3,370 t/h; silo lever S3 (§6E) | Layer 5, Layer 6 |
+| All months in the analysis? | **Verified** — 56/56 months (Jan-2022–Aug-2026), every file 100 % inside its own month, 0 duplicate RRs across files | `tools/rr_register.py` |
 | Field data decoding | **Done** — all code columns, 49 charge heads and 15 rebate heads decoded with confidence grades; 16 commodity groups cover 97 % of tonnes (§6C) | `tools/rr_register.py`, `results/field/` |
 | Scaling (more ore) | **Not done** (only the L0 load sweep and the L5 arrival-gap range) | arrival-rate multiplier sweep with bottleneck detection |
 | Wagon condition / life-cycle | **Not modelled**; wagon *type* per commodity now comes from data | terminal-side: sick-wagon detachment as an extra step |
@@ -275,11 +283,12 @@ drives detention and cost (with bounds). It ranks interventions by **net** benef
 | R1 | Where detention comes from (decomposition) | ablation + valid lower bound (E11) | done, re-verify after recalibration |
 | R2 | Procedure vs capital ranking | paired scenario campaign (E12–E15) | done |
 | R3 | **Per-factor bounds** (absolute ranges, tornado) | OAT ranges with CRN + Morris screening + envelope (Layer 5) | **done** |
-| R4 | **Net cost–benefit / break-even** (labour, lines, digitalisation, 24/7) | lever savings per rake per commodity = max affordable spend (Layer 6 C2/C4) | **done for labour/loading-rate; capital annuities still to add** |
+| R4 | **Net cost–benefit / break-even** (labour, lines, digitalisation, 24/7) | lever savings per rake per commodity = max affordable spend (Layer 6 C2/C4); labour cost from published rates (C5) | **done for labour/loading-rate; capital annuities (silo, 2nd line) still to add** |
 | R5 | **Scaling** (bottleneck migration as volume ×1.0 → ×2.0) | arrival-rate sweep, utilisation per resource | to do |
 | R6 | **Multi-commodity** extension | 10 commodity profiles from field data + IR free-time rules (Layer 6) | **done** (admin chain still common to all commodities) |
 | R7 | Validation on field data | needs placement–release logs (requested); partial: Poisson arrivals confirmed (§6C) | open |
 | R8 | Incentive alignment (who causes vs who pays) | attribution (L1) + pricing levers (E13/E14) | done (qualitative policy argument) |
+| R9 | **Sufficiency of the variable set** | traceability + omitted-factor stress test (Layer 7) | **done** (rankings robust; absolute hours need time logs) |
 
 ---
 
@@ -292,15 +301,17 @@ FCFS, full admin chain): detention **15.53 h**, demurrage ₹75,962 per rake, 84
 free time.
 
 **Ranges.** CITED parameters use the range the rule itself allows: base free time 3–7 h, penal ×1–×6,
-terminal hours 8–24 h (06–22 is cited). ASSUMED parameters use a uniform ±50 % stress band.
+terminal hours 8–24 h (06–22 is cited). ASSUMED parameters use a uniform ±50 % stress band, except
+the loading rate, whose range comes from published norms since 24-Oct-2026 (§6E): 675 t/h
+(payloader, ~5 h/rake) to 3,370 t/h (silo / rapid loading system, ~1 h/rake).
 Physical ones use physical limits: wagons 42–59, payload 52–71 t (BOXN → BOXNHL).
 
 **S1 — lower/upper bound of mean detention, each parameter alone** (top of 39; the full table is in `layer5_S1_bounds.csv`)
 | Parameter (range) | Detention at low → high end | Swing |
 |---|---|---|
 | Terminal working hours M4–M6 (8 → 24 h/day) | 31.86 → 10.69 h | **21.17 h** |
-| Mean loading rate (450 → 1,350 t/h) | 21.02 → 13.39 h | 7.63 h |
 | M6 release-reporting mean time (1.8 → 5.4 h) | 12.09 → 18.71 h | 6.63 h |
+| Mean loading rate (675 → 3,370 t/h, published range) | 17.68 → 11.09 h | 6.60 h |
 | M5 weighment mean time (0.9 → 2.7 h) | 13.66 → 17.25 h | 3.59 h |
 | Payload per wagon (52 → 71 t) | 14.82 → 16.79 h | 1.98 h |
 | Wagons per rake (42 → 59) | 13.85 → 15.65 h | 1.79 h |
@@ -322,18 +333,18 @@ on one line, crew shift 06–22: 0 (the crew shift coincides with the terminal-s
 already gates loading).
 
 **S3 — Morris screening** (20 trajectories, μ\* = h of detention per full-range move):
-terminal hours 21.2 (σ 8.8), M6 mean 7.5, loading rate 5.9, M5 mean 4.3, M5 rework 1.8 (σ/μ\* 0.63),
-wagons 1.6, M6 rework 1.5, payload 1.5. **Morris and OAT agree on the top 3.** Shunting times,
+terminal hours 20.1 (σ 8.8), M6 mean 7.5, loading rate 5.2, M5 mean 4.3, M5 rework 1.7 (σ/μ\* 0.58),
+M6 rework 1.6, M4 mean 1.0, payload 0.9, wagons 0.9. **Morris and OAT agree on the top 3.** Shunting times,
 transit and arrival gap have σ > μ\*: their effect is mostly interaction (they matter only together
 with other factors).
 
 **S4 — envelope** (all time-affecting factors at their favourable/unfavourable ends together):
-**4.52 h ← 15.53 h → 52.46 h**. The unfavourable end saturates the line (wait > 700 h) even with
+**3.54 h ← 15.53 h → 51.41 h**. The unfavourable end saturates the line (wait > 700 h) even with
 demand held at base. That is the model's absolute range within the stated bounds.
 
 **Reading for the thesis.** One calendar decision (how many hours a day the terminal's own
-paperwork runs) moves detention more than every physical parameter put together. Mechanical
-loading speed is second; release reporting is third.
+paperwork runs) moves detention more than every physical parameter put together. Release
+reporting (M6) and loading speed tie for second (6.6 h each).
 
 ### 6B. Layer 6 — which lever matters for which mineral (supervisor ask, 8–9 Oct)
 `experiments/run_layer6_commodities.py` → `results/layer6_*.csv`, `layer6_results.png`. Ten
@@ -366,6 +377,7 @@ pumping 600, mechanised 900).
 | G3 digitalise M5 weighment | −1.4 … −3.8 (coal hopper) | general, **size depends on material** (overload rate) |
 | S2 precise loading (no overload) | 0 (bagged, POL) … −2.0 h coal hopper; money: ₹1.67 lakh/rake coal BOXN, ₹1.35 lakh iron ore | **MATERIAL-SPECIFIC** |
 | G4 2nd line + 2nd crew | +0.18 (covered cargo) … −0.94 (containers) | **MATERIAL-SPECIFIC** (sign changes) |
+| S3 silo / rapid loading system, rake in ~1.25 h (bulk only, added 24-Oct) | −4.3 (coal hopper) … −5.0 (clinker); cash ₹38.9–43.8 k demurrage per rake (₹71.6–78.8 k incl. idle cost) | **MATERIAL-SPECIFIC** (bulk only) |
 | R1 free time cut to 3 h (coal, iron ore only) | 0 h, +≈₹20,000 demurrage per rake | **PRICING risk** |
 
 **What to focus on, per material**
@@ -386,7 +398,7 @@ pumping 600, mechanised 900).
   reporting (M6), weighment (M5). Per-commodity tornado (C3): **hours > loading rate > M6** for 9 of
   10 commodities (containers: hours > M6 > loading rate).
 
-**C4 labour/equipment break-even for +50 % loading rate** (no labour cost invented). Maximum spend
+**C4 labour/equipment break-even for +50 % loading rate** (labour cost compared in §6F). Maximum spend
 per rake that still pays, **cash only (demurrage)**: containers ₹10.5 k, POL ₹14.6 k, mechanised bulk
 ₹19.9–22.1 k, bagged ₹24.2–25.3 k, steel ₹35.6 k. Including the ASSUMED rake idle cost: ₹19–85 k.
 Per loading-hour saved, ≈ ₹21–31 k in every case. This answers the PhD student's question: hire
@@ -453,6 +465,66 @@ C = plausible, confirm with FOIS master):**
 4. Optional qualitative layer: a BPMN swim-lane map plus three-point (PERT) expert estimates for
    M1–M8 per commodity. This is the honest substitute for commodity-specific paperwork data.
 
+### 6E. Loading rates from published norms (24-Oct-2026)
+The RR register has no loading times, so the limits come from published sources:
+
+| Method | Published norm | Implied rate (BOXN rake 3,369 t) | Source |
+|---|---|---|---|
+| Silo / rapid loading system (RLS) | rake in 1–1.5 h; CCL Karo/Konar: "5 h → 1 h" | 2,250–3,370 t/h | PIB 07.10.2024; bulk-online RLS thread |
+| Conventional payloader (mechanised) | ~5 h per rake; IR mechanised free time 5:00 | ~675 t/h | PIB 07.10.2024; MoR Compendium 2.2 |
+| Manual, bagged into covered wagons | IR manual free time 9:00 (the time the Railway itself allows) | ~300 t/h for 2,700 t | MoR Compendium 2.2 |
+
+- Model base 900 t/h (mechanised) lies inside 675–3,370 → **no baseline result changes**.
+  Layer 6 manual rates (300–350 t/h) give 8–9 h, consistent with the 9:00 norm.
+- No public source gives a *measured* manual rate; that stays ASSUMED until the time logs arrive.
+- Layer 5 load-rate range: 450–1,350 (±50 %) → **675–3,370 t/h (published)**: 17.68 → 11.09 h.
+- New Layer 6 lever **S3 silo/RLS** (bulk only): −4.3 to −5.0 h per rake; ₹38.9–43.8 k demurrage
+  per rake (₹71.6–78.8 k incl. idle cost). At one rake a day that is ≈ ₹1.4–1.6 crore a year of
+  demurrage, the figure against which a silo's capital cost must be set (annuity not yet added, R4).
+
+### 6F. Labour cost vs demurrage (Layer 6 C5, 24-Oct-2026)
+C4 gives the most that faster loading may cost (demurrage saved). C5 sets this against **published**
+handling costs, under two bounding pay models for the bigger gang/machine needed for +50 % rate:
+
+- **Piece rate** (paid per tonne, as in CWC and coal-company contracts): the same tonnes are moved
+  by more hands in less time, so the bill per rake does not change → extra cost ≈ 0 (only a
+  contractor premium) → **pays for every material**.
+- **Shift rate, no productivity gain** (upper bound): the 50 % larger gang is paid a full shift
+  however short the loading → extra cost = 50 % of the handling bill.
+
+| Material | Break-even (cash) | per tonne | Today's handling rate | Break-even as % of rate | Shift-rate net |
+|---|---|---|---|---|---|
+| Coal / iron ore / clinker (payloader) | ₹19.9–22.1 k | ₹5.5–5.6/t | ~₹12/t (BCCL SOR 2025, order of magnitude) | 46–47 % | ≈ break-even (−₹7.9 k … +₹4.2 k) |
+| Cement / fertiliser (bagged) | ₹24.2–25.3 k | ₹9.0–9.2/t | ₹91/t median (₹50–133), CWC RWC tariff | ≈ 10 % | loses ₹43–158 k |
+| Foodgrains (bagged) | ₹24.8 k | ₹9.1/t | ₹100/t median (₹52–136), CWC RWC tariff | ≈ 9 % | loses ₹46–161 k |
+| Steel (crane), containers, POL | ₹10.5–35.6 k | ₹5.5–9.8/t | no published rate found | — | not costed |
+
+**Reading.** In labour terms the break-even pays for 24–31 extra labourer-days per rake
+(minimum wage ₹827/day, loading & unloading, central sphere Area A, from 01.04.2026). So the answer
+to "should we add labour?" depends on **how labour is contracted**, not only on how much is added:
+- per tonne → yes, for every material;
+- per shift with idle time → only bulk, and only just;
+- for bagged cargo, a contractor premium of up to ~10 % of today's rate still pays.
+
+### 6G. Sufficiency of the variable set (Layer 7, 24-Oct-2026)
+Evaluator's question: *how do you know the conditions/variables are sufficient?* Answer in
+`docs/VARIABLE_SELECTION.md`:
+- four selection filters (relevance to the IR detention interval, published evidence,
+  controllability, measurability);
+- a 23-factor traceability table (IN / PARTIAL / OUT, with reasons);
+- four kinds of evidence: complete by construction (attribution sums to 100 %), agreement with
+  untuned facts (Poisson arrivals, exact charges), Morris screening, and a stress test.
+
+**Layer 7 stress test** (`experiments/run_layer7_sufficiency.py`):
+- *Design:* add plausible omitted factors at realistic size, applied after each intervention so
+  none can remove them: +1/+3 h physical delay inside free time, +1/+3 h unmodelled paperwork,
+  +50 % traffic, loading disruptions, error rates ×2, and all together.
+- *Result:* base detention rises 15.5 → 23.1 h, but the **order of the six interventions is
+  identical in 9/9 cases (Kendall τ = 1.00)**. Procedure beats capital by 3.6–6.6×, and a second
+  line without crew stays counter-productive.
+- *Conclusion:* the set is sufficient for ranking interventions (the thesis's purpose), not for
+  predicting absolute hours at a named siding.
+
 ## 7. Numbers to quote (and which version they come from)
 
 ### 7.1 Exactly reproduced by the final code (safe to quote as model results)
@@ -482,11 +554,14 @@ rankings are unchanged.
 | E7 hard infeasibility, M1 sd × 0.25 → × 3 | 1.2% → 12.0% | 1.2% → **14.1%** |
 | One-way lane truck turnaround | ~6× | 6.28 h vs 1.06 h (≈ 6×) |
 
-### 7.2b Layers 5–6 (22-Oct-2026, this repo)
-See §6A–6B. Headline numbers: terminal-hours swing 21.17 h (31.86 → 10.69 h); envelope
-4.52 – 52.46 h; Morris top 3 = terminal hours, M6 mean, loading rate; per-commodity detention 13.4 h
+### 7.2b Layers 5–7 (22/24-Oct-2026, this repo)
+See §6A–6B, §6E–6G. Headline numbers: terminal-hours swing 21.17 h (31.86 → 10.69 h); envelope
+3.54 – 51.41 h (was 4.52 – 52.46 h before the published loading-rate range, 24-Oct); loading rate
+over its published range 17.68 → 11.09 h; Morris top 3 = terminal hours, M6 mean, loading rate; per-commodity detention 13.4 h
 (containers) – 22.0 h (foodgrains); G1 24/7 −4.1 to −6.1 h for every commodity; precise loading
-saves ₹1.67 lakh per coal BOXN rake (data leak + model cost).
+saves ₹1.67 lakh per coal BOXN rake (data leak + model cost); silo loading −4.3 to −5.0 h per bulk
+rake; labour break-even ₹5.5/t (bulk) and ₹9/t (bagged) = 46 % / 10 % of today's handling rates;
+Layer 7: ranking unchanged in 9/9 omitted-factor scenarios, procedure > capital by 3.6–6.6×.
 
 ### 7.3 Results to report as nulls or open
 - E8b/E9: at ρ ≈ 0.7 no online rule beats FCFS significantly. Sequencing pays only above ~50%
@@ -511,6 +586,10 @@ saves ₹1.67 lakh per coal BOXN rake (data leak + model cost).
 - **Decided 22-Oct (second session):** hypothesis / reverse-engineering calibration dropped (too
   vague); Layer 5 (per-parameter bounds) and Layer 6 (multi-commodity) built; field data used only
   for what it can measure (no timestamps).
-- **Pending:** selection-provenance traceability table (mid-term ask 2); scaling (R5);
+- **Decided 24-Oct:** loading-rate range from published norms (base 900 t/h kept: inside the range,
+  so no baseline result changes); labour cost compared only with *published* rates under two
+  bounding pay models (no invented labour cost); sufficiency answered by a stress test, not by
+  argument alone.
+- **Pending:** scaling (R5); capital annuities for silo / 2nd line (R4);
   **LaTeX/Overleaf thesis** — Ayan will provide reference documents for style/format; ask for them
   before starting.
