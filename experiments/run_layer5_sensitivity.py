@@ -174,9 +174,11 @@ def catalogue(cfg0, steps0):
         lambda c, s, x: (replace(c, rake=replace(c.rake, arrival_gap=Dist("exp", mean=x))), s),
         "36 to 15 rakes/month; 48 h = TERI's typical one-line terminal (15/month)")
     add("load_rate", "operational", "mean loading rate", "t/h", "ASSUMED",
-        900.0, _lin(450.0, 900.0, 1350.0),
+        900.0, _lin(675.0, 900.0, 3370.0),
         lambda c, s, x: (replace(c, rake=replace(c.rake, load_rate_tph=Dist(
-            "logn", mean=x, sd=c.rake.load_rate_tph.sd))), s), "+/-50 %")
+            "logn", mean=x, sd=c.rake.load_rate_tph.sd))), s),
+        "published range: payloader ~5 h/rake (675 t/h) to silo/RLS ~1 h/rake (3,370 t/h) "
+        "[PIB 07.10.2024; bulk-online RLS]")
     add("load_rate_sd", "operational", "loading-rate variability (sd)", "t/h", "ASSUMED",
         250.0, _lin(125.0, 250.0, 375.0),
         lambda c, s, x: (replace(c, rake=replace(c.rake, load_rate_tph=Dist(

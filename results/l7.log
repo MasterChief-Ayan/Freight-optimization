@@ -1,0 +1,26 @@
+
+>>> O1  SAVING IN DETENTION (h) PER INTERVENTION, WITH AND WITHOUT OMITTED FACTORS (30 paired reps x 50 rakes)
+omitted_factor        model as built  O1 +1 h physical delay in free time  O1 +3 h physical delay in free time  O2 +1 h unmodelled paperwork (M4)  O2 +3 h unmodelled paperwork (M4)  O3 +50 % traffic (gap 20 h)  O4 loading disruptions (-20 %, sd x2)  O5 error rates x2  O6 O1+O2 (+1 h each), O4, O5 together
+intervention                                                                                                                                                                                                                                                                                                      
++50% loading rate               1.94                                 1.86                                 1.83                               1.97                               1.97                         1.90                                   2.51               2.00                                   1.63
+2nd line + 2nd crew             0.67                                 0.27                                -0.19                               0.43                               0.21                         0.72                                   0.25               0.46                                   0.34
+2nd line alone                 -0.39                                -0.83                                -0.81                              -0.41                              -0.16                        -0.51                                  -0.78              -0.42                                  -0.88
+digitalise M5+M6                7.43                                 7.69                                 8.29                               7.61                               8.17                         7.50                                   7.67               9.22                                   8.90
+digitalise all admin            8.55                                 8.94                                 9.76                               9.25                              10.69                         8.88                                   8.93              10.41                                  10.74
+terminal 24/7                   4.84                                 5.23                                 6.05                               5.50                               6.86                         5.16                                   5.23               5.63                                   5.87
+
+>>> O2  DO THE CONCLUSIONS SURVIVE?
+                       omitted_factor  base_detention_h  kendall_tau_vs_built  top3_same_set    best_intervention  best_procedural_h  best_capital_h  procedure_over_capital  2nd_line_alone_h
+                       model as built             15.53                  1.00           True digitalise all admin               8.55            1.94                    4.41             -0.39
+  O1 +1 h physical delay in free time             17.00                  1.00           True digitalise all admin               8.94            1.86                    4.79             -0.83
+  O1 +3 h physical delay in free time             19.99                  1.00           True digitalise all admin               9.76            1.83                    5.33             -0.81
+    O2 +1 h unmodelled paperwork (M4)             17.24                  1.00           True digitalise all admin               9.25            1.97                    4.71             -0.41
+    O2 +3 h unmodelled paperwork (M4)             20.68                  1.00           True digitalise all admin              10.69            1.97                    5.42             -0.16
+          O3 +50 % traffic (gap 20 h)             15.87                  1.00           True digitalise all admin               8.88            1.90                    4.68             -0.51
+O4 loading disruptions (-20 %, sd x2)             18.49                  1.00           True digitalise all admin               8.93            2.51                    3.55             -0.78
+                    O5 error rates x2             17.39                  1.00           True digitalise all admin              10.41            2.00                    5.20             -0.42
+O6 O1+O2 (+1 h each), O4, O5 together             23.07                  1.00           True digitalise all admin              10.74            1.63                    6.59             -0.88
+
+  min Kendall tau = 1.00; top-3 unchanged in 9/9; procedure > capital in 9/9
+
+Saved: layer7_results.png, layer7_O1_sufficiency.csv, layer7_O2_rank_stability.csv

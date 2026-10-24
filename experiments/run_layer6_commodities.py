@@ -19,10 +19,15 @@ Each commodity becomes a PROFILE of the same verified model (no model code chang
       LOADING free time of the dominant wagon type (open/hopper mech 5:00,
       covered manual 31+ wagons 9:00, crane-handled >30 wagons 7:00,
       container 3:00, tank 30+ wagons 8:00), tarpaulin +1:00 for coal only
-  ASSUMED (no field measurement exists - flagged on every output)
+  ASSUMED, checked against published norms (no field measurement of loading time exists)
       loading rate by handling method: mechanised bulk 900 t/h (model base),
       manual bagged into covered wagons 300-350 t/h, crane 450 t/h,
-      reach-stacker 600 t/h, pumping 600 t/h; sd = 28 % of mean
+      reach-stacker 600 t/h, pumping 600 t/h; sd = 28 % of mean.
+      Checks: mechanised 900 t/h lies inside the published 675 (payloader, ~5 h/rake)
+      to 3,370 t/h (silo / rapid loading system, 1-1.5 h/rake) [PIB-24; BULK-RLS];
+      manual 300-350 t/h loads a 2,700 t covered rake in 8-9 h, i.e. inside the IR
+      manual free time of 9:00 that the Railway grants for exactly this operation
+      [IR-COMP 2.2]. No public source gives a measured manual rate.
 
 Everything else (admin chain M1-M7, calendars, arrivals, charges) is the calibrated
 base. The model represents the LOADING terminal; the RR register is the
@@ -48,7 +53,25 @@ C3  PER-COMMODITY TORNADO: the nine time-moving parameters of Layer 5, each move
     -50 % / +50 % around THAT commodity's base -> swing in detention and in cost per
     rake, per commodity (heat map).
 C4  LABOUR BREAK-EVEN: S1's saving per rake is the most one can spend per rake on
-    extra loading labour/equipment before it stops paying (no labour cost invented).
+    extra loading labour/equipment before it stops paying.
+C5  LABOUR COST vs DEMURRAGE: C4 set against PUBLISHED handling costs, under two
+    bounding pay models for the extra gang/machine needed for +50 % loading rate:
+      piece rate (paid per tonne, as in CWC / coal-company contracts): the same tonnes
+        are handled by more hands in less time, so the bill per rake does not change;
+        extra cost ~ 0 (only a contractor premium) -> net = demurrage saved
+      shift rate, no productivity gain (upper bound): the 50 % larger gang is paid a
+        full shift whatever the loading time -> extra cost = 50 % of the handling bill
+    Published inputs (CITED):
+      bagged cargo wagon handling: CWC Railside Warehouse Complex handling tariff,
+        14 terminals, Rs/t wagon-to-stack (jute bags): fertiliser/cement/salt median 91
+        (range 50-133), foodgrain median 100 (range 52-136)               [CWC-RWC]
+      coal loading into wagons by payloader: order of Rs 9-15/t, mid 12    [BCCL-SOR-25]
+        (BCCL Schedule of Rates 2025, item A.4; value read from a garbled extract,
+         so used as an order of magnitude only)
+      minimum wage, loading & unloading, central sphere, Area A, from 01.04.2026:
+        Rs 827/day                                                         [MOLE-26]
+    The break-even is also expressed as Rs per tonne and as labourer-days per rake.
+    Crane, container and POL handling have no published rate here -> not costed.
 """
 import _bootstrap  # noqa: F401
 
@@ -71,6 +94,18 @@ import run_layer5_sensitivity as L5
 QUICK = len(sys.argv) > 1 and sys.argv[1] == "quick"
 N_REPS = 10 if QUICK else 30
 FIELD = os.path.join(_bootstrap.RESULTS, "field")
+
+# published inputs for S3 and C5 (sources in the module docstring)
+RLS_HOURS_PER_RAKE = 1.25          # silo / RLS loads a rake in 1-1.5 h      [PIB-24; BULK-RLS]
+MIN_WAGE_DAY = 827.0               # Rs/day, loading & unloading, Area A    [MOLE-26]
+HANDLING_RS_PER_T = {              # Rs/t wagon handling, median (range)
+    "CEMENT": (91.0, 50.0, 133.0, "CWC-RWC"),
+    "FERTILISER": (91.0, 50.0, 133.0, "CWC-RWC"),
+    "FOODGRAINS": (100.0, 52.0, 136.0, "CWC-RWC"),
+    "COAL": (12.0, 9.0, 15.0, "BCCL-SOR-25 (order of magnitude)"),
+    "IRON ORE": (12.0, 9.0, 15.0, "BCCL-SOR-25 coal rate used as proxy"),
+    "CLINKER": (12.0, 9.0, 15.0, "BCCL-SOR-25 coal rate used as proxy"),
+}
 
 # ----------------------------------------------------------------------
 # commodity profiles  (data values are read from results/field when present;
@@ -175,6 +210,12 @@ def levers(pr, c, s):
                 "logn", mean=1.5 * c.rake.load_rate_tph.mean, sd=1.5 * c.rake.load_rate_tph.sd))), s),
         "S2 precise loading (no overload)": (c, {**s, "M5": replace(s["M5"], rework_prob=0.0)}),
     }
+    if pr["method"] == "mechanised":
+        # silo / rapid loading system: a rake in 1-1.5 h [PIB-24; BULK-RLS]; mid 1.25 h
+        r = pr["wagons"] * pr["tpw"] / RLS_HOURS_PER_RAKE
+        L["S3 silo / rapid loading system (bulk only)"] = (
+            replace(c, rake=replace(c.rake, load_rate_tph=Dist("logn", mean=r, sd=0.28 * r),
+                                    load_rate_floor=0.33 * r)), s)
     if pr["cut3"]:
         L["R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)]"] = (
             replace(c, charges=replace(c.charges, base_free_time_hr=3.0)), s)
@@ -305,13 +346,44 @@ def main():
     print(s1.rename(columns={"total_saving_per_rake": "max_spend_per_rake_Rs"}).to_string(
         index=False, float_format=lambda v: f"{v:,.0f}"))
 
+    # ---------------------------------------------------------------- C5
+    c5 = s1.merge(c1[["commodity", "t_per_rake"]], on="commodity")
+    c5["group"] = [next(p["group"] for p in profs if p["name"] == n) for n in c5.commodity]
+    hr = c5.group.map(lambda g: HANDLING_RS_PER_T.get(g, (np.nan,) * 3 + ("no published rate",)))
+    c5["handling_Rs_per_t"] = [h[0] for h in hr]
+    c5["handling_lo"] = [h[1] for h in hr]
+    c5["handling_hi"] = [h[2] for h in hr]
+    c5["handling_source"] = [h[3] for h in hr]
+    c5["handling_bill_per_rake"] = c5.handling_Rs_per_t * c5.t_per_rake
+    c5["breakeven_Rs_per_t"] = c5.max_spend_cash_only_Rs / c5.t_per_rake
+    c5["breakeven_pct_of_handling_rate"] = c5.breakeven_Rs_per_t / c5.handling_Rs_per_t
+    c5["breakeven_labourer_days"] = c5.max_spend_cash_only_Rs / MIN_WAGE_DAY
+    c5["net_piece_rate_Rs"] = c5.max_spend_cash_only_Rs                    # extra cost ~ 0
+    c5["extra_cost_shift_rate_Rs"] = 0.5 * c5.handling_bill_per_rake       # upper bound
+    c5["net_shift_rate_Rs"] = c5.max_spend_cash_only_Rs - c5.extra_cost_shift_rate_Rs
+    c5["net_shift_rate_lo_Rs"] = c5.max_spend_cash_only_Rs - 0.5 * c5.handling_hi * c5.t_per_rake
+    c5["net_shift_rate_hi_Rs"] = c5.max_spend_cash_only_Rs - 0.5 * c5.handling_lo * c5.t_per_rake
+    c5["verdict"] = np.where(c5.handling_Rs_per_t.isna(), "no published handling rate",
+                    np.where(c5.net_shift_rate_lo_Rs > 0, "pays under both pay models",
+                    np.where(c5.net_shift_rate_hi_Rs > 0, "pays on piece rate; shift rate depends on tariff",
+                             "pays on piece rate only")))
+    c5 = c5[["commodity", "load_method", "t_per_rake", "max_spend_cash_only_Rs", "breakeven_Rs_per_t",
+             "handling_Rs_per_t", "handling_lo", "handling_hi", "handling_source", "breakeven_pct_of_handling_rate",
+             "breakeven_labourer_days", "handling_bill_per_rake", "net_piece_rate_Rs", "extra_cost_shift_rate_Rs",
+             "net_shift_rate_Rs", "net_shift_rate_lo_Rs", "net_shift_rate_hi_Rs", "verdict"]]
+    print("\n>>> C5  LABOUR COST vs DEMURRAGE for +50 % loading rate (published handling rates)")
+    print(c5[["commodity", "max_spend_cash_only_Rs", "breakeven_Rs_per_t", "handling_Rs_per_t",
+              "breakeven_labourer_days", "net_shift_rate_Rs", "verdict"]].to_string(
+        index=False, float_format=lambda v: f"{v:,.1f}"))
+    c5.round(4).to_csv("layer6_C5_labour_vs_demurrage.csv", index=False)
+
     c1.round(4).to_csv("layer6_C1_commodity_baseline.csv", index=False)
     c2.round(4).to_csv("layer6_C2_levers.csv", index=False)
     cls.round(4).to_csv("layer6_C2_lever_classes.csv", index=False)
     sw.round(4).to_csv("layer6_C3_tornado_by_commodity.csv", index=False)
     s1.round(4).to_csv("layer6_C4_labour_breakeven.csv", index=False)
     chart(c1, c2, heat, s1)
-    print("\nSaved: layer6_results.png and five CSVs")
+    print("\nSaved: layer6_results.png and six CSVs")
 
 
 def chart(c1, c2, heat, s1):
@@ -357,7 +429,7 @@ def chart(c1, c2, heat, s1):
         for b in r:
             b.set_axisbelow(True)
     fig.suptitle("Layer 6 - multi-commodity analysis | profiles from ER RR register + MoR Compendium | "
-                 "loading rates ASSUMED", y=1.0)
+                 "loading rates ASSUMED (inside published norms)", y=1.0)
     fig.tight_layout()
     fig.savefig("layer6_results.png", dpi=150, bbox_inches="tight")
     plt.close(fig)

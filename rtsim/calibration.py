@@ -165,7 +165,11 @@ REGISTRY: List[Param] = [
           "Opportunity cost of rake time. Not an IR charge. Should be derived "
           "from asset value and utilisation."),
     Param("rake.load_rate_tph", "900 +/- 250", "ASSUMED", "-",
-          "Mechanised coal loading rate. Fit to observed loading durations."),
+          "Mechanised coal loading rate. The value is assumed, but it lies inside the "
+          "published range: conventional payloader loading about 5 h/rake (= 675 t/h "
+          "for 3,369 t) and silo / rapid loading 1-1.5 h/rake (= 2,250-3,370 t/h) "
+          "[PIB-24: PIB 07.10.2024, Karo/Konar CHP, rake loading 5 h -> 1 h; "
+          "BULK-RLS: bulk-online RLS thread]. Fit to observed loading durations."),
     Param("shunting.placement / removal", "1.0 +/- 0.3 h", "ASSUMED", "-",
           "Time & Motion studies exist for individual sidings; get the local one."),
     Param("admin.M1..M8 service times", "various", "ASSUMED", "-",

@@ -1,0 +1,11 @@
+commodity,load_method,t_per_rake,max_spend_cash_only_Rs,breakeven_Rs_per_t,handling_Rs_per_t,handling_lo,handling_hi,handling_source,breakeven_pct_of_handling_rate,breakeven_labourer_days,handling_bill_per_rake,net_piece_rate_Rs,extra_cost_shift_rate_Rs,net_shift_rate_Rs,net_shift_rate_lo_Rs,net_shift_rate_hi_Rs,verdict
+COAL (open BOXN),mechanised,3898.2322,21399.4222,5.4895,12.0,9.0,15.0,BCCL-SOR-25 (order of magnitude),0.4575,25.876,46778.7864,21399.4222,23389.3932,-1989.971,-7837.3193,3857.3773,pays on piece rate; shift rate depends on tariff
+COAL (hopper BOBRN),mechanised,3554.907,19858.5556,5.5862,12.0,9.0,15.0,BCCL-SOR-25 (order of magnitude),0.4655,24.0128,42658.884,19858.5556,21329.442,-1470.8864,-6803.2469,3861.4741,pays on piece rate; shift rate depends on tariff
+IRON ORE,mechanised,3955.9538,21732.9222,5.4937,12.0,9.0,15.0,BCCL-SOR-25 coal rate used as proxy,0.4578,26.2792,47471.4456,21732.9222,23735.7228,-2002.8006,-7936.7313,3931.1301,pays on piece rate; shift rate depends on tariff
+CLINKER,mechanised,3981.8102,22081.2444,5.5455,12.0,9.0,15.0,BCCL-SOR-25 coal rate used as proxy,0.4621,26.7004,47781.7224,22081.2444,23890.8612,-1809.6168,-7782.3321,4163.0985,pays on piece rate; shift rate depends on tariff
+"CEMENT (bagged, BCN)",manual,2757.8712,25315.5,9.1794,91.0,50.0,133.0,CWC-RWC,0.1009,30.6112,250966.2792,25315.5,125483.1396,-100167.6396,-158082.9348,-43631.28,pays on piece rate only
+FOODGRAINS,manual,2727.0012,24794.2333,9.0921,100.0,52.0,136.0,CWC-RWC,0.0909,29.9809,272700.12,24794.2333,136350.06,-111555.8267,-160641.8483,-46107.7979,pays on piece rate only
+FERTILISER,manual,2679.6,24191.5333,9.028,91.0,50.0,133.0,CWC-RWC,0.0992,29.2522,243843.6,24191.5333,121921.8,-97730.2667,-154001.8667,-42798.4667,pays on piece rate only
+"IRON & STEEL (flat, crane)",crane,3654.0,35635.2,9.7524,,,,no published rate,,43.0897,,35635.2,,,,,no published handling rate
+CONTAINERS,reach-stacker,1660.8375,10486.0,6.3137,,,,no published rate,,12.6796,,10486.0,,,,,no published handling rate
+POL (tank),pumping,2659.72,14641.4722,5.5049,,,,no published rate,,17.7043,,14641.4722,,,,,no published handling rate

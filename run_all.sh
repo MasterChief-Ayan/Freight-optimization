@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Reproduce every result of the project, in dependency order.
-#   bash run_all.sh            full run  (~15 min on a 2-core cloud machine; Layers 5-6 are the slowest)
+#   bash run_all.sh            full run  (~17 min on a 2-core cloud machine; Layers 5-6 are the slowest)
 #   bash run_all.sh quick      integrity checks + calibration report only (~1 min)
 # All outputs (charts, CSVs, logs) are written to results/.
 set -euo pipefail
@@ -32,6 +32,8 @@ if [ -d data/raw/RR_base_IN_freight_details ]; then
 fi
 echo ">>> Layer 6 (multi-commodity levers)"
 python3 experiments/run_layer6_commodities.py > results/l6.log 2>&1
+echo ">>> Layer 7 (sufficiency: do conclusions survive omitted factors?)"
+python3 experiments/run_layer7_sufficiency.py > results/l7.log 2>&1
 echo ">>> extension checks"
 python3 tools/verify_extensions.py | tee results/verify_extensions.log
 python3 tools/make_prof_charts.py > /dev/null

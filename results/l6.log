@@ -22,6 +22,7 @@ G4 2nd line + 2nd crew                                           0.18    -0.40  
 R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)]                   NaN      NaN                 0.00              0.00         NaN         NaN         NaN                         NaN      0.00         NaN
 S1 loading rate +50 % (labour/mechanisation)                    -3.64    -2.36                -2.12             -2.39       -1.40       -3.47       -3.52                       -3.69     -2.35       -2.37
 S2 precise loading (no overload)                                -0.02    -0.71                -1.96             -1.18       -0.05       -0.00       -0.00                       -0.07     -0.11       -0.01
+S3 silo / rapid loading system (bulk only)                        NaN    -4.96                -4.32             -4.89         NaN         NaN         NaN                         NaN     -4.92         NaN
 
   total saving per rake (Rs) = model cost avoided + data leak avoided
 commodity                                        CEMENT (bagged, BCN)  CLINKER  COAL (hopper BOBRN)  COAL (open BOXN)  CONTAINERS  FERTILISER  FOODGRAINS  IRON & STEEL (flat, crane)  IRON ORE  POL (tank)
@@ -33,10 +34,12 @@ G4 2nd line + 2nd crew                                       108151.0  65703.0  
 R1 RISK: free time cut to 3:00 [IR-COMP 2.2(c)]                   NaN      NaN             -20071.0          -19566.0         NaN         NaN         NaN                         NaN  -19753.0         NaN
 S1 loading rate +50 % (labour/mechanisation)                  72788.0  41153.0              36796.0           40361.0     18927.0     79489.0     83806.0                     84503.0   38362.0     30801.0
 S2 precise loading (no overload)                               2966.0  78057.0             123183.0          167114.0       952.0     43872.0       195.0                     93214.0  134675.0       153.0
+S3 silo / rapid loading system (bulk only)                        NaN  78750.0              71564.0           75410.0         NaN         NaN         NaN                         NaN   73808.0         NaN
 
   classification
                                           lever  mean_d_detention_h   min   max  relative_spread  n_commodities                             class
                        G1 terminal 24/7 (M4-M6)               -5.38 -6.09 -4.10             0.37             10                  GENERAL, uniform
+     S3 silo / rapid loading system (bulk only)               -4.78 -4.96 -4.32             0.13              4                 MATERIAL-SPECIFIC
              G2 digitalise M6 release reporting               -4.27 -4.59 -3.65             0.22             10                  GENERAL, uniform
    S1 loading rate +50 % (labour/mechanisation)               -2.73 -3.69 -1.40             0.84             10 GENERAL, size depends on material
                      G3 digitalise M5 weighment               -2.12 -3.81 -1.40             1.14             10 GENERAL, size depends on material
@@ -83,4 +86,17 @@ IRON & STEEL (flat, crane)             -4               -35,635                 
                 CONTAINERS             -1               -10,486                 18,927                  10,486          3 reach-stacker                1                               20,512
                 POL (tank)             -2               -14,641                 30,801                  14,641          4       pumping                1                               20,845
 
-Saved: layer6_results.png and five CSVs
+>>> C5  LABOUR COST vs DEMURRAGE for +50 % loading rate (published handling rates)
+                 commodity  max_spend_cash_only_Rs  breakeven_Rs_per_t  handling_Rs_per_t  breakeven_labourer_days  net_shift_rate_Rs                                          verdict
+          COAL (open BOXN)                21,399.4                 5.5               12.0                     25.9           -1,990.0 pays on piece rate; shift rate depends on tariff
+       COAL (hopper BOBRN)                19,858.6                 5.6               12.0                     24.0           -1,470.9 pays on piece rate; shift rate depends on tariff
+                  IRON ORE                21,732.9                 5.5               12.0                     26.3           -2,002.8 pays on piece rate; shift rate depends on tariff
+                   CLINKER                22,081.2                 5.5               12.0                     26.7           -1,809.6 pays on piece rate; shift rate depends on tariff
+      CEMENT (bagged, BCN)                25,315.5                 9.2               91.0                     30.6         -100,167.6                          pays on piece rate only
+                FOODGRAINS                24,794.2                 9.1              100.0                     30.0         -111,555.8                          pays on piece rate only
+                FERTILISER                24,191.5                 9.0               91.0                     29.3          -97,730.3                          pays on piece rate only
+IRON & STEEL (flat, crane)                35,635.2                 9.8                NaN                     43.1                NaN                       no published handling rate
+                CONTAINERS                10,486.0                 6.3                NaN                     12.7                NaN                       no published handling rate
+                POL (tank)                14,641.5                 5.5                NaN                     17.7                NaN                       no published handling rate
+
+Saved: layer6_results.png and six CSVs

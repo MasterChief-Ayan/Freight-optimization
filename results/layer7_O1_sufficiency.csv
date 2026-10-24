@@ -1,0 +1,55 @@
+omitted_factor,intervention,base_detention_h,saving_h,ci_h,significant,type
+model as built,digitalise all admin,15.5302,8.5453,0.2707,True,procedural
+model as built,digitalise M5+M6,15.5302,7.4329,0.2833,True,procedural
+model as built,terminal 24/7,15.5302,4.8404,0.1735,True,procedural
+model as built,+50% loading rate,15.5302,1.9367,0.1333,True,capital
+model as built,2nd line + 2nd crew,15.5302,0.6652,0.1699,True,capital
+model as built,2nd line alone,15.5302,-0.3928,0.2036,True,capital
+O1 +1 h physical delay in free time,digitalise all admin,17.0025,8.9351,0.2724,True,procedural
+O1 +1 h physical delay in free time,digitalise M5+M6,17.0025,7.6901,0.2569,True,procedural
+O1 +1 h physical delay in free time,terminal 24/7,17.0025,5.2305,0.1804,True,procedural
+O1 +1 h physical delay in free time,+50% loading rate,17.0025,1.8642,0.1716,True,capital
+O1 +1 h physical delay in free time,2nd line + 2nd crew,17.0025,0.2675,0.1934,True,capital
+O1 +1 h physical delay in free time,2nd line alone,17.0025,-0.8327,0.1823,True,capital
+O1 +3 h physical delay in free time,digitalise all admin,19.9878,9.7556,0.2594,True,procedural
+O1 +3 h physical delay in free time,digitalise M5+M6,19.9878,8.2923,0.2591,True,procedural
+O1 +3 h physical delay in free time,terminal 24/7,19.9878,6.051,0.1649,True,procedural
+O1 +3 h physical delay in free time,+50% loading rate,19.9878,1.83,0.1532,True,capital
+O1 +3 h physical delay in free time,2nd line + 2nd crew,19.9878,-0.1887,0.1631,True,capital
+O1 +3 h physical delay in free time,2nd line alone,19.9878,-0.807,0.2116,True,capital
+O2 +1 h unmodelled paperwork (M4),digitalise all admin,17.2398,9.2536,0.2657,True,procedural
+O2 +1 h unmodelled paperwork (M4),digitalise M5+M6,17.2398,7.612,0.2666,True,procedural
+O2 +1 h unmodelled paperwork (M4),terminal 24/7,17.2398,5.5048,0.1723,True,procedural
+O2 +1 h unmodelled paperwork (M4),+50% loading rate,17.2398,1.9657,0.1603,True,capital
+O2 +1 h unmodelled paperwork (M4),2nd line + 2nd crew,17.2398,0.435,0.1737,True,capital
+O2 +1 h unmodelled paperwork (M4),2nd line alone,17.2398,-0.405,0.1707,True,capital
+O2 +3 h unmodelled paperwork (M4),digitalise all admin,20.6792,10.693,0.2548,True,procedural
+O2 +3 h unmodelled paperwork (M4),digitalise M5+M6,20.6792,8.1668,0.2158,True,procedural
+O2 +3 h unmodelled paperwork (M4),terminal 24/7,20.6792,6.8555,0.1492,True,procedural
+O2 +3 h unmodelled paperwork (M4),+50% loading rate,20.6792,1.9746,0.1281,True,capital
+O2 +3 h unmodelled paperwork (M4),2nd line + 2nd crew,20.6792,0.2065,0.1026,True,capital
+O2 +3 h unmodelled paperwork (M4),2nd line alone,20.6792,-0.1628,0.1453,True,capital
+O3 +50 % traffic (gap 20 h),digitalise all admin,15.8683,8.8834,0.2667,True,procedural
+O3 +50 % traffic (gap 20 h),digitalise M5+M6,15.8683,7.5025,0.2612,True,procedural
+O3 +50 % traffic (gap 20 h),terminal 24/7,15.8683,5.1638,0.1582,True,procedural
+O3 +50 % traffic (gap 20 h),+50% loading rate,15.8683,1.8998,0.1299,True,capital
+O3 +50 % traffic (gap 20 h),2nd line + 2nd crew,15.8683,0.7224,0.1568,True,capital
+O3 +50 % traffic (gap 20 h),2nd line alone,15.8683,-0.5097,0.1785,True,capital
+"O4 loading disruptions (-20 %, sd x2)",digitalise all admin,18.4889,8.9315,0.2474,True,procedural
+"O4 loading disruptions (-20 %, sd x2)",digitalise M5+M6,18.4889,7.6658,0.2471,True,procedural
+"O4 loading disruptions (-20 %, sd x2)",terminal 24/7,18.4889,5.2267,0.1581,True,procedural
+"O4 loading disruptions (-20 %, sd x2)",+50% loading rate,18.4889,2.5137,0.1968,True,capital
+"O4 loading disruptions (-20 %, sd x2)",2nd line + 2nd crew,18.4889,0.2462,0.1876,True,capital
+"O4 loading disruptions (-20 %, sd x2)",2nd line alone,18.4889,-0.7836,0.2547,True,capital
+O5 error rates x2,digitalise all admin,17.3925,10.4076,0.3689,True,procedural
+O5 error rates x2,digitalise M5+M6,17.3925,9.2175,0.3826,True,procedural
+O5 error rates x2,terminal 24/7,17.3925,5.6301,0.201,True,procedural
+O5 error rates x2,+50% loading rate,17.3925,2.0028,0.1392,True,capital
+O5 error rates x2,2nd line + 2nd crew,17.3925,0.458,0.1422,True,capital
+O5 error rates x2,2nd line alone,17.3925,-0.4243,0.1754,True,capital
+"O6 O1+O2 (+1 h each), O4, O5 together",digitalise all admin,23.0717,10.7434,0.3158,True,procedural
+"O6 O1+O2 (+1 h each), O4, O5 together",digitalise M5+M6,23.0717,8.8997,0.3432,True,procedural
+"O6 O1+O2 (+1 h each), O4, O5 together",terminal 24/7,23.0717,5.8666,0.1866,True,procedural
+"O6 O1+O2 (+1 h each), O4, O5 together",+50% loading rate,23.0717,1.6297,0.1861,True,capital
+"O6 O1+O2 (+1 h each), O4, O5 together",2nd line + 2nd crew,23.0717,0.3395,0.1586,True,capital
+"O6 O1+O2 (+1 h each), O4, O5 together",2nd line alone,23.0717,-0.8827,0.2289,True,capital

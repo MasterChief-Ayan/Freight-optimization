@@ -1,5 +1,6 @@
 lever,mean_d_detention_h,min,max,relative_spread,n_commodities,class
 G1 terminal 24/7 (M4-M6),-5.3779,-6.0915,-4.0962,0.371,10,"GENERAL, uniform"
+S3 silo / rapid loading system (bulk only),-4.7758,-4.9625,-4.3232,0.1339,4,MATERIAL-SPECIFIC
 G2 digitalise M6 release reporting,-4.2733,-4.5907,-3.6527,0.2195,10,"GENERAL, uniform"
 S1 loading rate +50 % (labour/mechanisation),-2.7296,-3.6861,-1.3992,0.8378,10,"GENERAL, size depends on material"
 G3 digitalise M5 weighment,-2.1205,-3.8064,-1.3984,1.1356,10,"GENERAL, size depends on material"

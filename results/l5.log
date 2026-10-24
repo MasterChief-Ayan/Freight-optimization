@@ -12,8 +12,8 @@
   parameter                                              range |   detention h  lo..hi |  swing |   Rs demurrage/rake lo..hi
   ----------------------------------------------------------------------------------------------------------------------------
   terminal working hours (M4, M5, M6)                    8..24 |    31.86 ..    10.69 |  21.17*|     258,461 ..      29,714
-  mean loading rate                                  450..1350 |    21.02 ..    13.39 |   7.63*|     129,522 ..      57,813
   M6 mean work time                                   1.8..5.4 |    12.09 ..    18.71 |   6.63*|      44,379 ..     107,954
+  mean loading rate                                  675..3370 |    17.68 ..    11.09 |   6.60*|      96,245 ..      41,370
   M5 mean work time                                   0.9..2.7 |    13.66 ..    17.25 |   3.59*|      59,002 ..      92,512
   payload per wagon                                     52..71 |    14.82 ..    16.79 |   1.98*|      69,655 ..      87,442
   wagons per rake                                       42..59 |    13.85 ..    15.65 |   1.79*|      44,670 ..      78,304
@@ -82,28 +82,28 @@
   3 loading lines (crew unchanged)               detention   +0.72 +/-0.18*  wait   -19.12  demurrage/rake      +7,548
 
 >>> S3  MORRIS SCREENING  (detention; mu* = importance, sigma = interaction)
-         group                param                               label     mu  mu_star  sigma  n_ee  sigma_over_mu_star
-administrative hours_terminal_shift terminal working hours (M4, M5, M6) -21.18    21.18   8.79    20                0.42
-administrative              M6_mean                   M6 mean work time   7.48     7.48   2.92    20                0.39
-   operational            load_rate                   mean loading rate  -5.93     5.93   1.80    20                0.30
-administrative              M5_mean                   M5 mean work time   4.30     4.30   1.45    20                0.34
-administrative            M5_rework            M5 rejection probability   1.79     1.79   1.13    20                0.63
-   operational               wagons                     wagons per rake   1.57     1.57   0.56    20                0.35
-administrative            M6_rework            M6 rejection probability   1.52     1.52   0.96    20                0.63
-   operational          t_per_wagon                   payload per wagon   1.47     1.47   0.54    20                0.37
-administrative              M4_mean                   M4 mean work time   1.06     1.06   0.53    20                0.50
-   operational            placement   mean placement (shunting in) time   0.52     0.52   0.42    20                0.80
-   operational         load_rate_sd       loading-rate variability (sd)   0.49     0.50   0.32    20                0.64
-   operational              removal    mean removal (shunting out) time   0.46     0.46   0.61    20                1.33
-   operational          arrival_gap         mean rake inter-arrival gap  -0.11     0.38   0.54    20                1.41
-administrative                M5_sd       M5 work-time variability (sd)   0.09     0.24   0.34    20                1.42
-   operational              transit     mean transit to serving station  -0.04     0.23   0.42    20                1.82
+         group                 param                               label     mu  mu_star  sigma  n_ee  sigma_over_mu_star
+administrative  hours_terminal_shift terminal working hours (M4, M5, M6) -20.06    20.06   8.75    20                0.44
+administrative               M6_mean                   M6 mean work time   7.49     7.49   2.74    20                0.37
+   operational             load_rate                   mean loading rate  -5.24     5.24   2.60    20                0.50
+administrative               M5_mean                   M5 mean work time   4.26     4.26   1.51    20                0.35
+administrative             M5_rework            M5 rejection probability   1.72     1.72   1.00    20                0.58
+administrative             M6_rework            M6 rejection probability   1.55     1.55   0.89    20                0.57
+administrative               M4_mean                   M4 mean work time   1.02     1.02   0.44    20                0.43
+   operational           t_per_wagon                   payload per wagon   0.93     0.93   0.53    20                0.57
+   operational                wagons                     wagons per rake   0.92     0.92   0.52    20                0.56
+   operational             placement   mean placement (shunting in) time   0.68     0.68   0.50    20                0.74
+   operational          load_rate_sd       loading-rate variability (sd)   0.48     0.49   0.63    20                1.29
+   operational           arrival_gap         mean rake inter-arrival gap  -0.22     0.47   0.59    20                1.27
+administrative hours_terminal_office          terminal office hours (M3)   0.40     0.42   0.38    20                0.91
+   operational               removal    mean removal (shunting out) time   0.36     0.36   0.40    20                1.12
+administrative               M3_mean                   M3 mean work time   0.18     0.23   0.29    20                1.25
 
 >>> S4  ENVELOPE  (all time-affecting factors at once)
                              case  detention   wait    cycle  demurrage_pr  breach
                              base      15.53  33.10    64.97     75,961.96    0.84
-              all favourable ends       4.52  11.34    17.81      3,141.13    0.08
-            all unfavourable ends      52.46 972.83 1,050.59    562,353.58    1.00
-unfavourable ends, demand at base      52.42 719.13   796.86    561,214.56    1.00
+              all favourable ends       3.54  11.04    16.37      2,623.60    0.06
+            all unfavourable ends      51.41 943.43 1,019.43    544,579.83    1.00
+unfavourable ends, demand at base      51.33 689.95   765.76    542,793.44    1.00
 
 Saved: layer5_results.png, layer5_tornado_cost.png and five CSVs

@@ -1,0 +1,10 @@
+omitted_factor,base_detention_h,kendall_tau_vs_built,top3_same_set,best_intervention,best_procedural_h,best_capital_h,procedure_over_capital,2nd_line_alone_h
+model as built,15.5302,1.0,True,digitalise all admin,8.5453,1.9367,4.4124,-0.3928
+O1 +1 h physical delay in free time,17.0025,1.0,True,digitalise all admin,8.9351,1.8642,4.793,-0.8327
+O1 +3 h physical delay in free time,19.9878,1.0,True,digitalise all admin,9.7556,1.83,5.331,-0.807
+O2 +1 h unmodelled paperwork (M4),17.2398,1.0,True,digitalise all admin,9.2536,1.9657,4.7076,-0.405
+O2 +3 h unmodelled paperwork (M4),20.6792,1.0,True,digitalise all admin,10.693,1.9746,5.4153,-0.1628
+O3 +50 % traffic (gap 20 h),15.8683,1.0,True,digitalise all admin,8.8834,1.8998,4.6759,-0.5097
+"O4 loading disruptions (-20 %, sd x2)",18.4889,1.0,True,digitalise all admin,8.9315,2.5137,3.5531,-0.7836
+O5 error rates x2,17.3925,1.0,True,digitalise all admin,10.4076,2.0028,5.1964,-0.4243
+"O6 O1+O2 (+1 h each), O4, O5 together",23.0717,1.0,True,digitalise all admin,10.7434,1.6297,6.5923,-0.8827

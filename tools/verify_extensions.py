@@ -1,5 +1,5 @@
 """
-verify_extensions.py  -  integrity checks for Layer 5, Layer 6 and the field-data decoding.
+verify_extensions.py  -  integrity checks for Layers 5-7 and the field-data decoding.
 
     python tools/verify_extensions.py          (after run_layer5/6 and analyse_rr_register)
 
@@ -101,6 +101,29 @@ def layer6(c):
     corr = np.corrcoef(c1.loc[s1.index, "loading_h"], -s1.d_detention_h)[0, 1]
     c.assert_("faster loading helps more where loading takes longer",
               corr > 0.7, f"corr(loading hours, gain) = {corr:.2f}")
+    s3 = c2[c2.lever.str.startswith("S3")].set_index("commodity")
+    mech = set(c1.index[c1.load_method == "mechanised"])
+    c.assert_("silo/RLS lever only for mechanised bulk, and beats +50 % rate there",
+              set(s3.index) == mech and all(s3.loc[k, "d_detention_h"] < s1.loc[k, "d_detention_h"] for k in mech),
+              f"{len(s3)} bulk commodities")
+    c5 = pd.read_csv(os.path.join(RES, "layer6_C5_labour_vs_demurrage.csv")).set_index("commodity")
+    c4 = pd.read_csv(os.path.join(RES, "layer6_C4_labour_breakeven.csv")).set_index("commodity")
+    gap = (c5.breakeven_Rs_per_t * c5.t_per_rake - c4.loc[c5.index, "max_spend_cash_only_Rs"]).abs().max()
+    c.assert_("C5 labour-cost table is consistent with the C4 break-even",
+              gap < 1.0 and (c5.net_piece_rate_Rs == c5.max_spend_cash_only_Rs).all(), f"max gap Rs {gap:.2f}")
+
+
+def layer7(c):
+    o1 = pd.read_csv(os.path.join(RES, "layer7_O1_sufficiency.csv"))
+    built = o1[o1.omitted_factor == "model as built"].base_detention_h.iloc[0]
+    lv = pd.read_csv(os.path.join(RES, "layer5_S1_oat_levels.csv"))
+    base_l5 = lv[(lv.param == "load_rate") & (lv.x == 900.0)].detention.iloc[0]
+    c.assert_("Layer 7 'model as built' = Layer 5 base (same seeds, same model)",
+              abs(built - base_l5) < 1e-6, f"{built:.4f} vs {base_l5:.4f} h")
+    det = o1.groupby("omitted_factor", sort=False).base_detention_h.first()
+    c.assert_("every omitted factor added makes the base slower, never faster",
+              (det.drop("model as built") >= det["model as built"] - 1e-6).all(),
+              f"{det.min():.2f}-{det.max():.2f} h")
 
 
 def field(c):
@@ -133,8 +156,9 @@ def field(c):
 
 
 if __name__ == "__main__":
-    c = Check("EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, field decoding")
+    c = Check("EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 sufficiency, field decoding")
     layer5(c)
     layer6(c)
+    layer7(c)
     field(c)
     sys.exit(0 if c.report() else 1)
