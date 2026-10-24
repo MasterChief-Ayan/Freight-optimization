@@ -1,8 +1,8 @@
-"""Four single-message figures for the supervisor update (post mid-sem work).
+"""Six single-message figures for the supervisor update (post mid-sem work).
 
     python tools/make_prof_charts.py      (after Layers 5-6 and the field analysis)
 
-Writes results/prof/Fig1..Fig4 *.png. Palette: validated reference categorical
+Writes results/prof/Fig1..Fig6 *.png. Palette: validated reference categorical
 slots (blue #2a78d6, orange #eb6834), blue<->red diverging with gray midpoint.
 """
 import os

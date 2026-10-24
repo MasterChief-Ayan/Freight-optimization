@@ -86,7 +86,7 @@ archive/        Phase-1 prototypes (history only, not used)
 | `analyse_rr_register.py` | Per-commodity profiles and model parameters → `results/field/F0–F5` |
 | `verify_extensions.py` | 23 checks on Layers 5–7 and the field data |
 | `make_slide_charts.py` | Mid-term slide figures |
-| `make_prof_charts.py` | Four supervisor figures → `results/prof/` |
+| `make_prof_charts.py` | Six supervisor figures (Fig1–Fig6) → `results/prof/` |
 | `compare_outputs.py` | Proves a refactor changed no number (`ALL IDENTICAL`) |
 | `dry_run_two_rakes.py` | Prints one replication event by event (for understanding/debugging) |
 
