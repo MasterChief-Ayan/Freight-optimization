@@ -33,6 +33,21 @@ Nothing is lost between sessions: the repo keeps every version, and the project 
   release → tag name → target commit).
 - Rewriting published history (force-push) only with Ayan's explicit approval.
 
+## What goes into the repo (owner's rule, 24-Oct-2026)
+Only what is needed to **reproduce the results** or to **understand them**. Before every commit,
+review `git status` file by file; never `git add` a folder blindly.
+
+| Commit | Never commit |
+|---|---|
+| model, experiment and tool code (`rtsim/`, `experiments/`, `tools/`, `run_all.sh`, `requirements.txt`) | scratch work: result snapshots, comparison copies, test clones, quick-mode outputs |
+| input data the code reads (`data/raw/`) | caches that the code rebuilds (`data/processed/`, `__pycache__/`) |
+| outputs that `bash run_all.sh` regenerates (`results/`), from a **full** run, never from `quick` | email drafts, chat exports, personal notes, screenshots |
+| docs that explain the code and the results (`README.md`, `docs/`) | anything no script produces or reads, and any credential |
+| `archive/prototypes/` (history of the model, referenced in PROJECT_STORY §1.3) | |
+
+Check: every file under `results/` must be one that `bash run_all.sh` writes. A file that no
+script writes is either moved to the right place or deleted.
+
 ## Branches
 | Branch | Purpose | Rule |
 |---|---|---|
