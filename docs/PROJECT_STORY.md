@@ -4,7 +4,7 @@
 terminal, and solutions for quick release of rolling stock.*
 **Student:** Ayan Ahmed (22MF3IM04) · **Supervisor:** Prof. Biswajit Mahanty · M.Tech, Industrial & Systems Engineering
 **Context:** Indian Railways coal rakes at a **private siding** (Eastern Railway context).
-**This file last updated:** 24-Oct-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
+**This file last updated:** 25-Oct-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
 
 > **How to use this file (future sessions / Claude Code).** Read §0 first. It is the
 > state of the project in a dozen lines. §1–§3 are history, so you know *why* things are the way they are.
@@ -38,7 +38,7 @@ terminal, and solutions for quick release of rolling stock.*
    508.5 Mt** (after removing 338 sub-total rows). It has money, volume, wagons, wagon type and
    overloading, but **no placement/release timestamps**. It is **decoded** (`tools/rr_register.py`) and
    used for commodity profiles; the multi-commodity analysis (Layer 6) is done.
-10. Integrity: **80 checks** pass (57 model + 23 for Layers 5–7 and the data decoding,
+10. Integrity: **82 checks** pass (57 model + 25 for Layers 5–7 and the data decoding,
     `tools/verify_extensions.py`).
 11. Code base consolidated and re-verified on 22-Oct-2026 (this repo). Layers 3, 4 and E11
     reproduce the chat-era numbers exactly. 19/20 result tables are bit-identical between the
@@ -49,6 +49,9 @@ terminal, and solutions for quick release of rolling stock.*
     rates and the 2026 minimum wage (C5); **sufficiency test (Layer 7): the ranking of all six
     interventions is unchanged under 9 omitted-factor scenarios (Kendall τ = 1.00)**. All 56 months
     of field data verified present, no gaps, no duplicate RRs.
+13. 25-Oct-2026 (§6H): detention for every length of the terminal day (8–24 h, Fig. 7). The sweep
+    exposed a calendar bug (days longer than 18 h were capped at midnight); fixed and re-run. Only
+    the Layer 5 20-h level (13.46 → 12.28 h) and Morris values moved slightly; bounds unchanged.
 
 ---
 
@@ -333,8 +336,8 @@ on one line, crew shift 06–22: 0 (the crew shift coincides with the terminal-s
 already gates loading).
 
 **S3 — Morris screening** (20 trajectories, μ\* = h of detention per full-range move):
-terminal hours 20.1 (σ 8.8), M6 mean 7.5, loading rate 5.2, M5 mean 4.3, M5 rework 1.7 (σ/μ\* 0.58),
-M6 rework 1.6, M4 mean 1.0, payload 0.9, wagons 0.9. **Morris and OAT agree on the top 3.** Shunting times,
+terminal hours 20.3 (σ 9.0), M6 mean 7.5, loading rate 5.2, M5 mean 4.2, M5 rework 1.7 (σ/μ\* 0.59),
+M6 rework 1.5, M4 mean 1.0, payload 0.9, wagons 0.9. **Morris and OAT agree on the top 3.** Shunting times,
 transit and arrival gap have σ > μ\*: their effect is mostly interaction (they matter only together
 with other factors).
 
@@ -524,6 +527,24 @@ Evaluator's question: *how do you know the conditions/variables are sufficient?*
   line without crew stays counter-productive.
 - *Conclusion:* the set is sufficient for ranking interventions (the thesis's purpose), not for
   predicting absolute hours at a named siding.
+
+### 6H. Detention for every length of the terminal day (Layer 5b, 25-Oct-2026)
+`experiments/run_layer5b_hours_sweep.py` → `results/layer5b_hours_sweep.csv`, Fig. 7. Calendar of
+M4–M6 set to 8, 9, …, 24 h a day on the calibrated base (30 paired reps × 50 rakes).
+
+| Hours/day | 8 | 10 | 12 | 14 | **16 (today)** | 18 | 20 | 22 | 24 |
+|---|---|---|---|---|---|---|---|---|---|
+| Detention (h) | 31.86 | 25.86 | 21.87 | 18.35 | **15.53** | 13.46 | 12.28 | 11.36 | 10.69 |
+| Demurrage / rake (₹ k) | 258.5 | 184.4 | 139.6 | 103.8 | **76.0** | 55.8 | 44.3 | 35.8 | 29.7 |
+
+- Every extra hour helps, but less each time: 8 → 9 h saves 3.5 h; 16 → 17 h saves 1.2 h;
+  23 → 24 h saves 0.3 h.
+- From today: +2 h (to 18 h, 06:00–24:00) already gives 43 % of the full 24/7 gain (2.07 of 4.84 h).
+- Cutting to 12 h adds 6.3 h per rake and almost doubles demurrage (₹76 k → ₹140 k).
+- **Bug found and fixed by this sweep:** a calendar window lives inside one day, so 18–23-hour days
+  from 06:00 were silently capped at midnight (all behaved as 18 h). The fix lengthens the day by
+  opening earlier (20 h = 04:00–24:00). Two new checks guard it (the sweep reproduces the Layer 5
+  levels; every extra hour strictly shortens detention).
 
 ## 7. Numbers to quote (and which version they come from)
 
