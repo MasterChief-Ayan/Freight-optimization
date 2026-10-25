@@ -145,11 +145,19 @@ def _cal_hours(cal: Calendar, hours: float) -> Calendar:
     (e.g. 13.333 h) lets AdminChain._work take sub-microsecond chunks at the
     boundary and trip its convergence guard. Real offices close on the half
     hour, so this changes nothing of substance (only Morris draws non-round
-    values; every OAT level is already a whole or half hour)."""
+    values; every OAT level is already a whole or half hour).
+
+    A Calendar window lives inside one day (open < close <= 24). A day longer than
+    24 - open (e.g. 20 h from 06:00) cannot move the closing time past midnight:
+    until 24-Oct-2026 it was silently capped at 24:00, so every level between 18 and
+    23 h behaved as 18 h. Now the day is lengthened at the evening end up to midnight
+    and, beyond that, by opening earlier: 20 h = 04:00-24:00."""
     hours = round(hours * 2) / 2
     if hours >= 24 - 1e-9:
         return CAL_24_7
-    return replace(cal, close_hr=min(24.0, cal.open_hr + hours), always_on=False)
+    if cal.open_hr + hours <= 24.0:
+        return replace(cal, close_hr=cal.open_hr + hours, always_on=False)
+    return replace(cal, open_hr=24.0 - hours, close_hr=24.0, always_on=False)
 
 
 def _lin(lo, base, hi):
