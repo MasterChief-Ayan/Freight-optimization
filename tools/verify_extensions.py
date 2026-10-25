@@ -113,6 +113,17 @@ def layer6(c):
               gap < 1.0 and (c5.net_piece_rate_Rs == c5.max_spend_cash_only_Rs).all(), f"max gap Rs {gap:.2f}")
 
 
+def layer5b(c):
+    hs = pd.read_csv(os.path.join(RES, "layer5b_hours_sweep.csv"))
+    lv = pd.read_csv(os.path.join(RES, "layer5_S1_oat_levels.csv"))
+    l5 = lv[lv.param == "hours_terminal_shift"].set_index("x").detention
+    same = all(abs(hs.set_index("terminal_hours_per_day").detention_h[int(x)] - v) < 1e-6 for x, v in l5.items())
+    c.assert_("hour-by-hour sweep reproduces the Layer 5 levels (8/12/16/20/24 h)", same, f"{len(l5)} levels")
+    c.assert_("every extra terminal hour shortens detention (strictly)",
+              (hs.detention_h.diff().dropna() < 0).all(),
+              f"smallest gain {(-hs.detention_h.diff()).min():.2f} h")
+
+
 def layer7(c):
     o1 = pd.read_csv(os.path.join(RES, "layer7_O1_sufficiency.csv"))
     built = o1[o1.omitted_factor == "model as built"].base_detention_h.iloc[0]
@@ -158,6 +169,7 @@ def field(c):
 if __name__ == "__main__":
     c = Check("EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 sufficiency, field decoding")
     layer5(c)
+    layer5b(c)
     layer6(c)
     layer7(c)
     field(c)

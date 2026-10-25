@@ -243,4 +243,32 @@ finish(fig, ax, "Fig. 6  Are the model's variables enough? Add what it leaves ou
        f"{o2.base_detention_h.min():.1f} → {o2.base_detention_h.max():.1f} h; the best paperwork fix beats the best "
        f"capital fix by {o2.procedure_over_capital.min():.1f}–{o2.procedure_over_capital.max():.1f}× in every case. "
        "30 paired replications × 50 rakes.")
+# ---------------------------------------------------------------- Fig 7
+hs = pd.read_csv(os.path.join(RES, "layer5b_hours_sweep.csv"))
+fig, (a1, a2) = plt.subplots(2, 1, figsize=(10.5, 7.2), sharex=True, gridspec_kw={"height_ratios": [1.6, 1]})
+a1.plot(hs.terminal_hours_per_day, hs.detention_h, color=BLUE, lw=2.2, marker="o", ms=5, zorder=3)
+a1.fill_between(hs.terminal_hours_per_day, hs.detention_h - hs.detention_ci95, hs.detention_h + hs.detention_ci95,
+                color=BLUE, alpha=0.15, lw=0)
+for _, r in hs[hs.terminal_hours_per_day.isin([8, 12, 16, 20, 24])].iterrows():
+    a1.annotate(f"{r.detention_h:.1f} h", (r.terminal_hours_per_day, r.detention_h), textcoords="offset points",
+                xytext=(-16 if r.terminal_hours_per_day == 16 else 0, 9), ha="center", fontsize=9.5, color=INK2)
+a1.axvline(16, color=INK2, lw=1, ls="--")
+a1.text(16.15, hs.detention_h.max() * 0.97, "today: 06:00–22:00 (16 h)", fontsize=9, color=INK2, va="top")
+a1.set_ylabel("mean detention (h)")
+a1.set_ylim(0, hs.detention_h.max() * 1.12)
+a2.bar(hs.terminal_hours_per_day, hs.demurrage_per_rake / 1e3, color=ORANGE, width=0.65)
+a2.set_ylabel("demurrage per rake\n(₹ thousand)")
+a2.set_xlabel("hours a day the terminal's paperwork runs (placement advice M4, weighment M5, release M6)")
+a2.set_xticks(hs.terminal_hours_per_day)
+a2.grid(axis="x", visible=False)
+for a in (a1, a2):
+    a.set_axisbelow(True)
+fig.subplots_adjust(top=0.85, bottom=0.14, hspace=0.12)
+one = hs.set_index("terminal_hours_per_day").saving_from_one_more_hour_h
+finish(fig, a1, "Fig. 7  Every extra working hour shortens detention, with diminishing returns",
+       f"From today's 16 h: +1 h saves {one[17]:.1f} h per rake, going to 24/7 saves {hs.detention_h[hs.terminal_hours_per_day == 16].iloc[0] - hs.detention_h.iloc[-1]:.1f} h; "
+       f"cutting to 12 h adds {hs.detention_h[hs.terminal_hours_per_day == 12].iloc[0] - hs.detention_h[hs.terminal_hours_per_day == 16].iloc[0]:.1f} h",
+       "Fig7_detention_vs_terminal_hours.png",
+       "Calibrated base, 30 paired replications × 50 rakes; shaded band = 95 % CI. Day starts 06:00; beyond 18 h it starts "
+       "earlier (20 h = 04:00–24:00). 06:00–22:00 is the IR rule [Compendium 4.1].")
 print("saved:", sorted(os.listdir(OUT)))

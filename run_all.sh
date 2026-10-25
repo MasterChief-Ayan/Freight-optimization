@@ -30,6 +30,8 @@ if [ -d data/raw/RR_base_IN_freight_details ]; then
   echo ">>> field data (decode + commodity profiles)"
   python3 tools/analyse_rr_register.py > results/field.log 2>&1
 fi
+echo ">>> Layer 5b (detention for every length of the terminal day)"
+python3 experiments/run_layer5b_hours_sweep.py > results/l5b.log 2>&1
 echo ">>> Layer 6 (multi-commodity levers)"
 python3 experiments/run_layer6_commodities.py > results/l6.log 2>&1
 echo ">>> Layer 7 (sufficiency: do conclusions survive omitted factors?)"

@@ -10,6 +10,8 @@ EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 su
   [PASS] longer terminal hours never increase detention (monotone)        8 h 31.86 -> 24 h 10.69
   [PASS] envelope brackets the base (best < base < worst)                 3.54 < 15.53 < 51.41
   [PASS] Morris and OAT agree on the top-3 factors                        Morris ['hours_terminal_shift', 'M6_mean', 'load_rate']
+  [PASS] hour-by-hour sweep reproduces the Layer 5 levels (8/12/16/20/24 h) 5 levels
+  [PASS] every extra terminal hour shortens detention (strictly)          smallest gain 0.30 h
   [PASS] free time per commodity matches the IR rule built into the profile coal open 8, cement (goods shed) 9, containers 3+2
   [PASS] free-time cut changes the bill, never the time                   3 commodities
   [PASS] precise loading helps most where overloading is most frequent    largest gain: COAL (hopper BOBRN)
@@ -26,4 +28,4 @@ EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 su
   [PASS] coal pays no busy-season charge after 01.10.2022 (exemption)     80,286 coal RRs
   [PASS] commodity groups cover >= 95 % of tonnes                         97.0%
 ------------------------------------------------------------------------------------------
-  23/23 passed
+  25/25 passed
