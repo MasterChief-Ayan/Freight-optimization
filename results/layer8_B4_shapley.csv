@@ -1,0 +1,28 @@
+package,metric,lever,shapley_change,alone_change,package_change,sum_of_alone,lever_name
+A paperwork 24/7 + digital release,detention,H,-4.1401,-5.3545,-7.5164,-9.9452,terminal paperwork 24/7
+A paperwork 24/7 + digital release,detention,D,-3.3763,-4.5907,-7.5164,-9.9452,digital release reporting
+A paperwork 24/7 + digital release,demurrage_pr,H,-39239.9,-51943.8333,-70135.2111,-95543.0778,terminal paperwork 24/7
+A paperwork 24/7 + digital release,demurrage_pr,D,-30895.3111,-43599.2444,-70135.2111,-95543.0778,digital release reporting
+A paperwork 24/7 + digital release,cycle,H,-11.1614,-16.3336,-19.377,-29.7215,terminal paperwork 24/7
+A paperwork 24/7 + digital release,cycle,D,-8.2157,-13.3879,-19.377,-29.7215,digital release reporting
+B = A + precise loading,detention,H,-3.9089,-5.3545,-8.2022,-11.1224,terminal paperwork 24/7
+B = A + precise loading,detention,D,-3.3691,-4.5907,-8.2022,-11.1224,digital release reporting
+B = A + precise loading,detention,P,-0.9243,-1.1772,-8.2022,-11.1224,precise loading
+B = A + precise loading,demurrage_pr,H,-36714.1611,-51943.8333,-75591.4,-106914.6222,terminal paperwork 24/7
+B = A + precise loading,demurrage_pr,D,-30539.2556,-43599.2444,-75591.4,-106914.6222,digital release reporting
+B = A + precise loading,demurrage_pr,P,-8337.9833,-11371.5444,-75591.4,-106914.6222,precise loading
+B = A + precise loading,cycle,H,-10.1887,-16.3336,-20.1938,-33.9806,terminal paperwork 24/7
+B = A + precise loading,cycle,D,-7.7323,-13.3879,-20.1938,-33.9806,digital release reporting
+B = A + precise loading,cycle,P,-2.2728,-4.2591,-20.1938,-33.9806,precise loading
+C = B + faster loading,detention,H,-3.6606,-5.3545,-9.7669,-13.5084,terminal paperwork 24/7
+C = B + faster loading,detention,D,-3.2994,-4.5907,-9.7669,-13.5084,digital release reporting
+C = B + faster loading,detention,P,-0.9139,-1.1772,-9.7669,-13.5084,precise loading
+C = B + faster loading,detention,L,-1.893,-2.386,-9.7669,-13.5084,loading 50 % faster
+C = B + faster loading,demurrage_pr,H,-33612.8259,-51943.8333,-83520.9667,-128314.0444,terminal paperwork 24/7
+C = B + faster loading,demurrage_pr,D,-28264.85,-43599.2444,-83520.9667,-128314.0444,digital release reporting
+C = B + faster loading,demurrage_pr,P,-7688.5444,-11371.5444,-83520.9667,-128314.0444,precise loading
+C = B + faster loading,demurrage_pr,L,-13954.7463,-21399.4222,-83520.9667,-128314.0444,loading 50 % faster
+C = B + faster loading,cycle,H,-9.0864,-16.3336,-24.4786,-42.9185,terminal paperwork 24/7
+C = B + faster loading,cycle,D,-7.2372,-13.3879,-24.4786,-42.9185,digital release reporting
+C = B + faster loading,cycle,P,-2.1375,-4.2591,-24.4786,-42.9185,precise loading
+C = B + faster loading,cycle,L,-6.0176,-8.9379,-24.4786,-42.9185,loading 50 % faster

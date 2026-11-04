@@ -1,5 +1,5 @@
 """
-verify_extensions.py  -  integrity checks for Layers 5-7 and the field-data decoding.
+verify_extensions.py  -  integrity checks for Layers 5-8 and the field-data decoding.
 
     python tools/verify_extensions.py          (after run_layer5/6 and analyse_rr_register)
 
@@ -137,6 +137,29 @@ def layer7(c):
               f"{det.min():.2f}-{det.max():.2f} h")
 
 
+def layer8(c):
+    b2 = pd.read_csv(os.path.join(RES, "layer8_B2_cause_split.csv"))
+    b3 = pd.read_csv(os.path.join(RES, "layer8_B3_money.csv"))
+    b4 = pd.read_csv(os.path.join(RES, "layer8_B4_shapley.csv"))
+    b7 = pd.read_csv(os.path.join(RES, "layer8_B7_damage.csv"))
+    c1 = pd.read_csv(os.path.join(RES, "layer6_C1_commodity_baseline.csv")).set_index("commodity")
+    c.assert_("Layer 8 base = Layer 6 coal BOXN base (same seeds, same profile)",
+              abs(b2.detention_h.iloc[0] - c1.loc["COAL (open BOXN)", "detention_h"]) < 1e-3,
+              f"{b2.detention_h.iloc[0]:.3f} h")
+    c.assert_("billed hours split exactly into loading + work + rework + office wait",
+              (b2.check_sum_h - b2.detention_h).abs().max() < 1e-3, f"{len(b2)} packages")
+    bands = [k for k in b3.columns if k.startswith("dem_band_")]
+    c.assert_("demurrage by IR band adds up to demurrage per rake",
+              (b3[bands].sum(axis=1) - b3.demurrage_per_rake).abs().max() < 1.0, f"{len(bands)} bands")
+    g = b4.groupby(["package", "metric"]).agg(s=("shapley_change", "sum"), tot=("package_change", "first"))
+    c.assert_("Shapley shares add up exactly to each package's saving",
+              (g.s - g.tot).abs().max() < 1e-2, f"{len(g)} package-metric pairs")
+    t = b7[b7.policy.isin(["detach", "return_rake"]) & (b7.package == "TODAY")].pivot(
+        index="p_defect_per_wagon", columns="policy", values="wagons_tied_up")
+    c.assert_("returning the whole rake ties up more wagon time than detaching",
+              (t.return_rake > t.detach).all() and t.detach.is_monotonic_increasing, f"{len(t)} damage levels")
+
+
 def field(c):
     raw = os.path.join(ROOT, "data", "raw", "RR_base_IN_freight_details")
     if not os.path.isdir(raw):
@@ -172,5 +195,6 @@ if __name__ == "__main__":
     layer5b(c)
     layer6(c)
     layer7(c)
+    layer8(c)
     field(c)
     sys.exit(0 if c.report() else 1)

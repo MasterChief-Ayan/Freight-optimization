@@ -1,0 +1,16 @@
+package,party,gain,Rs_cr_per_yr
+A paperwork 24/7 + digital release,client / siding owner,demurrage avoided,2.0479
+A paperwork 24/7 + digital release,client / siding owner,overload penalties + paid-unused capacity avoided (data),0.0
+A paperwork 24/7 + digital release,client / siding owner,line capacity x1.65 (762 rakes/yr ceiling),
+A paperwork 24/7 + digital release,Railway,wagon time back: 47.6 wagons (Rs 21.0 cr one-time fleet value) with RR + payment digital as the data show; 37.5 wagons (Rs 16.5 cr) if RR waits for office hours,
+A paperwork 24/7 + digital release,Railway,"demurrage income forgone (transfer, not a loss to the economy)",-2.0479
+B = A + precise loading,client / siding owner,demurrage avoided,2.2073
+B = A + precise loading,client / siding owner,overload penalties + paid-unused capacity avoided (data),4.2023
+B = A + precise loading,client / siding owner,line capacity x1.76 (810 rakes/yr ceiling),
+B = A + precise loading,Railway,wagon time back: 50.5 wagons (Rs 22.3 cr one-time fleet value) with RR + payment digital as the data show; 39.0 wagons (Rs 17.2 cr) if RR waits for office hours,
+B = A + precise loading,Railway,"demurrage income forgone (transfer, not a loss to the economy)",-2.2073
+C = B + faster loading,client / siding owner,demurrage avoided,2.4388
+C = B + faster loading,client / siding owner,overload penalties + paid-unused capacity avoided (data),4.2023
+C = B + faster loading,client / siding owner,line capacity x2.06 (947 rakes/yr ceiling),
+C = B + faster loading,Railway,wagon time back: 56.4 wagons (Rs 24.9 cr one-time fleet value) with RR + payment digital as the data show; 47.3 wagons (Rs 20.9 cr) if RR waits for office hours,
+C = B + faster loading,Railway,"demurrage income forgone (transfer, not a loss to the economy)",-2.4388

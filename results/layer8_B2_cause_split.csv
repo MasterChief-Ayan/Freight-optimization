@@ -1,0 +1,5 @@
+package,detention_h,loading_physical_h,paperwork_working_time_h,rework_h,waiting_for_office_to_open_h,check_sum_h
+TODAY,17.0189,4.6939,5.8671,1.0806,5.3773,17.0189
+A paperwork 24/7 + digital release,9.5025,4.6939,4.0789,0.7069,0.0228,9.5025
+B = A + precise loading,8.8166,4.6939,4.0789,0.021,0.0228,8.8166
+C = B + faster loading,7.252,3.1293,4.0789,0.021,0.0228,7.252

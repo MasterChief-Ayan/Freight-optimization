@@ -1,0 +1,9 @@
+package,RR_and_payment_digital,detention_h,removed_to_departure_h,arrival_to_departure_h,rake_hours_saved_vs_today_same_basis,wagons_freed,fleet_value_Rs_cr
+TODAY,False,17.0189,14.0509,70.4983,0.0,0.0,0.0
+TODAY,True,17.0189,0.0541,56.5015,0.0,0.0,0.0
+A paperwork 24/7 + digital release,False,9.5025,19.3979,51.1212,19.377,37.4623,16.5339
+A paperwork 24/7 + digital release,True,9.5025,0.1428,31.8661,24.6353,47.6283,21.0206
+B = A + precise loading,False,8.8166,20.1186,50.3045,20.1938,39.0414,17.2308
+B = A + precise loading,True,8.8166,0.1821,30.368,26.1335,50.5248,22.299
+C = B + faster loading,False,7.252,18.8469,46.0196,24.4786,47.3254,20.8869
+C = B + faster loading,True,7.252,0.1821,27.3549,29.1466,56.3501,24.87

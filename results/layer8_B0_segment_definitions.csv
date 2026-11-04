@@ -1,0 +1,8 @@
+column,segment,inside_free_time_window,owner
+wait_hr,waiting before placement,False,terminal / railway
+placement_hr,placement shunting,False,railway
+preload_idle_hr,"placed -> loading starts (M4 advice, M2, crew, repairs)",True,terminal
+loading_hr,loading,True,terminal
+release_lag_hr,"loading ends -> released (M5 weighment, M6 release)",True,terminal
+removal_hr,removal shunting,False,railway
+rr_lag_hr,removed -> departs (M7 RR + payment),False,client

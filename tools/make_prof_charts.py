@@ -271,4 +271,88 @@ finish(fig, a1, "Fig. 7  Every extra working hour shortens detention, with dimin
        "Fig7_detention_vs_terminal_hours.png",
        "Calibrated base, 30 paired replications × 50 rakes; shaded band = 95 % CI. Day starts 06:00; beyond 18 h it starts "
        "earlier (20 h = 04:00–24:00). 06:00–22:00 is the IR rule [Compendium 4.1].")
+# ---------------------------------------------------------------- Fig 8
+AQUA, YELLOW = "#1baf7a", "#eda100"
+b2 = pd.read_csv(os.path.join(RES, "layer8_B2_cause_split.csv"))
+b3m = pd.read_csv(os.path.join(RES, "layer8_B3_money.csv")).set_index("package")
+short8 = {"TODAY": "Today", "A paperwork 24/7 + digital release": "A  paperwork 24/7\n+ digital release",
+          "B = A + precise loading": "B  = A + precise\nloading", "C = B + faster loading": "C  = B + 50 %\nfaster loading"}
+parts = [("loading_physical_h", "loading (physical)", BLUE), ("paperwork_working_time_h", "paperwork: working time", ORANGE),
+         ("rework_h", "paperwork: rework", AQUA), ("waiting_for_office_to_open_h", "waiting for the office to open", YELLOW)]
+fig, ax = plt.subplots(figsize=(11.5, 5.6))
+y = np.arange(len(b2))[::-1]
+left = np.zeros(len(b2))
+for col, lab, colr in parts:
+    v = b2[col].values
+    ax.barh(y, v, left=left, color=colr, height=0.6, edgecolor=SURF, linewidth=2, label=lab)
+    for yi, l, vv in zip(y, left, v):
+        if vv >= 0.8:
+            ax.text(l + vv / 2, yi, f"{vv:.1f}", ha="center", va="center", fontsize=9.5, color=INK, zorder=4)
+    left += v
+for yi, (_, r) in zip(y, b2.iterrows()):
+    dem = b3m.loc[r.package, "demurrage_per_rake"]
+    ax.text(r.detention_h + 0.25, yi, f"{r.detention_h:.1f} h   ·   demurrage ₹{dem/1e3:,.1f}k / rake", va="center",
+            fontsize=9.5, color=INK2, bbox=dict(facecolor=SURF, edgecolor="none", pad=1.5))
+ax.set_yticks(y); ax.set_yticklabels([short8[p] for p in b2.package], fontsize=10)
+ax.set_xlabel("hours per rake inside the IR free-time window (placement → release)")
+ax.set_xlim(0, b2.detention_h.max() * 1.55)
+ax.axvline(8, color=INK2, lw=1, ls="--", zorder=0); ax.text(8.1, y.max() + 0.42, "free time 8 h", fontsize=8.5, color=INK2)
+ax.grid(axis="y", visible=False)
+ax.legend(frameon=False, fontsize=9, loc="lower left", bbox_to_anchor=(0, 1.0), ncol=4)
+fig.subplots_adjust(top=0.80, bottom=0.14, left=0.17)
+finish(fig, ax, "Fig. 8  Where a coal rake's billed hours come from, and what each package removes",
+       "Today 17.0 h = 4.7 loading + 5.9 paperwork work + 1.1 rework + 5.4 waiting for the office to open",
+       "Fig8_breakdown_of_billed_hours.png",
+       "Coal BOXN profile (ER data), 30 paired reps × 50 rakes. Split by counterfactual runs: office hours removed, then rework removed "
+       "(Layer 8, B2). Admin durations ASSUMED.")
+
+# ---------------------------------------------------------------- Fig 9
+b4 = pd.read_csv(os.path.join(RES, "layer8_B4_shapley.csv"))
+s9 = b4[(b4.package == "C = B + faster loading") & (b4.metric == "detention")].copy()
+s9 = s9.sort_values("shapley_change")
+fig, ax = plt.subplots(figsize=(10.5, 5.2))
+y = np.arange(len(s9))[::-1]
+h = 0.36
+ax.barh(y + h / 2, -s9.alone_change, h, color=ORANGE, edgecolor=SURF, linewidth=2, label="saving if done alone")
+ax.barh(y - h / 2, -s9.shapley_change, h, color=BLUE, edgecolor=SURF, linewidth=2,
+        label="its fair share of the package saving (Shapley)")
+for yi, (_, r) in zip(y, s9.iterrows()):
+    ax.text(-r.alone_change + 0.08, yi + h / 2, f"{-r.alone_change:.2f} h", va="center", fontsize=9, color=INK2)
+    ax.text(-r.shapley_change + 0.08, yi - h / 2, f"{-r.shapley_change:.2f} h ({100*r.shapley_change/r.package_change:.0f} %)",
+            va="center", fontsize=9, color=INK2)
+ax.set_yticks(y); ax.set_yticklabels([n[0].upper() + n[1:] for n in s9.lever_name], fontsize=10)
+ax.set_xlabel("hours of detention saved per rake")
+ax.set_xlim(0, -s9.alone_change.min() * 1.3)
+ax.grid(axis="y", visible=False)
+ax.legend(frameon=False, fontsize=9.5, loc="lower right")
+tot, alone = -s9.package_change.iloc[0], -s9.sum_of_alone.iloc[0]
+fig.subplots_adjust(top=0.84, bottom=0.15, left=0.22)
+finish(fig, ax, "Fig. 9  Savings overlap: done alone they promise more than they deliver together",
+       f"Package C: the four levers alone add up to {alone:.1f} h, together they save {tot:.1f} h; blue bars sum to exactly {tot:.1f} h",
+       "Fig9_fair_split_of_saving.png",
+       "Shapley value = a lever's average marginal saving over every order in which the levers could be introduced (Layer 8, B4).")
+
+# ---------------------------------------------------------------- Fig 10
+b7 = pd.read_csv(os.path.join(RES, "layer8_B7_damage.csv"))
+t7 = b7[(b7.package == "TODAY") & b7.policy.isin(["detach", "return_rake"])]
+fig, ax = plt.subplots(figsize=(10.5, 5.4))
+for pol, colr, lab in (("detach", BLUE, "detach the bad wagon(s), load the rest"),
+                       ("return_rake", ORANGE, "send the whole rake back, wait for a replacement")):
+    g = t7[t7.policy == pol].sort_values("p_defect_per_wagon")
+    xs = [0] + list(100 * g.p_defect_per_wagon); ys = [0] + list(g.wagons_tied_up)
+    ax.plot(xs, ys, color=colr, lw=2, marker="o", ms=8, markeredgecolor=SURF, markeredgewidth=2, label=lab)
+    ax.text(xs[-1] + 0.04, ys[-1], f"{ys[-1]:.1f} wagons", va="center", fontsize=9.5, color=INK2)
+ax.set_xlabel("wagons found defective at the siding (% of wagons; 10 % of defects are unfit)")
+ax.set_ylabel("extra wagons tied up all year")
+ax.set_xlim(-0.05, 2.45)
+ax.legend(frameon=False, fontsize=9.5, loc="upper left")
+fig.subplots_adjust(top=0.84, bottom=0.15)
+r = (t7[t7.policy == "return_rake"].set_index("p_defect_per_wagon").wagons_tied_up
+     / t7[t7.policy == "detach"].set_index("p_defect_per_wagon").wagons_tied_up)
+finish(fig, ax, "Fig. 10  A damaged wagon: sending the whole rake back costs far more wagon time",
+       f"Returning the rake ties up {r.min():.1f}–{r.max():.1f}× the wagon time of detaching; the client's demurrage barely moves "
+       "(the rejected visit is outside the free-time clock)",
+       "Fig10_wagon_damage_policies.png",
+       "Coal BOXN, today's process, 292 rakes/yr. Damage rates and repair/lead times ASSUMED (no published rates); the rules are cited "
+       "in rtsim/damage.py (Layer 8, B7).")
 print("saved:", sorted(os.listdir(OUT)))

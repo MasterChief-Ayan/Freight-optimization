@@ -1,0 +1,126 @@
+
+>>> BASE: COAL (open BOXN), 58 wagons, 3,898 t/rake, 30 reps x 50 rakes, 292 rakes/yr, free time 8 h
+
+>>> B1  TIME BREAKDOWN (h per rake, arrival -> departure)
+package                  TODAY  A paperwork 24/7 + digital release  B = A + precise loading  C = B + faster loading
+wait_hr                  37.43                               20.23                    19.37                   17.93
+placement_hr              0.99                                0.99                     0.99                    0.99
+preload_idle_hr           1.35                                0.55                     0.55                    0.55
+loading_hr                4.69                                4.69                     4.69                    3.13
+release_lag_hr           10.97                                4.26                     3.57                    3.57
+removal_hr                1.00                                1.00                     1.00                    1.00
+rr_lag_hr                14.05                               19.40                    20.12                   18.85
+detention_billed_window  17.02                                9.50                     8.82                    7.25
+arrival_to_departure     70.50                               51.12                    50.30                   46.02
+line_held_per_rake       19.01                               11.50                    10.81                    9.25
+breach_share              0.90                                0.67                     0.59                    0.28
+
+>>> B2  WHY THE BILLED WINDOW IS THAT LONG (h per rake)
+                           package  detention_h  loading_physical_h  paperwork_working_time_h  rework_h  waiting_for_office_to_open_h  check_sum_h
+                             TODAY        17.02                4.69                      5.87      1.08                          5.38        17.02
+A paperwork 24/7 + digital release         9.50                4.69                      4.08      0.71                          0.02         9.50
+           B = A + precise loading         8.82                4.69                      4.08      0.02                          0.02         8.82
+            C = B + faster loading         7.25                3.13                      4.08      0.02                          0.02         7.25
+
+>>> B3  MONEY, WAGONS, CAPACITY
+package                                     TODAY  A paperwork 24/7 + digital release  B = A + precise loading  C = B + faster loading
+demurrage_per_rake                      89,786.26                           19,651.04                14,194.86                6,265.29
+dem_band_0_6h                           40,612.89                           17,503.11                13,282.00                5,819.33
+dem_band_6_12h                          32,261.53                            1,899.82                   737.24                  297.73
+dem_band_12_24h                         15,152.50                              209.44                   136.94                  128.89
+dem_band_24_48h                          1,759.33                               38.67                    38.67                   19.33
+dem_band_48_72h                              0.00                                0.00                     0.00                    0.00
+dem_band_72_infh                             0.00                                0.00                     0.00                    0.00
+data_leak_per_rake                     143,914.48                          143,914.48                     0.00                    0.00
+client_cost_per_rake                   233,700.73                          163,565.52                14,194.86                6,265.29
+rakes_per_year                             292.00                              292.00                   292.00                  292.00
+demurrage_saved_Rs_cr_per_yr                 0.00                                2.05                     2.21                    2.44
+leak_saved_Rs_cr_per_yr                      0.00                                0.00                     4.20                    4.20
+rake_hours_saved_per_rake                    0.00                               19.38                    20.19                   24.48
+wagon_hours_saved_per_yr                     0.00                          328,169.67               342,002.46              414,570.30
+wagons_freed                                 0.00                               37.46                    39.04                   47.33
+fleet_value_Rs_cr                            0.00                               16.53                    17.23                   20.89
+wagons_freed_wait_plus_detention_basis       0.00                               47.80                    50.77                   56.60
+line_held_h                                 19.01                               11.50                    10.81                    9.25
+line_capacity_rakes_per_yr                 460.73                              761.93                   810.27                  947.38
+capacity_vs_today                            1.00                                1.65                     1.76                    2.06
+wagons_freed_RR_digital                      0.00                               47.63                    50.52                   56.35
+fleet_value_RR_digital_Rs_cr                 0.00                               21.02                    22.30                   24.87
+
+>>> B4  SHAPLEY SPLIT OF EACH PACKAGE'S SAVING
+                           package       metric lever  shapley_change  alone_change  package_change  sum_of_alone                lever_name
+A paperwork 24/7 + digital release    detention     H           -4.14         -5.35           -7.52         -9.95   terminal paperwork 24/7
+A paperwork 24/7 + digital release    detention     D           -3.38         -4.59           -7.52         -9.95 digital release reporting
+A paperwork 24/7 + digital release demurrage_pr     H      -39,239.90    -51,943.83      -70,135.21    -95,543.08   terminal paperwork 24/7
+A paperwork 24/7 + digital release demurrage_pr     D      -30,895.31    -43,599.24      -70,135.21    -95,543.08 digital release reporting
+A paperwork 24/7 + digital release        cycle     H          -11.16        -16.33          -19.38        -29.72   terminal paperwork 24/7
+A paperwork 24/7 + digital release        cycle     D           -8.22        -13.39          -19.38        -29.72 digital release reporting
+           B = A + precise loading    detention     H           -3.91         -5.35           -8.20        -11.12   terminal paperwork 24/7
+           B = A + precise loading    detention     D           -3.37         -4.59           -8.20        -11.12 digital release reporting
+           B = A + precise loading    detention     P           -0.92         -1.18           -8.20        -11.12           precise loading
+           B = A + precise loading demurrage_pr     H      -36,714.16    -51,943.83      -75,591.40   -106,914.62   terminal paperwork 24/7
+           B = A + precise loading demurrage_pr     D      -30,539.26    -43,599.24      -75,591.40   -106,914.62 digital release reporting
+           B = A + precise loading demurrage_pr     P       -8,337.98    -11,371.54      -75,591.40   -106,914.62           precise loading
+           B = A + precise loading        cycle     H          -10.19        -16.33          -20.19        -33.98   terminal paperwork 24/7
+           B = A + precise loading        cycle     D           -7.73        -13.39          -20.19        -33.98 digital release reporting
+           B = A + precise loading        cycle     P           -2.27         -4.26          -20.19        -33.98           precise loading
+            C = B + faster loading    detention     H           -3.66         -5.35           -9.77        -13.51   terminal paperwork 24/7
+            C = B + faster loading    detention     D           -3.30         -4.59           -9.77        -13.51 digital release reporting
+            C = B + faster loading    detention     P           -0.91         -1.18           -9.77        -13.51           precise loading
+            C = B + faster loading    detention     L           -1.89         -2.39           -9.77        -13.51       loading 50 % faster
+            C = B + faster loading demurrage_pr     H      -33,612.83    -51,943.83      -83,520.97   -128,314.04   terminal paperwork 24/7
+            C = B + faster loading demurrage_pr     D      -28,264.85    -43,599.24      -83,520.97   -128,314.04 digital release reporting
+            C = B + faster loading demurrage_pr     P       -7,688.54    -11,371.54      -83,520.97   -128,314.04           precise loading
+            C = B + faster loading demurrage_pr     L      -13,954.75    -21,399.42      -83,520.97   -128,314.04       loading 50 % faster
+            C = B + faster loading        cycle     H           -9.09        -16.33          -24.48        -42.92   terminal paperwork 24/7
+            C = B + faster loading        cycle     D           -7.24        -13.39          -24.48        -42.92 digital release reporting
+            C = B + faster loading        cycle     P           -2.14         -4.26          -24.48        -42.92           precise loading
+            C = B + faster loading        cycle     L           -6.02         -8.94          -24.48        -42.92       loading 50 % faster
+
+>>> B6  WHO GAINS WHAT
+                           package                 party                                                                                                                                                             gain  Rs_cr_per_yr
+A paperwork 24/7 + digital release client / siding owner                                                                                                                                                demurrage avoided          2.05
+A paperwork 24/7 + digital release client / siding owner                                                                                                         overload penalties + paid-unused capacity avoided (data)          0.00
+A paperwork 24/7 + digital release client / siding owner                                                                                                                       line capacity x1.65 (762 rakes/yr ceiling)           NaN
+A paperwork 24/7 + digital release               Railway wagon time back: 47.6 wagons (Rs 21.0 cr one-time fleet value) with RR + payment digital as the data show; 37.5 wagons (Rs 16.5 cr) if RR waits for office hours           NaN
+A paperwork 24/7 + digital release               Railway                                                                                                   demurrage income forgone (transfer, not a loss to the economy)         -2.05
+           B = A + precise loading client / siding owner                                                                                                                                                demurrage avoided          2.21
+           B = A + precise loading client / siding owner                                                                                                         overload penalties + paid-unused capacity avoided (data)          4.20
+           B = A + precise loading client / siding owner                                                                                                                       line capacity x1.76 (810 rakes/yr ceiling)           NaN
+           B = A + precise loading               Railway wagon time back: 50.5 wagons (Rs 22.3 cr one-time fleet value) with RR + payment digital as the data show; 39.0 wagons (Rs 17.2 cr) if RR waits for office hours           NaN
+           B = A + precise loading               Railway                                                                                                   demurrage income forgone (transfer, not a loss to the economy)         -2.21
+            C = B + faster loading client / siding owner                                                                                                                                                demurrage avoided          2.44
+            C = B + faster loading client / siding owner                                                                                                         overload penalties + paid-unused capacity avoided (data)          4.20
+            C = B + faster loading client / siding owner                                                                                                                       line capacity x2.06 (947 rakes/yr ceiling)           NaN
+            C = B + faster loading               Railway wagon time back: 56.4 wagons (Rs 24.9 cr one-time fleet value) with RR + payment digital as the data show; 47.3 wagons (Rs 20.9 cr) if RR waits for office hours           NaN
+            C = B + faster loading               Railway                                                                                                   demurrage income forgone (transfer, not a loss to the economy)         -2.44
+
+>>> B7  WAGON DAMAGE (change vs the same package without damage)
+               package             policy  p_defect_per_wagon  defects_per_rake  unfit_per_rake  rakes_rejected_share  wagons_detached_per_rake  loading_damage_per_rake  detention_h  d_detention_h  wait_h  d_wait_h  d_arrival_to_departure_h  demurrage_per_rake  d_demurrage_per_rake  d_demurrage_Rs_cr_per_yr  wagons_tied_up  line_held_h  tonnes_lost_per_rake
+                 TODAY             detach                0.01              0.30            0.03                  0.00                      0.03                     0.00        17.13           0.11   37.92      0.48                      0.47           90,761.62                975.37                      0.03            0.91        19.12                  1.79
+                 TODAY             detach                0.01              0.60            0.06                  0.00                      0.06                     0.00        17.30           0.28   38.47      1.04                      1.13           92,432.67              2,646.41                      0.08            2.19        19.30                  4.28
+                 TODAY             detach                0.02              1.19            0.12                  0.00                      0.12                     0.00        17.60           0.58   39.55      2.12                      2.57           95,313.98              5,527.72                      0.16            4.97        19.59                  8.36
+                 TODAY        return_rake                0.01              0.27            0.00                  0.03                      0.00                     0.00        17.11           0.09   38.83      1.39                      1.23           90,649.17                862.91                      0.03            2.39        19.16                  0.00
+                 TODAY        return_rake                0.01              0.54            0.00                  0.06                      0.00                     0.00        17.19           0.17   40.55      3.11                      2.99           91,384.80              1,598.54                      0.05            5.79        19.32                  0.00
+                 TODAY        return_rake                0.02              1.06            0.00                  0.12                      0.00                     0.00        17.43           0.41   43.42      5.98                      5.99           93,597.50              3,811.24                      0.11           11.57        19.68                  0.10
+                 TODAY loading damage 1 %                0.00              0.00            0.00                  0.00                      0.00                     0.57        17.02           0.00   37.46      0.03                      0.02           89,796.89                 10.63                      0.00            0.03        19.02                  0.00
+C = B + faster loading             detach                0.01              0.30            0.03                  0.00                      0.03                     0.00         7.36           0.10   18.02      0.10                      0.31            6,777.62                512.33                      0.01            0.61         9.35                  1.79
+C = B + faster loading             detach                0.01              0.60            0.06                  0.00                      0.06                     0.00         7.49           0.24   18.13      0.20                      0.69            7,359.56              1,094.27                      0.03            1.34         9.48                  4.28
+C = B + faster loading             detach                0.02              1.19            0.12                  0.00                      0.12                     0.00         7.73           0.48   18.34      0.42                      1.32            8,564.02              2,298.73                      0.07            2.54         9.73                  8.36
+C = B + faster loading        return_rake                0.01              0.27            0.00                  0.03                      0.00                     0.00         7.33           0.08   18.69      0.77                      0.93            6,654.53                389.24                      0.01            1.79         9.38                  0.00
+C = B + faster loading        return_rake                0.01              0.54            0.00                  0.06                      0.00                     0.00         7.43           0.18   19.83      1.90                      2.22            7,075.36                810.07                      0.02            4.30         9.55                  0.00
+C = B + faster loading        return_rake                0.02              1.06            0.00                  0.12                      0.00                     0.00         7.61           0.36   21.83      3.91                      4.52            7,966.62              1,701.33                      0.05            8.73         9.86                  0.10
+C = B + faster loading loading damage 1 %                0.00              0.00            0.00                  0.00                      0.00                     0.57         7.27           0.02   17.93      0.01                      0.01            6,303.96                 38.67                      0.00            0.01         9.27                  0.00
+
+>>> B8  NEXT BOTTLENECK: RR + PAYMENT (M7) - rake time after it leaves the line
+                           package  RR_and_payment_digital  detention_h  removed_to_departure_h  arrival_to_departure_h  rake_hours_saved_vs_today_same_basis  wagons_freed  fleet_value_Rs_cr
+                             TODAY                   False        17.02                   14.05                   70.50                                  0.00          0.00               0.00
+                             TODAY                    True        17.02                    0.05                   56.50                                  0.00          0.00               0.00
+A paperwork 24/7 + digital release                   False         9.50                   19.40                   51.12                                 19.38         37.46              16.53
+A paperwork 24/7 + digital release                    True         9.50                    0.14                   31.87                                 24.64         47.63              21.02
+           B = A + precise loading                   False         8.82                   20.12                   50.30                                 20.19         39.04              17.23
+           B = A + precise loading                    True         8.82                    0.18                   30.37                                 26.13         50.52              22.30
+            C = B + faster loading                   False         7.25                   18.85                   46.02                                 24.48         47.33              20.89
+            C = B + faster loading                    True         7.25                    0.18                   27.35                                 29.15         56.35              24.87
+
+Saved: layer8_B0..B8 CSVs and layer8_results.png

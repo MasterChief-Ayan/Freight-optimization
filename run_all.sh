@@ -36,6 +36,8 @@ echo ">>> Layer 6 (multi-commodity levers)"
 python3 experiments/run_layer6_commodities.py > results/l6.log 2>&1
 echo ">>> Layer 7 (sufficiency: do conclusions survive omitted factors?)"
 python3 experiments/run_layer7_sufficiency.py > results/l7.log 2>&1
+echo ">>> Layer 8 (breakdown of time and money; wagon damage)"
+python3 experiments/run_layer8_breakdown.py > results/l8.log 2>&1
 echo ">>> extension checks"
 python3 tools/verify_extensions.py | tee results/verify_extensions.log
 python3 tools/make_prof_charts.py > /dev/null

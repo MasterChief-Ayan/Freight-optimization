@@ -1,0 +1,5 @@
+package,wait_hr,placement_hr,preload_idle_hr,loading_hr,release_lag_hr,removal_hr,rr_lag_hr,detention_billed_window,arrival_to_departure,line_held_per_rake,breach_share
+TODAY,37.4339,0.9908,1.3526,4.6939,10.9723,1.0038,14.0509,17.0189,70.4983,19.0135,0.8963
+A paperwork 24/7 + digital release,20.2262,0.9908,0.5501,4.6939,4.2585,1.0038,19.3979,9.5025,51.1212,11.4971,0.6674
+B = A + precise loading,19.3746,0.9908,0.5501,4.6939,3.5726,1.0038,20.1186,8.8166,50.3045,10.8112,0.5874
+C = B + faster loading,17.9261,0.9908,0.5501,3.1293,3.5726,1.0038,18.8469,7.252,46.0196,9.2466,0.2778
