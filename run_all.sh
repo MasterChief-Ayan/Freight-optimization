@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Reproduce every result of the project, in dependency order.
 #   bash run_all.sh            full run  (~17 min on a 2-core cloud machine; Layers 5-6 are the slowest)
-#   bash run_all.sh quick      integrity checks + calibration report only (~1 min)
+#   bash run_all.sh quick      70 integrity checks + calibration report only (~1 min)
 # All outputs (charts, CSVs, logs) are written to results/.
 set -euo pipefail
 cd "$(dirname "$0")"
 mkdir -p results
 
-echo ">>> integrity checks (57 in total)"
-for m in verify verify_admin verify_trucks verify_optimiser; do
+echo ">>> integrity checks (70 in total)"
+for m in verify verify_admin verify_trucks verify_optimiser verify_damage; do
   python3 -m rtsim.$m
 done 2>&1 | tee results/verify_all.log
 

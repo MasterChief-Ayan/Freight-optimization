@@ -167,6 +167,43 @@ class CoordinationConfig:
 
 
 # ----------------------------------------------------------------------
+# WAGON DAMAGE (optional module, rtsim/damage.py). OFF by default: with
+# enabled=False the model is byte-identical to the version without it.
+# ----------------------------------------------------------------------
+@dataclass(frozen=True)
+class DamageConfig:
+    """Wagons found damaged at the siding, and what that does to the rake.
+
+    Field facts this follows (sources in rtsim/damage.py):
+      - wagons with rejectable defects are marked sick; the usual practice is
+        to detach them and attach a fit wagon [IRIMEE, freight train exam];
+        the supervisor reports cases where the whole rake is sent back;
+      - a sizeable number of wagons are found unloadable at examination,
+        partly from mishandling at private sidings [CAG 31/2014, ch. 10];
+      - an unfit/sick-wagon free-time allowance exists ONLY for the seven old
+        steel plants [IR-COMP 2.3(b)]; elsewhere the time stays inside the
+        free-time window, and demurrage applies to the whole group of wagons
+        even if one wagon is detained [IR-COMP 2.1.2].
+    No published rate of damage per wagon at loading sidings was found, so
+    every probability and duration below is ASSUMED (scenario inputs)."""
+    enabled: bool = False
+    # (1) empty rake: wagons found defective when examined after placement
+    p_defect_per_wagon: float = 0.0                 # ASSUMED (scenario)
+    share_minor: float = 0.6                        # ASSUMED: no effect on loading
+    share_repairable: float = 0.3                   # ASSUMED: fixed at the siding
+    #   remainder (0.1) = unfit: cannot be fixed at the siding
+    repair_hr_per_wagon: Dist = field(default_factory=lambda: Dist("logn", mean=1.5, sd=0.75))  # ASSUMED
+    unfit_policy: str = "detach"                    # "detach" | "return_rake"
+    detach_hr: Dist = field(default_factory=lambda: Dist("logn", mean=1.5, sd=0.5))   # ASSUMED, needs the loco
+    replacement_lead_hr: Dist = field(default_factory=lambda: Dist("logn", mean=24.0, sd=12.0))  # ASSUMED
+    max_attempts: int = 3                           # replacement rakes tried before accepting
+    # (2) loaded rake: wagons damaged by the loading equipment, found at the
+    #     outgoing examination and repaired before release
+    p_loading_damage_per_wagon: float = 0.0         # ASSUMED (scenario)
+    loading_repair_hr_per_wagon: Dist = field(default_factory=lambda: Dist("logn", mean=1.0, sd=0.5))  # ASSUMED
+
+
+# ----------------------------------------------------------------------
 # EXPERIMENT CONTROL
 # ----------------------------------------------------------------------
 @dataclass(frozen=True)
@@ -190,6 +227,7 @@ class Config:
     coordination: CoordinationConfig = field(default_factory=CoordinationConfig)
     charges: ChargeConfig = field(default_factory=ChargeConfig)
     run: RunConfig = field(default_factory=RunConfig)
+    damage: DamageConfig = field(default_factory=DamageConfig)
 
     # Scenario metadata - printed on every result table so no chart is
     # ever ambiguous about which assumptions produced it

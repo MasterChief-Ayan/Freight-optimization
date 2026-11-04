@@ -126,6 +126,11 @@ class Terminal:
         # trucks that turned up too late to be useful (hard infeasibility)
         self.loading_started = {}
         self.road = None       # RoadSide, attached in Layer 2
+        # Optional wagon-damage module (rtsim/damage.py), attached by simulate()
+        # only when cfg.damage.enabled. None = the model without it, unchanged.
+        self.damage = None
+        self.damage_log = {}       # rake_id -> what the examinations found
+        self.load_hr_override = {}  # rake_id -> loading time after detaching wagons
         rc = cfg.resources
         # NOT a PriorityResource. SimPy fixes a request's priority at the
         # moment it is made, which makes any time-dependent bid - ageing,
@@ -216,6 +221,10 @@ class Terminal:
         self._dispatch()
         yield awarded                     # won the call for proposals
 
+        insp = None
+        if self.damage is not None:       # optional module; no-op when off
+            insp = yield from self._damage_before_placement(rake)
+
         try:
             # --- placement: needs the loco as well -----------------------
             with self.loco.request() as loco_req:
@@ -229,10 +238,13 @@ class Terminal:
             # may begin, and stacking permission (M2, started at booking)
             # must have been granted. Both sit INSIDE the free-time window,
             # so any time spent here is chargeable detention.
+            dmg = self._start_damage_work(rake, insp) if insp is not None else None
             yield from self._gate(rake, "M4")
             m2 = self.pending.pop(rake.id, None)
             if m2 is not None:
                 yield m2
+            if dmg is not None:           # repairs / detachment run beside M4
+                yield dmg
 
             # --- loading: needs a crew -----------------------------------
             wait_for_shift = self._crew_window_delay()
@@ -250,7 +262,7 @@ class Terminal:
                 ev = self.loading_started.get(rake.id)
                 if ev is not None and not ev.triggered:
                     ev.succeed()
-                yield self.env.timeout(rake.load_hr)
+                yield self.env.timeout(self.load_hr_override.get(rake.id, rake.load_hr))
                 self._ev(rake, "loading_end", PARTY_TERMINAL, resource="crew")
 
             # M7 (RR + freight payment) is prepared IN PARALLEL with
@@ -263,7 +275,10 @@ class Terminal:
             # reporting (M6). Both sit between loading_end and released, so
             # every hour here is chargeable detention. TERI attributes
             # 80-85% of terminal restrictions to poor release.
+            ldmg = self._start_loading_damage(rake) if self.damage is not None else None
             yield from self._gate(rake, "M5", "M6")
+            if ldmg is not None:          # loading-damage repairs run beside M5/M6
+                yield ldmg
 
             # FREE TIME CLOCK STOPS HERE (IR rule)
             self._ev(rake, "released", PARTY_TERMINAL)
@@ -294,6 +309,104 @@ class Terminal:
             yield m7
         self._ev(rake, "departed", PARTY_CLIENT)
 
+
+
+    # -- optional wagon-damage module (cfg.damage; see rtsim/damage.py) -----
+    def _damage_before_placement(self, rake: Rake):
+        """Examine the empty rake. Under 'return_rake', a rake with an unfit
+        wagon is placed, examined, sent back, and a replacement queues again;
+        those trial events carry their own names, so the IR detention clock of
+        the rake that is finally loaded is unaffected by the rejected visit."""
+        d = self.damage
+        rec = self.damage_log.setdefault(rake.id, {
+            "attempts": 1, "rejected": 0, "trial_line_hr": 0.0, "replacement_wait_hr": 0.0,
+            "n_defect": 0, "n_minor": 0, "n_repairable": 0, "n_unfit": 0,
+            "repair_hr": 0.0, "detach_hr": 0.0, "wagons_detached": 0, "tonnes_lost": 0.0,
+            "n_loading_damage": 0, "loading_repair_hr": 0.0})
+        attempt = 1
+        while True:
+            insp = d.inspect(rake.id, rake.wagons, attempt)
+            if not (insp.n_unfit > 0 and d.cfg.unfit_policy == "return_rake"
+                    and attempt < d.cfg.max_attempts):
+                break
+            # trial placement, examination, rejection, removal: the line is held
+            t0 = self.env.now
+            with self.loco.request() as rq:
+                yield rq
+                self._ev(rake, "trial_placement_start", PARTY_RAILWAY, resource="loco")
+                yield self.env.timeout(rake.place_hr)
+            self._ev(rake, "rake_rejected", PARTY_RAILWAY, resource="line",
+                     detail=f"{insp.n_unfit} unfit wagon(s), attempt {attempt}")
+            with self.loco.request() as rq:
+                yield rq
+                yield self.env.timeout(rake.remove_hr)
+            self._ev(rake, "trial_removed", PARTY_RAILWAY, resource="line")
+            rec["trial_line_hr"] += self.env.now - t0
+            rec["rejected"] += 1
+            self.free_lines += 1
+            self._dispatch()
+            self._sample()
+            lead = d.lead_hours(rake.id, attempt)
+            yield self.env.timeout(lead)
+            rec["replacement_wait_hr"] += lead
+            self._ev(rake, "replacement_arrive", PARTY_RAILWAY)
+            attempt += 1
+            rec["attempts"] = attempt
+            self._waiting += 1
+            self._sample()
+            again = self.env.event()
+            self.waiting.append((rake, again))
+            self._dispatch()
+            yield again
+        for k in ("n_defect", "n_minor", "n_repairable", "n_unfit"):
+            rec[k] = getattr(insp, k)
+        rec["attempt_used"] = attempt
+        return insp
+
+    def _start_damage_work(self, rake: Rake, insp):
+        """Repairs at the siding, then detachment of unfit wagons (needs the
+        loco). Runs as a parallel process joined before loading."""
+        d, rec = self.damage, self.damage_log[rake.id]
+
+        def work():
+            if insp.n_repairable > 0:
+                h = d.repair_hours(rake.id, insp.n_repairable, rec["attempt_used"])
+                self._ev(rake, "wagon_repair_start", PARTY_RAILWAY, detail=f"{insp.n_repairable} wagon(s)")
+                yield self.env.timeout(h)
+                self._ev(rake, "wagon_repair_end", PARTY_RAILWAY)
+                rec["repair_hr"] = h
+            if insp.n_unfit > 0:          # detach (or the last attempt under return_rake)
+                with self.loco.request() as rq:
+                    yield rq
+                    h = d.detach_hours(rake.id)
+                    self._ev(rake, "detach_start", PARTY_RAILWAY, resource="loco",
+                             detail=f"{insp.n_unfit} wagon(s)")
+                    yield self.env.timeout(h)
+                    self._ev(rake, "detach_end", PARTY_RAILWAY, resource="loco")
+                k = min(insp.n_unfit, rake.wagons - 1)
+                rec["detach_hr"] = h
+                rec["wagons_detached"] = k
+                rec["tonnes_lost"] = rake.tonnes * k / rake.wagons
+                self.load_hr_override[rake.id] = rake.load_hr * (rake.wagons - k) / rake.wagons
+        if insp.n_repairable == 0 and insp.n_unfit == 0:
+            return None
+        return self.env.process(work())
+
+    def _start_loading_damage(self, rake: Rake):
+        d = self.damage
+        rec = self.damage_log.setdefault(rake.id, {})
+        n = d.loading_damage(rake.id, rake.wagons)
+        rec["n_loading_damage"] = n
+        if n == 0:
+            return None
+
+        def work():
+            h = d.loading_repair_hours(rake.id, n)
+            self._ev(rake, "loading_damage_repair_start", PARTY_TERMINAL, detail=f"{n} wagon(s)")
+            yield self.env.timeout(h)
+            self._ev(rake, "loading_damage_repair_end", PARTY_TERMINAL)
+            rec["loading_repair_hr"] = h
+        return self.env.process(work())
 
 
 def feed(env: simpy.Environment, terminal: Terminal, rakes: List[Rake]):
@@ -363,6 +476,9 @@ def simulate(cfg: Config, policy: PolicyFn, seed: int,
 
     admin = AdminChain(env, log, streams, admin_steps) if admin_steps is not None else None
     term = Terminal(env, cfg, log, policy, admin=admin)
+    if cfg.damage.enabled:
+        from .damage import DamageModel
+        term.damage = DamageModel(cfg.damage, streams)
 
     if tas_rule is not None:
         trucks = generate_trucks(cfg, rakes, streams)
