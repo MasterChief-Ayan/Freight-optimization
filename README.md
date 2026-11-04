@@ -28,6 +28,8 @@ register: 220,395 consignments, 2022–26.
 | 8 | When extra labour pays | 50% faster loading is worth **₹10.5k–35.6k per rake** in demurrage = ₹5.5/t (bulk), ₹9/t (bagged): pays if labour is paid per tonne; per full shift only bulk ≈ breaks even | `layer6_C4_…`, `layer6_C5_labour_vs_demurrage.csv` |
 | 9 | Fair dispatch is free | Contract-Net ageing cuts the worst-case wait by 33% (161 → 108 h) at ≈ 0 cost to the mean | `layer3_E10_fairness.csv` |
 | 10 | The variable set is sufficient for ranking | adding 9 omitted-factor scenarios (extra delays, +50% traffic, disruptions, errors ×2): ranking of all 6 interventions unchanged (Kendall τ = 1.00) | `layer7_O2_rank_stability.csv`, `docs/VARIABLE_SELECTION.md` |
+| 11 | Where the 17 h come from (coal) | 4.7 loading + 5.9 paperwork work + 1.1 rework + **5.4 waiting for the office to open**; package A (24/7 + digital release) → 9.5 h, demurrage ₹89.8k → ₹19.7k per rake | `layer8_B2_cause_split.csv`, `layer8_B3_money.csv` |
+| 12 | Damaged wagon: detach, don't return | sending the whole rake back ties up 2.3–2.6× the wagon time of detaching the bad wagon (damage rates ASSUMED) | `layer8_B7_damage.csv` |
 
 Rule for quoting: a number that depends only on CITED or DERIVED parameters is a figure. A number
 that touches an ASSUMED parameter (admin durations, truck volumes) is a direction or ranking only.
@@ -61,8 +63,9 @@ archive/        Phase-1 prototypes (history only, not used)
 | `admin.py` | 1 | paperwork steps M1–M8 with office-hour calendars and rework loops, gating the physical chain |
 | `trucks.py` | 2 | road side: trucks, gate, one-way lane, appointment system, M8 |
 | `optimiser.py` | 3 | CP-SAT optimal sequence and valid lower bound |
+| `damage.py` | opt. | wagon damage at the siding (minor / repaired / unfit → detach or return rake); OFF by default |
 | `calibration.py` | – | provenance table: each parameter's value, source and status |
-| `verify*.py` (4 files) | – | 57 integrity checks (18 + 13 + 12 + 14) |
+| `verify*.py` (5 files) | – | 70 integrity checks (18 + 13 + 12 + 14 + 13 damage) |
 
 ### `experiments/`: one script per question
 
@@ -77,6 +80,7 @@ archive/        Phase-1 prototypes (history only, not used)
 | `run_layer5_sensitivity.py` | Each of 39 parameters and 27 conditions alone: bounds, Morris screening, envelope |
 | `run_layer6_commodities.py` | 10 materials from field data: which levers are general vs material-specific; labour break-even and labour cost (C5) |
 | `run_layer7_sufficiency.py` | Are the variables enough? Adds omitted factors and checks whether the ranking of interventions changes |
+| `run_layer8_breakdown.py` | **Breakdown**: every hour and rupee per package (segments, causes, IR bands, Shapley split, parties, wagons, capacity) + wagon-damage scenarios |
 | `_bootstrap.py` | Path helper (repo root on `sys.path`, output to `results/`) |
 
 ### `tools/`: data and figures
@@ -85,9 +89,9 @@ archive/        Phase-1 prototypes (history only, not used)
 |---|---|
 | `rr_register.py` | Loads, cleans (rules C1–C5) and decodes the FOIS register; code tables graded A/B/C |
 | `analyse_rr_register.py` | Per-commodity profiles and model parameters → `results/field/F0–F5` |
-| `verify_extensions.py` | 25 checks on Layers 5–7 and the field data |
+| `verify_extensions.py` | 30 checks on Layers 5–8 and the field data |
 | `make_slide_charts.py` | Mid-term slide figures |
-| `make_prof_charts.py` | Seven supervisor figures (Fig1–Fig7) → `results/prof/` |
+| `make_prof_charts.py` | Ten supervisor figures (Fig1–Fig10) → `results/prof/` |
 | `compare_outputs.py` | Proves a refactor changed no number (`ALL IDENTICAL`) |
 | `dry_run_two_rakes.py` | Prints one replication event by event (for understanding/debugging) |
 
@@ -105,12 +109,12 @@ config ─► terminal (+admin, +trucks) ─► eventlog ─► accounting ─�
 
 ```bash
 pip install -r requirements.txt
-bash run_all.sh quick               # 57 checks + provenance table (~1 min)
+bash run_all.sh quick               # 70 model checks + provenance table (~1 min)
 bash run_all.sh                     # regenerate everything in results/ (~15 min, 2 cores)
 python tools/dry_run_two_rakes.py   # watch one simulation, event by event
 ```
 
-Integrity: **82/82 checks pass** (57 model + 25 extensions).
+Integrity: **100/100 checks pass** (70 model + 30 extensions).
 
 ## Data
 
@@ -124,6 +128,7 @@ calibrate detention hours; for that we are waiting on terminal time logs. See `d
 - `docs/PROJECT_STORY.md`: how the project started, the mid-term, current state, next steps, numbers to quote.
 - `docs/CODEBASE.md`: every file in detail, event chain, recipes for adding features.
 - `docs/VARIABLE_SELECTION.md`: why these variables, where each candidate factor is, and the sufficiency test.
+- `docs/BREAKDOWN_REPORT.md`: where every hour and rupee comes from, wagon damage, engine assessment.
 - `docs/WORKFLOW.md`: branches, tags, how to save changes.
 
 Milestone tags: `v1.0-midterm-model` (Layers 0–4) · `v1.1-sensitivity-commodities` (Layers 5–6 + field data).

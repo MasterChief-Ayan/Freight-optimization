@@ -83,3 +83,23 @@ LAYER 3 VERIFICATION  -  optimiser and coordination
 ---------------------------------------------------------------------------------------------
   14/14 passed
 =============================================================================================
+
+========================================================================================================
+WAGON-DAMAGE MODULE VERIFICATION
+========================================================================================================
+  [PASS] enabled with p = 0 reproduces the model exactly (Layer 1)                   50 rakes, mean detention 15.6039 h
+  [PASS] enabled with p = 0 reproduces the model exactly (Layer 0)                   
+  [PASS] repairs at the siding raise detention and the pre-loading gap               detention 15.60 -> 18.34 h; pre-loading 1.69 -> 3.61 h
+  [PASS] repairs run in parallel with M4 (tiny repairs add ~0 h)                     diff +0.0000 h
+  [PASS] detach: every unfit wagon is detached                                       100 wagons detached
+  [PASS] detach: the delay falls inside the free-time window (detention rises)       15.60 -> 16.30 h
+  [PASS] return_rake: rejected rakes wait at least the replacement lead time longer  45 rakes rejected
+  [PASS] return_rake: free-time clock starts only after the rejected visit           45 rakes; detention 15.22 h (return) vs 16.30 h (detach)
+  [PASS] event chain stays in order with damage on                                   both policies
+  [PASS] loading line never over capacity (incl. rejected visits)                    both policies
+  [PASS] loading damage repaired between loading end and release                     32 rakes
+  [PASS] detention rises with the damage rate                                        15.60 -> 15.91 -> 16.58
+  [PASS] every damage event has an owner                                             737 events
+--------------------------------------------------------------------------------------------------------
+  13/13 passed
+========================================================================================================

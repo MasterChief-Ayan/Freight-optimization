@@ -20,6 +20,11 @@ EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 su
   [PASS] C5 labour-cost table is consistent with the C4 break-even        max gap Rs 0.13
   [PASS] Layer 7 'model as built' = Layer 5 base (same seeds, same model) 15.5302 vs 15.5302 h
   [PASS] every omitted factor added makes the base slower, never faster   15.53-23.07 h
+  [PASS] Layer 8 base = Layer 6 coal BOXN base (same seeds, same profile) 17.019 h
+  [PASS] billed hours split exactly into loading + work + rework + office wait 4 packages
+  [PASS] demurrage by IR band adds up to demurrage per rake               6 bands
+  [PASS] Shapley shares add up exactly to each package's saving           9 package-metric pairs
+  [PASS] returning the whole rake ties up more wagon time than detaching  3 damage levels
   [PASS] no sub-total rows remain                                         220,395 RRs
   [PASS] tonnage conserved when grouped                                   508.5 Mt
   [PASS] OTC is the Rs 20/t terminal charge                               median 20.000 Rs/t on 44,496 RRs
@@ -28,4 +33,4 @@ EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 su
   [PASS] coal pays no busy-season charge after 01.10.2022 (exemption)     80,286 coal RRs
   [PASS] commodity groups cover >= 95 % of tonnes                         97.0%
 ------------------------------------------------------------------------------------------
-  25/25 passed
+  30/30 passed

@@ -4,7 +4,7 @@
 terminal, and solutions for quick release of rolling stock.*
 **Student:** Ayan Ahmed (22MF3IM04) · **Supervisor:** Prof. Biswajit Mahanty · M.Tech, Industrial & Systems Engineering
 **Context:** Indian Railways coal rakes at a **private siding** (Eastern Railway context).
-**This file last updated:** 25-Oct-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
+**This file last updated:** 4-Nov-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
 
 > **How to use this file (future sessions / Claude Code).** Read §0 first. It is the
 > state of the project in a dozen lines. §1–§3 are history, so you know *why* things are the way they are.
@@ -38,7 +38,8 @@ terminal, and solutions for quick release of rolling stock.*
    508.5 Mt** (after removing 338 sub-total rows). It has money, volume, wagons, wagon type and
    overloading, but **no placement/release timestamps**. It is **decoded** (`tools/rr_register.py`) and
    used for commodity profiles; the multi-commodity analysis (Layer 6) is done.
-10. Integrity: **82 checks** pass (57 model + 25 for Layers 5–7 and the data decoding,
+10. Integrity: **100 checks** pass (70 model incl. 13 for the wagon-damage module + 30 for Layers 5–8
+    and the data decoding,
     `tools/verify_extensions.py`).
 11. Code base consolidated and re-verified on 22-Oct-2026 (this repo). Layers 3, 4 and E11
     reproduce the chat-era numbers exactly. 19/20 result tables are bit-identical between the
@@ -52,6 +53,11 @@ terminal, and solutions for quick release of rolling stock.*
 13. 25-Oct-2026 (§6H): detention for every length of the terminal day (8–24 h, Fig. 7). The sweep
     exposed a calendar bug (days longer than 18 h were capped at midnight); fixed and re-run. Only
     the Layer 5 20-h level (13.46 → 12.28 h) and Morris values moved slightly; bounds unchanged.
+14. 2/4-Nov-2026 (§6I, `docs/BREAKDOWN_REPORT.md`): supervisor asked for (i) a full **breakdown** of how
+    the time and money savings arise, (ii) **wagon damage**, (iii) engines. Built Layer 8 (coal BOXN:
+    segment, cause, IR-band, Shapley, party, wagon and capacity breakdowns) and an optional
+    wagon-damage module (off by default; byte-identical when off). Engine assessed, deferred.
+    Direction note (scrap example = batch clearance; integrated business case): `2November2026/`.
 
 ---
 
@@ -229,7 +235,7 @@ M1–M8 service times; M1–M8 rework 0.05–0.20; truck capacity 35 t; slots/pe
 6. **Multiple materials**, each with its own approvals/formalities and wagon type.
 7. Wagon/train information source: FOIS **RailSAHAY** (https://www.fois.indianrail.gov.in/RailSAHAY/Home.jsp).
 
-### 4.2 Status against those asks (updated 24-Oct-2026)
+### 4.2 Status against those asks (updated 4-Nov-2026)
 | Ask | Status | Where |
 |---|---|---|
 | Per-parameter bounds (mid-term ask 1) | **Done** — Layer 5: 39 parameters × 5 levels, 27 conditions, Morris, envelope (§6A) | `experiments/run_layer5_sensitivity.py` |
@@ -244,6 +250,9 @@ M1–M8 service times; M1–M8 rework 0.05–0.20; truck capacity 35 t; slots/pe
 | Optimisation objective | **Time** (CP-SAT minimises waiting). Money is *measured* and used in COST/CNP bids, not optimised | `optimiser.py`, `accounting.py` |
 | Hypothesis / reverse engineering | **Dropped** on Ayan's instruction (too vague) | — |
 | Placement–release time logs | **Requested** from the PhD students by Ayan; uncertain. Work proceeds without them | — |
+| Breakdown of savings (4-Nov) | **Done** — Layer 8: segments, causes, IR bands, Shapley, parties, wagons, capacity (§6I) | `experiments/run_layer8_breakdown.py`, `docs/BREAKDOWN_REPORT.md` |
+| Wagon damage (4-Nov) | **Done (scenario level)** — module `rtsim/damage.py` (minor / repaired / unfit → detach or return rake; loading damage); rates ASSUMED, rules cited (§6I) | Layer 8 B7, Fig. 10 |
+| Engines: types, origin, capacity (4-Nov) | **Assessed, deferred** — loco delays fall outside the billed window; light "loco availability lag" design ready if asked (§6I) | `docs/BREAKDOWN_REPORT.md` §6 |
 
 ### 4.3 Repository consolidation (done 22-Oct-2026)
 The chat produced files in many separate replies. The code was **replayed from the chat history
@@ -292,6 +301,8 @@ drives detention and cost (with bounds). It ranks interventions by **net** benef
 | R7 | Validation on field data | needs placement–release logs (requested); partial: Poisson arrivals confirmed (§6C) | open |
 | R8 | Incentive alignment (who causes vs who pays) | attribution (L1) + pricing levers (E13/E14) | done (qualitative policy argument) |
 | R9 | **Sufficiency of the variable set** | traceability + omitted-factor stress test (Layer 7) | **done** (rankings robust; absolute hours need time logs) |
+| R10 | **Breakdown of time and money** (where every hour and rupee comes from; fair split between levers) | counterfactual cause split + IR band split + Shapley (Layer 8) | **done** |
+| R11 | **Wagon damage** (detach vs return rake) | optional damage module, scenario sweep (Layer 8 B7) | **done at scenario level** (rates ASSUMED) |
 
 ---
 
@@ -546,6 +557,32 @@ M4–M6 set to 8, 9, …, 24 h a day on the calibrated base (30 paired reps × 5
   opening earlier (20 h = 04:00–24:00). Two new checks guard it (the sweep reproduces the Layer 5
   levels; every extra hour strictly shortens detention).
 
+### 6I. Breakdown, wagon damage, engine (Layer 8, 4-Nov-2026)
+Full write-up with every table: `docs/BREAKDOWN_REPORT.md`. Headlines (coal BOXN, 292 rakes/yr):
+- **Billed window today 17.0 h** = 4.7 loading + 5.9 paperwork working time + 1.1 rework +
+  **5.4 waiting for the office to open**. Package A (24/7 + digital release) → 9.5 h; C → 7.3 h.
+- **Demurrage per rake** ₹89,786 → ₹19,651 (A) → ₹6,265 (C); the 6–24 h bands empty first, which is
+  why money falls faster than time.
+- **Data leak** (overload penalty + paid-unused capacity) ₹143,914 per rake = ₹4.20 crore/yr,
+  removed by precise loading; larger than the demurrage saving.
+- **Shapley split of package C's 9.77 h:** 24/7 37 %, digital release 34 %, faster loading 19 %,
+  precise loading 9 %. Alone they would sum to 13.51 h.
+- **Wagons freed:** 47.6 (A) – 56.4 (C) wagons (₹21.0–24.9 crore) with RR + payment electronic, as the
+  ER data show for coal (eT-RR 99.7 %, e-payment 87 %); 37.5–47.3 wagons if RR waited for office
+  hours (the model's M7 assumption, which conflicts with the data — see §8).
+- **Wagon damage (rates ASSUMED):** returning the whole rake ties up **2.3–2.6×** the wagon time of
+  detaching the bad wagon; the client's demurrage barely moves (the rejected visit is outside the
+  clock). Loading damage costs ≈ 0 h today (hidden behind M5/M6), only showing after paperwork
+  is fixed. Rules: IRIMEE (detach + attach fit wagon), CAG 31/2014 ch. 10, IR-COMP 2.3(b) (allowance
+  only for old steel plants), 2.1.2 (group demurrage).
+- **Engine:** placement and removal sit outside the IR clock, so loco delays change queue, wagon
+  time and capacity, not demurrage; a second loco already showed 0 h. A light "loco availability
+  lag + traction mix" design is ready if the supervisor wants it (no loco data in the register).
+- **Verification:** before any change, `main` at `a3fe0df` was snapshotted. After adding the
+  damage module and Layer 8, the full pipeline was re-run: 32/32 pre-existing result tables are
+  identical. The only differences are the CP-SAT rows of E8b/E9 (known wall-clock
+  non-determinism, §7.3, not quoted). Layer 8 reproduces the 2-Nov pilot to < 1e-4.
+
 ## 7. Numbers to quote (and which version they come from)
 
 ### 7.1 Exactly reproduced by the final code (safe to quote as model results)
@@ -611,6 +648,9 @@ Layer 7: ranking unchanged in 9/9 omitted-factor scenarios, procedure > capital 
   so no baseline result changes); labour cost compared only with *published* rates under two
   bounding pay models (no invented labour cost); sufficiency answered by a stress test, not by
   argument alone.
+- **Pending (4-Nov):** recalibrate M7 (RR + payment) to the field evidence (eT-RR 99.7 %, e-payment
+  87 % for coal). It does not affect detention or demurrage, but it does affect arrival → departure,
+  wagon time and the Layer 1 attribution ("client 23.7 %"). Engine light version only if asked.
 - **Pending:** scaling (R5); capital annuities for silo / 2nd line (R4);
   **LaTeX/Overleaf thesis** — Ayan will provide reference documents for style/format; ask for them
   before starting.
