@@ -82,7 +82,7 @@ exact, i.e. the parts add up to the detention.
 Reading:
 - **Today, 6.5 of 17.0 h (38 %) are not productive work:** 5.4 h of waiting for the office to
   open, plus 1.1 h of redoing rejected paperwork.
-- Package A removes the office wait completely and makes release reporting faster.
+- Package A removes the office wait almost completely (5.38 → 0.02 h) and makes release reporting faster.
 - Precise loading removes the remaining rework (no overloading means no re-weighment).
 - Faster loading then cuts the physical part.
 
@@ -179,6 +179,7 @@ electronic (`layer8_B8`):
 The equivalent rows with RR waiting for office hours start from §2.1 (70.50 → 51.12 / 50.30 /
 46.02 h).
 
+**Railway gains:**
 - wagon time back, with RR + payment electronic, as the ER data show for coal (eT-RR 99.7 %,
   e-payment 87 %, on-account 13 %): **47.6 wagons (₹21.0 crore of fleet) with A, 56.4 wagons
   (₹24.9 crore) with C**;
@@ -243,8 +244,8 @@ weighment and release reporting (M5, M6).
 
 | Defective wagons | Policy | Extra detention (billed) | Extra waiting | Extra arrival → departure | Extra demurrage per year | Wagons tied up |
 |---|---|---|---|---|---|---|
-| 0.5 % | detach | +0.11 h | +0.49 h | +0.47 h | ₹2.8 lakh | 0.9 |
-| 0.5 % | return rake | +0.09 h | +1.39 h | +1.24 h | ₹2.5 lakh | 2.4 |
+| 0.5 % | detach | +0.11 h | +0.48 h | +0.47 h | ₹2.8 lakh | 0.9 |
+| 0.5 % | return rake | +0.09 h | +1.39 h | +1.23 h | ₹2.5 lakh | 2.4 |
 | 1 % | detach | +0.28 h | +1.04 h | +1.13 h | ₹7.7 lakh | 2.2 |
 | 1 % | return rake (6 % of rakes rejected) | +0.17 h | +3.11 h | +2.99 h | ₹4.7 lakh | 5.8 |
 | 2 % | detach | +0.58 h | +2.12 h | +2.57 h | ₹16.1 lakh | 5.0 |
@@ -338,12 +339,12 @@ definition; only queue, wagon time and capacity will.
 | Demurrage per rake today → A → C | ₹89,800 → ₹19,700 → ₹6,300 (−78 %, −93 %) | rake by rake (§3.1), averaged | §3.1; `layer8_B3` |
 | Demurrage avoided per year | ₹2.05 / ₹2.44 crore | (₹89,786 − ₹19,651) × 292 = ₹2.05 cr; (₹89,786 − ₹6,265) × 292 = ₹2.44 cr | §3.2 |
 | Line capacity | +65 % (A), ×2 (C) | 8,760 ÷ line-held hours: 8,760/19.01 = 461 → 8,760/11.50 = 762 → 8,760/9.25 = 947 rakes/yr | §2.1, §3.4 |
-| Wagons freed (fleet value) | 48 / 57 wagons (₹21 / ₹25 crore) | §3.4 table, RR + payment electronic as the data show | §3.4; `layer8_B8` |
+| Wagons freed (fleet value) | 48 / 56 wagons (₹21.0 / ₹24.9 crore). The 2-Nov email said 48–57 (₹21–25 crore): its 57 came from the 2-Nov pilot's narrower measure (waiting + detention saved = 56.6 wagons for C). | §3.4 table, whole stay, RR + payment electronic as the data show | §3.4; `layer8_B8` |
 | Line held ~19 h vs ~6–7 h physical work | 19.01 h vs 0.99 + 4.69 + 1.00 = 6.68 h | placement + loading + removal | §2.1 |
 | "Office hours cause ~73 % of all waiting" | 73.3 % | **different measure:** E11 decomposition of total *waiting* in the base model (25 rakes, arrival every 22 h), not of the coal billed window. In the coal billed window, office waiting is 5.4 of 17.0 h (32 %). | `layer3_E11_decomposition.csv` |
 | Savings don't add up | 13.5 h alone vs 9.8 h together | four single-lever runs vs package C | §3.3; `layer8_B4` |
 | Yard clutter share 8.7 % → 12.3 % | +1.48 h today, +1.17 h after A | factorial, Y on/off | §4; `layer8_B5` |
-| A second line alone doesn't reduce detention | −0.28 h (E12), −0.39 h (Layer 7) | earlier experiments | `layer4_E12_interventions.csv`, `layer7_O1_sufficiency.csv` |
+| A second line alone doesn't reduce detention | detention 0.28 h worse (E12), 0.39 h worse (Layer 7) | earlier experiments | `layer4_E12_interventions.csv`, `layer7_O1_sufficiency.csv` |
 | Scrap: 10–50 days to pay, 40–50 (+15) days to lift; ₹6,814 crore scrap sales FY26 | — | cited documents | 2-Nov direction note (project) |
 | Coal 17,200 rakes/yr (62 Mt), 5.6× iron ore; penalties ₹24 crore/yr (coal), ₹14 crore/yr (iron ore); 160 t unused per rake | — | ER register, full rakes arriving in ER, 4.66 years | `tools/rr_register.py`; PROJECT_STORY §6C |
 | Copper not among the 16 groups (97 % of tonnage) | — | ER register | `results/field/F1_commodity_profiles.csv` |
