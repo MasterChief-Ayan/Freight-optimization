@@ -100,6 +100,20 @@ Reading:
 | 24–48 h (₹225) | 1,759 | 39 | 39 | 19 |
 | **Total per rake** | **89,786** | **19,651** | **14,195** | **6,265** |
 
+**How each rake's demurrage is computed (intermediate step).** Rake by rake:
+1. excess = detention − 8 h free time;
+2. part-hours are charged as full hours (model setting `demurrage_part_hour_rounding`);
+3. each band's hours × that band's rate × 58 wagons;
+4. the sum is that rake's demurrage; the table shows the average over rakes.
+
+Worked example for one rake at the average detention of 17.02 h:
+- excess 9.02 h → 10 charged hours;
+- 6 h × ₹150 + 4 h × ₹165 = ₹1,560 per wagon;
+- × 58 wagons = **₹90,480**.
+
+This is close to, but not equal to, the table's ₹89,786. The table averages each rake's own
+charge, and rakes differ.
+
 **Why money falls faster than time.** Package A cuts detention by 44 % but demurrage by 78 %. Two
 reasons:
 - every hour removed lies *above* the 8 h free time;
@@ -110,13 +124,26 @@ reasons:
 | | TODAY | A | B | C |
 |---|---|---|---|---|
 | Demurrage per rake | ₹89,786 | ₹19,651 | ₹14,195 | ₹6,265 |
-| Data leak per rake (overload penalty + paid-unused capacity) | ₹143,914 | ₹143,914 | 0 | 0 |
+| Data leak per rake = overload penalty ₹949 + paid-unused capacity ₹142,965 | ₹143,914 | ₹143,914 | 0 | 0 |
 | **Client's avoidable cost per rake** | **₹233,701** | ₹163,566 | ₹14,195 | ₹6,265 |
 | Demurrage avoided per year | — | ₹2.05 crore | ₹2.21 crore | ₹2.44 crore |
 | Penalties + paid-unused capacity avoided per year | — | 0 | **₹4.20 crore** | **₹4.20 crore** |
 
-The data leak is larger than the demurrage. Precise loading (weigh-controlled loading) is worth
-₹4.2 crore a year to a coal siding of this size. That is the field data's strongest money signal.
+**How the data leak is built, and how to read it.** Inputs are ER-register values for coal BOXN
+full rakes (Layer 6 profile).
+
+- **Overload penalty: ₹949 per rake** = 30.4 % overload incidence × ₹3,117 median punitive charge
+  per overloaded consignment.
+  - *This is conservative.* In the register, 44 % of coal full rakes pay some punitive charge, and
+    the mean is ₹28,125 per penalised rake (median ₹3,896; skewed).
+  - That gives an average of **₹12,393 per coal full rake**, about 13× the model's ₹949, or
+    **≈ ₹36 lakh a year** at 292 rakes.
+- **Paid-but-unused capacity: ₹142,965 per rake** = 158.9 t × ₹899.7 per tonne (medians).
+  - This is freight already paid for capacity left empty, not a cash penalty.
+  - Precise, weigh-controlled loading turns it into **~159 t more coal per rake for the same
+    freight bill**. That is ₹4.2 crore a year of carrying value, *assuming* wagons can be filled
+    to the permissible limit.
+  - Read it as a capacity gain, not as cash saved.
 
 ### 3.3 Fair split of the saving between levers (Shapley, `layer8_B4`, Fig. 9)
 
@@ -139,7 +166,19 @@ be introduced, and the shares add up exactly to the package's saving.
 - penalties and paid-unused capacity avoided: ₹4.20 crore (B, C);
 - line capacity: 461 → 762 (A) → 947 (C) rakes a year ceiling (×1.65 to ×2.06), with no new line.
 
-**Railway:**
+**Railway: how the wagon figure is built.** Arrival → departure per rake, with RR + payment
+electronic (`layer8_B8`):
+
+| | TODAY | A | B | C |
+|---|---|---|---|---|
+| Arrival → departure | 56.50 h | 31.87 h | 30.37 h | 27.35 h |
+| Rake-hours saved | — | 24.64 h | 26.13 h | 29.15 h |
+| Wagons freed = saved h × 58 × 292 ÷ 8,760 | — | 47.6 | 50.5 | 56.4 |
+| Fleet value at ₹44.1 lakh per wagon | — | ₹21.0 crore | ₹22.3 crore | ₹24.9 crore |
+
+The equivalent rows with RR waiting for office hours start from §2.1 (70.50 → 51.12 / 50.30 /
+46.02 h).
+
 - wagon time back, with RR + payment electronic, as the ER data show for coal (eT-RR 99.7 %,
   e-payment 87 %, on-account 13 %): **47.6 wagons (₹21.0 crore of fleet) with A, 56.4 wagons
   (₹24.9 crore) with C**;
@@ -161,7 +200,12 @@ be introduced, and the shares add up exactly to the package's saving.
    - office hours → paperwork working time → loading speed (§2.2);
    - after the siding is fixed, RR + payment (M7) decides when the rake actually leaves (§3.4).
      In reality this is largely solved for coal (eT-RR 99.7 %).
-5. **Batch clearance is the common root.** Office calendars (daily batches), shift-paid gangs and
+5. **Yard clutter (scenario: loading 20 % slower).**
+   - It adds +1.48 h per rake today (+8.7 %, +₹14,233 demurrage);
+   - +1.17 h after package A, a *larger share* (+12.3 %);
+   - +0.78 h after C (+10.8 %).
+   - Source: `layer8_B5_factorial.csv`.
+6. **Batch clearance is the common root.** Office calendars (daily batches), shift-paid gangs and
    monthly scrap auctions all create idle occupancy (2-Nov direction note).
 
 ---
@@ -283,3 +327,41 @@ definition; only queue, wagon time and capacity will.
   - It does not affect detention or demurrage.
   - It does affect arrival → departure, wagon time and Layer 1 attribution ("client 23.7 %").
   - Recalibrating M7 is listed as pending (PROJECT_STORY §8).
+
+---
+
+## 9. Traceability: every number in the 2-Nov email, and where it comes from
+
+| Email statement | Value | How it is obtained | Source |
+|---|---|---|---|
+| Detention today → A → C | 17.0 → 9.5 → 7.3 h (−44 %, −57 %) | simulated mean, coal BOXN, 30 reps × 50 rakes | §2.1; `layer8_B1` |
+| Demurrage per rake today → A → C | ₹89,800 → ₹19,700 → ₹6,300 (−78 %, −93 %) | rake by rake (§3.1), averaged | §3.1; `layer8_B3` |
+| Demurrage avoided per year | ₹2.05 / ₹2.44 crore | (₹89,786 − ₹19,651) × 292 = ₹2.05 cr; (₹89,786 − ₹6,265) × 292 = ₹2.44 cr | §3.2 |
+| Line capacity | +65 % (A), ×2 (C) | 8,760 ÷ line-held hours: 8,760/19.01 = 461 → 8,760/11.50 = 762 → 8,760/9.25 = 947 rakes/yr | §2.1, §3.4 |
+| Wagons freed (fleet value) | 48 / 57 wagons (₹21 / ₹25 crore) | §3.4 table, RR + payment electronic as the data show | §3.4; `layer8_B8` |
+| Line held ~19 h vs ~6–7 h physical work | 19.01 h vs 0.99 + 4.69 + 1.00 = 6.68 h | placement + loading + removal | §2.1 |
+| "Office hours cause ~73 % of all waiting" | 73.3 % | **different measure:** E11 decomposition of total *waiting* in the base model (25 rakes, arrival every 22 h), not of the coal billed window. In the coal billed window, office waiting is 5.4 of 17.0 h (32 %). | `layer3_E11_decomposition.csv` |
+| Savings don't add up | 13.5 h alone vs 9.8 h together | four single-lever runs vs package C | §3.3; `layer8_B4` |
+| Yard clutter share 8.7 % → 12.3 % | +1.48 h today, +1.17 h after A | factorial, Y on/off | §4; `layer8_B5` |
+| A second line alone doesn't reduce detention | −0.28 h (E12), −0.39 h (Layer 7) | earlier experiments | `layer4_E12_interventions.csv`, `layer7_O1_sufficiency.csv` |
+| Scrap: 10–50 days to pay, 40–50 (+15) days to lift; ₹6,814 crore scrap sales FY26 | — | cited documents | 2-Nov direction note (project) |
+| Coal 17,200 rakes/yr (62 Mt), 5.6× iron ore; penalties ₹24 crore/yr (coal), ₹14 crore/yr (iron ore); 160 t unused per rake | — | ER register, full rakes arriving in ER, 4.66 years | `tools/rr_register.py`; PROJECT_STORY §6C |
+| Copper not among the 16 groups (97 % of tonnage) | — | ER register | `results/field/F1_commodity_profiles.csv` |
+| Wagon value ₹44 lakh | ₹1,140 crore ÷ 2,583 | MoR order, Oct 2026 | ThePrint, 29-Oct-2026 |
+
+---
+
+## 10. NOT included in any number above (and stated as such)
+
+| Not included | Effect on the numbers | Status |
+|---|---|---|
+| **Cost of implementing the packages** (24/7 staff, digital release system, weigh-controlled loading, extra labour or loaders) | All savings are **gross**. Net benefit = saving − these costs. | Next step (payback; R4). Labour vs demurrage is covered separately (Layer 6 C5). |
+| Repair cost of damaged wagons | Damage effects are counted only as time, demurrage and wagon time | Only a cited range for severe damage (₹5–10 lakh per wagon) exists |
+| Damage rates by wagon type and material | Damage modelled for coal BOXN only; rates ASSUMED | Needs siding damage or sick-marking records |
+| Engines (types, origin, capacity) | Outside the billed window by definition | Assessed; light version ready (§6) |
+| RR + payment (M7) on office hours | The model's base assumption conflicts with the data | Both bases reported (§3.4); recalibration pending |
+| Overload penalty at its mean | Model uses the median-based ₹949 per rake; the data mean is ₹12,393 | Conservative (§3.2) |
+| Paperwork step durations from real logs | Rupee figures are orders of magnitude | Time logs requested |
+| Demurrage pooling, waivers, monthly settlement | Not modelled; they change the bill, not the time | Out of scope |
+| Discounting / inflation | All values in 2026 rupees, per year, undiscounted | — |
+| Traffic other than one rake per 30 h | Per-year values scale with traffic; the queue grows faster than linearly | Scaling study pending (R5) |

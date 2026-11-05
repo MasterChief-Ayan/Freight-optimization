@@ -4,7 +4,7 @@
 terminal, and solutions for quick release of rolling stock.*
 **Student:** Ayan Ahmed (22MF3IM04) · **Supervisor:** Prof. Biswajit Mahanty · M.Tech, Industrial & Systems Engineering
 **Context:** Indian Railways coal rakes at a **private siding** (Eastern Railway context).
-**This file last updated:** 4-Nov-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
+**This file last updated:** 5-Nov-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
 
 > **How to use this file (future sessions / Claude Code).** Read §0 first. It is the
 > state of the project in a dozen lines. §1–§3 are history, so you know *why* things are the way they are.
@@ -651,6 +651,11 @@ Layer 7: ranking unchanged in 9/9 omitted-factor scenarios, procedure > capital 
 - **Pending (4-Nov):** recalibrate M7 (RR + payment) to the field evidence (eT-RR 99.7 %, e-payment
   87 % for coal). It does not affect detention or demurrage, but it does affect arrival → departure,
   wagon time and the Layer 1 attribution ("client 23.7 %"). Engine light version only if asked.
+- **Noted 5-Nov:** the Layer 6/8 overload penalty uses a median (₹949 per coal rake); the ER data mean
+  is ₹12,393 per coal full rake (44 % penalised, mean ₹28,125), so penalty savings are conservative.
+  "Paid-unused capacity" (₹142,965 per rake) is a capacity gain (~159 t more per rake for the same
+  freight), not cash. All package savings are gross (implementation costs not yet included).
+  `docs/BREAKDOWN_REPORT.md` §9 traces every number of the 2-Nov email; §10 lists what is excluded.
 - **Pending:** scaling (R5); capital annuities for silo / 2nd line (R4);
   **LaTeX/Overleaf thesis** — Ayan will provide reference documents for style/format; ask for them
   before starting.
