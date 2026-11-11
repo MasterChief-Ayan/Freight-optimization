@@ -1,0 +1,71 @@
+Layer 9 capacity: 30 reps x 200 rakes (warm-up 20), coal BOXN siding, today's wait at 292 rakes/yr = 35.00 h
+                            config  ceiling_rakes_per_yr  same_service_capacity_rakes_per_yr  extra_rakes_vs_today  extra_pct_vs_today busiest_resource_at_292  crew_util_at_capacity  loco_util_at_capacity
+                             TODAY                458.14                              292.00                  0.00                0.00                    line                   0.16                   0.07
+A paperwork 24/7 + digital release                756.20                              556.02                264.02               90.42                    line                   0.30                   0.13
+           B = A + precise loading                809.17                              612.81                320.81              109.87                    line                   0.33                   0.14
+            C = B + faster loading                945.30                              731.84                439.84              150.63                    line                   0.26                   0.17
+       TODAY + 2nd line + 2nd crew                927.53                              709.75                417.75              143.07                    line                   0.19                   0.16
+           A + 2nd line + 2nd crew               1506.59                             1262.28                970.28              332.29                    line                   0.34                   0.29
+
+K3 simulation vs Pollaczek-Khinchine (one line, utilisation < 0.9):
+                            config       offices  offered_rakes_per_yr  line_util  line_hold_h  queue_wait_h  queue_wait_PK_h  sim_over_PK
+                             TODAY   as modelled                   250      0.543       19.028        14.996           12.903        1.162
+                             TODAY   as modelled                   292      0.637       19.121        21.963           19.064        1.152
+                             TODAY   as modelled                   300      0.654       19.086        22.993           20.433        1.125
+                             TODAY   as modelled                   350      0.769       19.245        37.768           36.159        1.044
+                             TODAY   as modelled                   400      0.883       19.340        74.119           82.102        0.903
+A paperwork 24/7 + digital release   as modelled                   250      0.330       11.579         5.001            3.043        1.644
+A paperwork 24/7 + digital release   as modelled                   292      0.386       11.584         6.476            3.885        1.667
+A paperwork 24/7 + digital release   as modelled                   300      0.397       11.582         6.389            4.057        1.575
+A paperwork 24/7 + digital release   as modelled                   350      0.463       11.585         8.268            5.321        1.554
+A paperwork 24/7 + digital release   as modelled                   400      0.529       11.581        10.627            6.936        1.532
+A paperwork 24/7 + digital release   as modelled                   450      0.595       11.581        12.830            9.062        1.416
+A paperwork 24/7 + digital release   as modelled                   500      0.662       11.595        16.266           12.156        1.338
+A paperwork 24/7 + digital release   as modelled                   550      0.727       11.580        21.255           16.436        1.293
+A paperwork 24/7 + digital release   as modelled                   600      0.793       11.580        27.303           23.659        1.154
+A paperwork 24/7 + digital release   as modelled                   650      0.859       11.582        37.339           37.752        0.989
+           B = A + precise loading   as modelled                   250      0.309       10.820         4.400            2.543        1.730
+           B = A + precise loading   as modelled                   292      0.361       10.826         5.651            3.221        1.755
+           B = A + precise loading   as modelled                   300      0.371       10.824         5.603            3.358        1.669
+           B = A + precise loading   as modelled                   350      0.433       10.827         7.126            4.348        1.639
+           B = A + precise loading   as modelled                   400      0.494       10.823         9.083            5.578        1.629
+           B = A + precise loading   as modelled                   450      0.556       10.823        10.878            7.136        1.524
+           B = A + precise loading   as modelled                   500      0.619       10.837        13.530            9.313        1.453
+           B = A + precise loading   as modelled                   550      0.679       10.822        16.858           12.077        1.396
+           B = A + precise loading   as modelled                   600      0.742       10.826        20.629           16.372        1.260
+           B = A + precise loading   as modelled                   650      0.803       10.824        26.020           23.269        1.118
+           B = A + precise loading   as modelled                   700      0.865       10.823        37.195           36.527        1.018
+            C = B + faster loading   as modelled                   250      0.264        9.262         3.459            1.764        1.960
+            C = B + faster loading   as modelled                   292      0.309        9.267         4.313            2.201        1.960
+            C = B + faster loading   as modelled                   300      0.317        9.265         4.342            2.286        1.899
+            C = B + faster loading   as modelled                   350      0.370        9.267         5.374            2.894        1.857
+            C = B + faster loading   as modelled                   400      0.423        9.265         6.707            3.614        1.856
+            C = B + faster loading   as modelled                   450      0.476        9.264         7.858            4.465        1.760
+            C = B + faster loading   as modelled                   500      0.530        9.279         9.551            5.594        1.707
+            C = B + faster loading   as modelled                   550      0.582        9.262        11.375            6.833        1.665
+            C = B + faster loading   as modelled                   600      0.635        9.267        13.218            8.562        1.544
+            C = B + faster loading   as modelled                   650      0.688        9.266        15.534           10.838        1.433
+            C = B + faster loading   as modelled                   700      0.740        9.265        18.918           14.060        1.345
+            C = B + faster loading   as modelled                   750      0.793        9.261        23.786           18.809        1.265
+            C = B + faster loading   as modelled                   800      0.846        9.262        30.631           26.973        1.136
+            C = B + faster loading   as modelled                   850      0.898        9.260        42.307           43.467        0.973
+                             TODAY all open 24/7                   250      0.392       13.732         4.957            4.806        1.031
+                             TODAY all open 24/7                   292      0.458       13.732         6.471            6.295        1.028
+                             TODAY all open 24/7                   300      0.470       13.732         6.805            6.621        1.028
+                             TODAY all open 24/7                   350      0.549       13.732         9.045            9.066        0.998
+                             TODAY all open 24/7                   400      0.627       13.732        12.197           12.538        0.973
+                             TODAY all open 24/7                   450      0.705       13.732        17.058           17.859        0.955
+                             TODAY all open 24/7                   500      0.784       13.732        25.036           27.038        0.926
+                             TODAY all open 24/7                   550      0.862       13.732        39.577           46.658        0.848
+A paperwork 24/7 + digital release all open 24/7                   250      0.330       11.571         3.050            3.035        1.005
+A paperwork 24/7 + digital release all open 24/7                   292      0.386       11.571         3.901            3.865        1.009
+A paperwork 24/7 + digital release all open 24/7                   300      0.396       11.571         4.079            4.041        1.010
+A paperwork 24/7 + digital release all open 24/7                   350      0.462       11.571         5.304            5.293        1.002
+A paperwork 24/7 + digital release all open 24/7                   400      0.528       11.571         6.881            6.896        0.998
+A paperwork 24/7 + digital release all open 24/7                   450      0.594       11.571         8.812            9.021        0.977
+A paperwork 24/7 + digital release all open 24/7                   500      0.660       11.571        11.399           11.973        0.952
+A paperwork 24/7 + digital release all open 24/7                   550      0.726       11.571        15.260           16.351        0.933
+A paperwork 24/7 + digital release all open 24/7                   600      0.793       11.571        21.290           23.515        0.905
+A paperwork 24/7 + digital release all open 24/7                   650      0.859       11.571        31.844           37.370        0.852
+
+Saved: layer9_K1..K3 CSVs and layer9_results.png

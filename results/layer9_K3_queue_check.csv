@@ -1,0 +1,59 @@
+config,offices,offered_rakes_per_yr,line_util,line_hold_h,queue_wait_h,queue_wait_PK_h,sim_over_PK
+TODAY,as modelled,250,0.543,19.0284,14.9963,12.9029,1.1622
+TODAY,as modelled,292,0.6374,19.1207,21.9634,19.0635,1.1521
+TODAY,as modelled,300,0.6536,19.0861,22.9932,20.4325,1.1253
+TODAY,as modelled,350,0.7689,19.2447,37.7676,36.1593,1.0445
+TODAY,as modelled,400,0.8831,19.3399,74.1193,82.102,0.9028
+A paperwork 24/7 + digital release,as modelled,250,0.3304,11.5785,5.0012,3.0427,1.6437
+A paperwork 24/7 + digital release,as modelled,292,0.3861,11.5843,6.4757,3.885,1.6668
+A paperwork 24/7 + digital release,as modelled,300,0.3966,11.5821,6.389,4.0575,1.5746
+A paperwork 24/7 + digital release,as modelled,350,0.4629,11.5849,8.2682,5.3212,1.5538
+A paperwork 24/7 + digital release,as modelled,400,0.5288,11.5813,10.6271,6.9355,1.5323
+A paperwork 24/7 + digital release,as modelled,450,0.5949,11.5807,12.8304,9.0622,1.4158
+A paperwork 24/7 + digital release,as modelled,500,0.6618,11.595,16.2659,12.1557,1.3381
+A paperwork 24/7 + digital release,as modelled,550,0.7271,11.58,21.2547,16.4357,1.2932
+A paperwork 24/7 + digital release,as modelled,600,0.7931,11.5798,27.3033,23.6587,1.154
+A paperwork 24/7 + digital release,as modelled,650,0.8594,11.5822,37.3395,37.752,0.9891
+B = A + precise loading,as modelled,250,0.3088,10.8204,4.3997,2.5434,1.7299
+B = A + precise loading,as modelled,292,0.3609,10.826,5.651,3.2207,1.7546
+B = A + precise loading,as modelled,300,0.3707,10.824,5.6032,3.3576,1.6688
+B = A + precise loading,as modelled,350,0.4326,10.8265,7.126,4.3477,1.639
+B = A + precise loading,as modelled,400,0.4942,10.8232,9.0832,5.5776,1.6285
+B = A + precise loading,as modelled,450,0.556,10.8227,10.8779,7.1357,1.5244
+B = A + precise loading,as modelled,500,0.6186,10.8371,13.5297,9.3133,1.4527
+B = A + precise loading,as modelled,550,0.6794,10.8216,16.8576,12.0773,1.3958
+B = A + precise loading,as modelled,600,0.7415,10.826,20.6294,16.3722,1.26
+B = A + precise loading,as modelled,650,0.8031,10.8239,26.0196,23.2695,1.1182
+B = A + precise loading,as modelled,700,0.8648,10.8226,37.1947,36.5265,1.0183
+C = B + faster loading,as modelled,250,0.2643,9.2616,3.4587,1.7645,1.9602
+C = B + faster loading,as modelled,292,0.3089,9.2669,4.3132,2.2007,1.96
+C = B + faster loading,as modelled,300,0.3173,9.2651,4.3417,2.2864,1.8989
+C = B + faster loading,as modelled,350,0.3703,9.2675,5.374,2.8943,1.8567
+C = B + faster loading,as modelled,400,0.4231,9.2649,6.7069,3.6142,1.8557
+C = B + faster loading,as modelled,450,0.4759,9.2638,7.8582,4.4654,1.7598
+C = B + faster loading,as modelled,500,0.5296,9.2786,9.5513,5.5938,1.7075
+C = B + faster loading,as modelled,550,0.5815,9.2624,11.375,6.8327,1.6648
+C = B + faster loading,as modelled,600,0.6347,9.267,13.2184,8.5617,1.5439
+C = B + faster loading,as modelled,650,0.6875,9.266,15.5342,10.8385,1.4332
+C = B + faster loading,as modelled,700,0.7403,9.2646,18.9177,14.0602,1.3455
+C = B + faster loading,as modelled,750,0.7929,9.2612,23.7861,18.8094,1.2646
+C = B + faster loading,as modelled,800,0.8458,9.2618,30.631,26.9731,1.1356
+C = B + faster loading,as modelled,850,0.8985,9.2598,42.3074,43.4672,0.9733
+TODAY,all open 24/7,250,0.3919,13.7324,4.9569,4.8061,1.0314
+TODAY,all open 24/7,292,0.4577,13.7324,6.4712,6.2951,1.028
+TODAY,all open 24/7,300,0.4703,13.7324,6.805,6.6207,1.0278
+TODAY,all open 24/7,350,0.5487,13.7324,9.0449,9.0656,0.9977
+TODAY,all open 24/7,400,0.6271,13.7324,12.1974,12.5382,0.9728
+TODAY,all open 24/7,450,0.7054,13.7324,17.0576,17.8588,0.9551
+TODAY,all open 24/7,500,0.7838,13.7324,25.0356,27.0375,0.926
+TODAY,all open 24/7,550,0.8622,13.7324,39.5774,46.6578,0.8482
+A paperwork 24/7 + digital release,all open 24/7,250,0.3302,11.5708,3.0498,3.0351,1.0049
+A paperwork 24/7 + digital release,all open 24/7,292,0.3857,11.5708,3.9008,3.8652,1.0092
+A paperwork 24/7 + digital release,all open 24/7,300,0.3963,11.5708,4.0792,4.0406,1.0096
+A paperwork 24/7 + digital release,all open 24/7,350,0.4623,11.5708,5.3035,5.293,1.002
+A paperwork 24/7 + digital release,all open 24/7,400,0.5283,11.5708,6.8811,6.8962,0.9978
+A paperwork 24/7 + digital release,all open 24/7,450,0.5944,11.5708,8.8123,9.0214,0.9768
+A paperwork 24/7 + digital release,all open 24/7,500,0.6604,11.5708,11.3986,11.9734,0.952
+A paperwork 24/7 + digital release,all open 24/7,550,0.7265,11.5708,15.2601,16.3508,0.9333
+A paperwork 24/7 + digital release,all open 24/7,600,0.7925,11.5708,21.2903,23.5151,0.9054
+A paperwork 24/7 + digital release,all open 24/7,650,0.8586,11.5708,31.8435,37.3702,0.8521

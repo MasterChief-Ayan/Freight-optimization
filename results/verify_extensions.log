@@ -1,6 +1,6 @@
 
 ==========================================================================================
-EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 sufficiency, field decoding
+EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 sufficiency, Layers 8-9 breakdown and capacity, field decoding
 ==========================================================================================
   [PASS] Layer 5 base reproduces the Layer 1 calibrated baseline          L5 15.53 h vs L1 15.53 h
   [PASS] every parameter at its base value reproduces the base exactly    max |diff| 0.0e+00 h over 39 params
@@ -25,6 +25,13 @@ EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 su
   [PASS] demurrage by IR band adds up to demurrage per rake               6 bands
   [PASS] Shapley shares add up exactly to each package's saving           9 package-metric pairs
   [PASS] returning the whole rake ties up more wagon time than detaching  3 damage levels
+  [PASS] Layer 9 line hold at 292 rakes/yr agrees with Layer 8 (within 3 %) max gap 0.76% (200- vs 50-rake runs)
+  [PASS] the queue never shrinks when more rakes are offered              6 configurations
+  [PASS] capacity ceiling rises package by package (Today < A < B < C)    458 < 756 < 809 < 945
+  [PASS] a second line + crew roughly doubles the ceiling (1.8-2.1x)      2.02x / 1.99x
+  [PASS] same-service capacity stays below the theoretical ceiling        6 configurations
+  [PASS] below 80 % line use the siding clears what is offered (throughput) median gap 1.7% over 66 cells
+  [PASS] with offices open, the queue matches Pollaczek-Khinchine (0.85-1.15) sim/PK 0.91-1.03 over 16 cells
   [PASS] no sub-total rows remain                                         220,395 RRs
   [PASS] tonnage conserved when grouped                                   508.5 Mt
   [PASS] OTC is the Rs 20/t terminal charge                               median 20.000 Rs/t on 44,496 RRs
@@ -33,4 +40,4 @@ EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 su
   [PASS] coal pays no busy-season charge after 01.10.2022 (exemption)     80,286 coal RRs
   [PASS] commodity groups cover >= 95 % of tonnes                         97.0%
 ------------------------------------------------------------------------------------------
-  30/30 passed
+  37/37 passed

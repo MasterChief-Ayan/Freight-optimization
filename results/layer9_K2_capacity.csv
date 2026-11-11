@@ -1,0 +1,7 @@
+config,lines,crews,line_hold_h_at_292,detention_h_at_292,wait_h_at_292,ceiling_rakes_per_yr,same_service_capacity_rakes_per_yr,extra_rakes_vs_today,extra_pct_vs_today,line_util_at_292,crew_util_at_292,loco_util_at_292,busiest_resource_at_292,crew_util_at_capacity,loco_util_at_capacity,today_wait_target_h
+TODAY,1,1,19.1207,17.1244,35.0026,458.1433,292.0,0.0,0.0,0.6374,0.1559,0.0665,line,0.1559,0.0665,35.0026
+A paperwork 24/7 + digital release,1,1,11.5843,9.588,19.5148,756.1955,556.0206,264.0206,90.418,0.3861,0.1559,0.0665,line,0.2969,0.1267,35.0026
+B = A + precise loading,1,1,10.826,8.8297,18.6902,809.1662,612.8141,320.8141,109.8678,0.3609,0.1559,0.0665,line,0.3272,0.1397,35.0026
+C = B + faster loading,1,1,9.2669,7.2706,17.3524,945.3006,731.8388,439.8388,150.6297,0.3089,0.1039,0.0665,line,0.2605,0.1668,35.0026
+TODAY + 2nd line + 2nd crew,2,2,18.8888,16.8521,15.2668,927.5343,709.7528,417.7528,143.066,0.3148,0.078,0.0665,line,0.1895,0.1617,35.0026
+A + 2nd line + 2nd crew,2,2,11.6289,9.5908,14.0776,1506.5861,1262.2752,970.2752,332.286,0.1938,0.078,0.0665,line,0.337,0.2877,35.0026

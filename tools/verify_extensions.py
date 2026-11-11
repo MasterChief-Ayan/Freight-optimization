@@ -1,5 +1,5 @@
 """
-verify_extensions.py  -  integrity checks for Layers 5-8 and the field-data decoding.
+verify_extensions.py  -  integrity checks for Layers 5-9 and the field-data decoding.
 
     python tools/verify_extensions.py          (after run_layer5/6 and analyse_rr_register)
 
@@ -160,6 +160,39 @@ def layer8(c):
               (t.return_rake > t.detach).all() and t.detach.is_monotonic_increasing, f"{len(t)} damage levels")
 
 
+def layer9(c):
+    k1 = pd.read_csv(os.path.join(RES, "layer9_K1_traffic_sweep.csv"))
+    k2 = pd.read_csv(os.path.join(RES, "layer9_K2_capacity.csv")).set_index("config")
+    k3 = pd.read_csv(os.path.join(RES, "layer9_K3_queue_check.csv"))
+    b1 = pd.read_csv(os.path.join(RES, "layer8_B1_time_breakdown.csv")).set_index("package")
+    one = k2[k2.lines == 1]
+    gap = (one.line_hold_h_at_292 - b1.loc[one.index, "line_held_per_rake"]).abs() / b1.loc[one.index, "line_held_per_rake"]
+    c.assert_("Layer 9 line hold at 292 rakes/yr agrees with Layer 8 (within 3 %)",
+              (gap < 0.03).all(), f"max gap {gap.max():.2%} (200- vs 50-rake runs)")
+    mono = all((g.sort_values("offered_rakes_per_yr").wait_h.diff().dropna() >= -0.5).all()
+               for _, g in k1.groupby("config"))
+    c.assert_("the queue never shrinks when more rakes are offered", mono, f"{k1.config.nunique()} configurations")
+    order = list(one.ceiling_rakes_per_yr)
+    c.assert_("capacity ceiling rises package by package (Today < A < B < C)",
+              all(a < b for a, b in zip(order, order[1:])), " < ".join(f"{x:.0f}" for x in order))
+    r2 = [k2.loc["TODAY + 2nd line + 2nd crew", "ceiling_rakes_per_yr"] / k2.loc["TODAY", "ceiling_rakes_per_yr"],
+          k2.loc["A + 2nd line + 2nd crew", "ceiling_rakes_per_yr"] / k2.loc["A paperwork 24/7 + digital release", "ceiling_rakes_per_yr"]]
+    c.assert_("a second line + crew roughly doubles the ceiling (1.8-2.1x)",
+              all(1.8 <= r <= 2.1 for r in r2), " / ".join(f"{r:.2f}x" for r in r2))
+    c.assert_("same-service capacity stays below the theoretical ceiling",
+              (k2.same_service_capacity_rakes_per_yr < k2.ceiling_rakes_per_yr).all(), f"{len(k2)} configurations")
+    low = k1[k1.line_util < 0.8]
+    dev = ((low.throughput_per_yr - low.offered_rakes_per_yr) / low.offered_rakes_per_yr).abs()
+    c.assert_("below 80 % line use the siding clears what is offered (throughput)",
+              dev.median() < 0.05, f"median gap {dev.median():.1%} over {len(low)} cells")
+    # below 80 % use: nearer saturation a 180-rake run has not reached steady state and
+    # under-reads the queue, which the formula (a steady-state result) cannot reproduce
+    flat = k3[(k3.offices == "all open 24/7") & (k3.line_util < 0.8)]
+    c.assert_("with offices open, the queue matches Pollaczek-Khinchine (0.85-1.15)",
+              flat.sim_over_PK.between(0.85, 1.15).all(),
+              f"sim/PK {flat.sim_over_PK.min():.2f}-{flat.sim_over_PK.max():.2f} over {len(flat)} cells")
+
+
 def field(c):
     raw = os.path.join(ROOT, "data", "raw", "RR_base_IN_freight_details")
     if not os.path.isdir(raw):
@@ -190,11 +223,12 @@ def field(c):
 
 
 if __name__ == "__main__":
-    c = Check("EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 sufficiency, field decoding")
+    c = Check("EXTENSIONS VERIFICATION  -  Layer 5 sensitivity, Layer 6 commodities, Layer 7 sufficiency, Layers 8-9 breakdown and capacity, field decoding")
     layer5(c)
     layer5b(c)
     layer6(c)
     layer7(c)
     layer8(c)
+    layer9(c)
     field(c)
     sys.exit(0 if c.report() else 1)
