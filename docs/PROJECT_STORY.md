@@ -597,8 +597,8 @@ traffic 292 and 250–1600 rakes/yr). Two measures: **ceiling** Λ = 8760 / (lin
 |---|---|---|---|---|
 | Today | 19.12 | 458 | 292 | — |
 | A (24/7 + digital release) | 11.58 | 756 | 556 | +264 (+90 %) |
-| B (A + faster loading) | 10.83 | 809 | 613 | +321 (+110 %) |
-| C (B + precise loading) | 9.27 | 945 | 732 | +440 (+151 %) |
+| B (A + precise loading) | 10.83 | 809 | 613 | +321 (+110 %) |
+| C (B + 50 % faster loading) | 9.27 | 945 | 732 | +440 (+151 %) |
 | Today + 2nd line + 2nd crew | 18.89 | 928 | 710 | +418 (+143 %) |
 | A + 2nd line + 2nd crew | 11.63 | 1507 | 1262 | +970 (+332 %) |
 
