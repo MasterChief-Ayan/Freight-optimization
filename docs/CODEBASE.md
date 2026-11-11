@@ -2,7 +2,7 @@
 
 Companion to `docs/PROJECT_STORY.md`. This file answers four questions:
 which file does what, how they connect, how to run and verify, and where a new feature goes.
-**Last verified:** 4-Nov-2026. 100/100 integrity checks pass (70 model + 30 extension), and every
+**Last verified:** 11-Nov-2026. 107/107 integrity checks pass (70 model + 37 extension), and every
 result in `results/` regenerates from `bash run_all.sh`.
 
 ---
@@ -48,7 +48,8 @@ Freight-optimization/
 │   ├── run_layer5b_hours_sweep.py L5  detention for every length of the terminal day (8-24 h)
 │   ├── run_layer6_commodities.py  L6  10 commodity profiles x 8 levers, per-commodity tornado, labour break-even (C4), labour cost (C5)
 │   ├── run_layer7_sufficiency.py  L7  omitted-factor stress test: does the ranking of interventions survive?
-│   └── run_layer8_breakdown.py    L8  breakdown of time and money per package; Shapley split; parties; wagon damage; RR basis
+│   ├── run_layer8_breakdown.py    L8  breakdown of time and money per package; Shapley split; parties; wagon damage; RR basis
+│   └── run_layer9_capacity.py     L9  capacity: traffic sweep 250–1600 rakes/yr, ceiling, same-service capacity, utilisations, Pollaczek–Khinchine check
 │
 ├── tools/                     HELPERS (not part of the model)
 │   ├── compare_outputs.py     regression check: are two results folders numerically identical?
@@ -166,8 +167,9 @@ python experiments/run_layer6_commodities.py [quick]   # multi-commodity (~6 min
 python experiments/run_layer7_sufficiency.py [quick]   # sufficiency stress test (~2 min)
 python experiments/run_layer5b_hours_sweep.py [quick]  # detention vs terminal hours 8-24 h (~15 s)
 python experiments/run_layer8_breakdown.py [quick]     # breakdown + wagon damage (~40 s)
+python experiments/run_layer9_capacity.py              # capacity of the siding (several minutes)
 python -m rtsim.verify_damage                          # 13 damage-module checks
-python tools/verify_extensions.py                      # 30 extension checks
+python tools/verify_extensions.py                      # 37 extension checks
 python experiments/run_layer1.py   # any single layer (works from any folder)
 python tools/dry_run_two_rakes.py  # see one replication event by event
 python -m rtsim.calibration        # parameter provenance
@@ -178,7 +180,7 @@ python -m rtsim.calibration        # parameter provenance
 | `verify.py` | 18 | conservation; monotone event chain; no negative durations; line capacity; detention = release − placement; demurrage iff free time exceeded; graded table reproduced; marginal rate non-decreasing; free time = 5 + 2 + 1; Little's Law within 5%; byte-identical log for a seed; process-independent sub-seeds (`substream_seed(1000,'loading')=1948952355`); **physical durations identical across policies**; **admin time schedule-dependent (up to 8 h)**; CRN across runs; policy hook changes outcomes; SPT < LPT; all policies serve the same rakes |
 | `verify_admin.py` | 13 | all steps disabled reproduces L0 exactly; calendar truncation (1 h task at 17:30 → 17 h); 24/7 costs exactly 1 h; weekend skip; removing rework reduces detention; ablating M6 cuts detention; M7 changes cycle but not detention/dwell; digitalising M5 + M6 reduces detention; every admin event has an owner; chain monotone with gates; deterministic; non-physical time is the majority of dwell (88.5%); **detention inside TERI 14–17 h** |
 | `verify_trucks.py` | 12 | rake chain unchanged when road side added (A1 on); truck conservation; one-way lane never holds two trucks; queued lane allows concurrency; quota respected; appointments flatten the peak (80 → 10); deviation cost convex; MINMAX lowers worst-off company cost at the test point; hard infeasibility measured; more gate servers shorten the queue; A1 off makes material bind; M8 fires for trucks |
-| `tools/verify_extensions.py` | 30 | Layer 5 base = Layer 1 baseline; every parameter at base reproduces base; commercial parameters never move time; demurrage linear in rate; M7 never touches detention; terminal hours monotone; envelope brackets base; Morris top-3 = OAT top-3; Layer 6 free time per IR rule; free-time cut moves bill not time; precise loading helps most where overload is highest; loading-rate gain correlates with loading hours; silo lever only for mechanised bulk and beats +50 % rate; C5 consistent with C4; hour sweep reproduces Layer 5 levels; every extra terminal hour strictly shortens detention; Layer 7 base = Layer 5 base; Layer 8 base = Layer 6 coal base; billed hours split exactly; IR bands sum to demurrage; Shapley shares sum to each package saving; returning a rake ties up more wagon time than detaching; every omitted factor slows the base; field: no sub-totals, tonnage conserved, OTC/DTC = ₹20/t, DPO = 15 %, coal exempt, groups cover ≥ 95 % (field checks SKIP without data/raw) |
+| `tools/verify_extensions.py` | 37 | Layer 5 base = Layer 1 baseline; every parameter at base reproduces base; commercial parameters never move time; demurrage linear in rate; M7 never touches detention; terminal hours monotone; envelope brackets base; Morris top-3 = OAT top-3; Layer 6 free time per IR rule; free-time cut moves bill not time; precise loading helps most where overload is highest; loading-rate gain correlates with loading hours; silo lever only for mechanised bulk and beats +50 % rate; C5 consistent with C4; hour sweep reproduces Layer 5 levels; every extra terminal hour strictly shortens detention; Layer 7 base = Layer 5 base; Layer 8 base = Layer 6 coal base; billed hours split exactly; IR bands sum to demurrage; Shapley shares sum to each package saving; returning a rake ties up more wagon time than detaching; every omitted factor slows the base; Layer 9: line hold at 292 within 3 % of Layer 8, queue never shrinks with more traffic, ceiling Today < A < B < C, 2nd line gives 1.8–2.1× ceiling, same-service capacity < ceiling, throughput within 5 % of offered when line utilisation < 0.8, PK ratio 0.85–1.15 with offices open and utilisation < 0.8; field: no sub-totals, tonnage conserved, OTC/DTC = ₹20/t, DPO = 15 %, coal exempt, groups cover ≥ 95 % (field checks SKIP without data/raw) |
 | `verify_optimiser.py` | 14 | CP-SAT returns a valid permutation; no placement before arrival; no line overlap; reproduces SPT when all jobs are at t = 0; offline optimum ≤ every online rule (checks 1–12 run on the physical model, no admin); CNP < FCFS on waiting; CNP bid uses only rake + clock; ageing reduces worst wait; heavy ageing collapses onto FCFS; captured-gain scale anchored; identical rakes/revenue across policies; 60-rake solve within 20 s; **13: lower bound never violated by any policy**; **14: executing the relaxed plan (89.48 h) is worse than the bound (37.59 h), so the bound must be read, not simulated** |
 | `verify_damage.py` | 13 | enabled with p = 0 reproduces L0 and L1 exactly; repairs raise detention and the pre-loading gap; repairs run in parallel with M4; detach removes every unfit wagon, inside the billed window; return-rake: wait rises by at least the lead time, free-time clock starts after the rejected visit; event chain in order; line never over capacity incl. rejected visits; loading damage repaired between loading end and release; detention rises with damage rate; every damage event has an owner |
 
@@ -204,10 +206,12 @@ This repo was itself checked this way against the replayed original code (§7).
 | `run_layer6_commodities.py` | C1 baseline per commodity; C2 8 levers x 10 commodities + classes (S3 silo for bulk only); C3 per-commodity tornado; C4 labour break-even; C5 labour cost vs demurrage (published handling rates, two pay models) | `layer6_results.png`, `layer6_C1_..C5_*.csv`, `l6.log` |
 | `run_layer7_sufficiency.py` | O1 saving per intervention with each omitted factor; O2 rank stability (Kendall τ, top-3, procedure/capital) | `layer7_results.png`, `layer7_O1_sufficiency.csv`, `layer7_O2_rank_stability.csv`, `l7.log` |
 | `run_layer8_breakdown.py` | B1 segments; B2 cause split of the billed window; B3 money (IR bands, data leak, per year, wagons, capacity); B4 Shapley; B5 2^5 factorial; B6 parties; B7 wagon damage; B8 RR + payment digital | `layer8_B0..B8_*.csv`, `layer8_results.png`, `l8.log`, `prof/Fig8-10` |
+| `run_layer9_capacity.py` | K1 traffic sweep (6 configs × 292, 250–1600 rakes/yr; 200 rakes, warm-up 20, 30 reps); K2 ceiling Λ = 8760/H̄, same-service capacity R* (wait ≤ today's at 292), utilisations; K3 Pollaczek–Khinchine check (as modelled and offices all open) | `layer9_K1_traffic_sweep.csv`, `layer9_K2_capacity.csv`, `layer9_K3_queue_check.csv`, `layer9_results.png`, `l9.log` |
 | `tools/make_slide_charts.py` | slide figures | `slide_decomposition.png`, `slide_calibration.png`, `slide_procedural_vs_capital.png` |
 
 Operating points: L0/L1 use the default 50 rakes, 30 reps, arrival gap exp(30 h).
 L3, L4 and E11 use 25 rakes, gap 22 h (ρ ≈ 0.7, contended but stable). At 18 h the line saturates (ρ ≈ 1.07).
+L5–L8 use 50 rakes (warm-up 5), 30 reps, gap exp(30 h) = 292 rakes/yr. L9 uses 200 rakes (warm-up 20), 30 reps, gap exp(8760/R) for R = 292 and 250–1600 rakes/yr.
 
 ---
 

@@ -30,6 +30,7 @@ register: 220,395 consignments, 2022–26.
 | 10 | The variable set is sufficient for ranking | adding 9 omitted-factor scenarios (extra delays, +50% traffic, disruptions, errors ×2): ranking of all 6 interventions unchanged (Kendall τ = 1.00) | `layer7_O2_rank_stability.csv`, `docs/VARIABLE_SELECTION.md` |
 | 11 | Where the 17 h come from (coal) | 4.7 loading + 5.9 paperwork work + 1.1 rework + **5.4 waiting for the office to open**; package A (24/7 + digital release) → 9.5 h, demurrage ₹89.8k → ₹19.7k per rake | `layer8_B2_cause_split.csv`, `layer8_B3_money.csv` |
 | 12 | Damaged wagon: detach, don't return | sending the whole rake back ties up 2.3–2.6× the wagon time of detaching the bad wagon (damage rates ASSUMED) | `layer8_B7_damage.csv` |
+| 13 | Procedure also adds capacity; a second line adds more | at today's 35 h wait the coal siding takes **292 rakes/yr today, 556 with package A (+90 %, no construction)**, 732 with C, 710 with a 2nd line + crew, 1,262 with A + 2nd line; the line is the bottleneck throughout (crew ≤ 34 %, loco ≤ 29 %); simulated queue matches Pollaczek–Khinchine (0.91–1.03) when offices are open | `layer9_K2_capacity.csv`, `layer9_K3_queue_check.csv` |
 
 Rule for quoting: a number that depends only on CITED or DERIVED parameters is a figure. A number
 that touches an ASSUMED parameter (admin durations, truck volumes) is a direction or ranking only.
@@ -114,7 +115,7 @@ bash run_all.sh                     # regenerate everything in results/ (~15 min
 python tools/dry_run_two_rakes.py   # watch one simulation, event by event
 ```
 
-Integrity: **100/100 checks pass** (70 model + 30 extensions).
+Integrity: **107/107 checks pass** (70 model + 37 extensions).
 
 ## Data
 

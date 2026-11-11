@@ -38,7 +38,7 @@ terminal, and solutions for quick release of rolling stock.*
    508.5 Mt** (after removing 338 sub-total rows). It has money, volume, wagons, wagon type and
    overloading, but **no placement/release timestamps**. It is **decoded** (`tools/rr_register.py`) and
    used for commodity profiles; the multi-commodity analysis (Layer 6) is done.
-10. Integrity: **100 checks** pass (70 model incl. 13 for the wagon-damage module + 30 for Layers 5–8
+10. Integrity: **107 checks** pass (70 model incl. 13 for the wagon-damage module + 37 for Layers 5–9
     and the data decoding,
     `tools/verify_extensions.py`).
 11. Code base consolidated and re-verified on 22-Oct-2026 (this repo). Layers 3, 4 and E11
@@ -58,6 +58,10 @@ terminal, and solutions for quick release of rolling stock.*
     segment, cause, IR-band, Shapley, party, wagon and capacity breakdowns) and an optional
     wagon-damage module (off by default; byte-identical when off). Engine assessed, deferred.
     Direction note (scrap example = batch clearance; integrated business case): `2November2026/`.
+15. 11-Nov-2026 (§6J): final meeting. Supervisor asked for **capacity** (can the siding take more
+    rakes?), a 3-paragraph abstract (problem / what was done / what was found), and exactly 4
+    chapters (Introduction, Modelling incl. implementation, Results, Conclusion). Built **Layer 9**
+    (capacity) and the final MTP-1 report (41 pages, LaTeX).
 
 ---
 
@@ -296,7 +300,7 @@ drives detention and cost (with bounds). It ranks interventions by **net** benef
 | R2 | Procedure vs capital ranking | paired scenario campaign (E12–E15) | done |
 | R3 | **Per-factor bounds** (absolute ranges, tornado) | OAT ranges with CRN + Morris screening + envelope (Layer 5) | **done** |
 | R4 | **Net cost–benefit / break-even** (labour, lines, digitalisation, 24/7) | lever savings per rake per commodity = max affordable spend (Layer 6 C2/C4); labour cost from published rates (C5) | **done for labour/loading-rate; capital annuities (silo, 2nd line) still to add** |
-| R5 | **Scaling** (bottleneck migration as volume ×1.0 → ×2.0) | arrival-rate sweep, utilisation per resource | to do |
+| R5 | **Scaling** (bottleneck migration as volume ×1.0 → ×2.0) | arrival-rate sweep, utilisation per resource | **done** (Layer 9, 11-Nov-2026, §6J; coal only) |
 | R6 | **Multi-commodity** extension | 10 commodity profiles from field data + IR free-time rules (Layer 6) | **done** (admin chain still common to all commodities) |
 | R7 | Validation on field data | needs placement–release logs (requested); partial: Poisson arrivals confirmed (§6C) | open |
 | R8 | Incentive alignment (who causes vs who pays) | attribution (L1) + pricing levers (E13/E14) | done (qualitative policy argument) |
@@ -583,6 +587,37 @@ Full write-up with every table: `docs/BREAKDOWN_REPORT.md`. Headlines (coal BOXN
   identical. The only differences are the CP-SAT rows of E8b/E9 (known wall-clock
   non-determinism, §7.3, not quoted). Layer 8 reproduces the 2-Nov pilot to < 1e-4.
 
+### 6J. Capacity of the siding (Layer 9) and the final MTP-1 report (11-Nov-2026)
+Asked at the final meeting: "not only cost, also capacity — can we increase the rake count?"
+`experiments/run_layer9_capacity.py` (coal BOXN profile of Layer 8; 200 rakes, warm-up 20, 30 reps;
+traffic 292 and 250–1600 rakes/yr). Two measures: **ceiling** Λ = 8760 / (line hold per rake) and
+**same-service capacity** R* = most rakes/yr with mean wait ≤ today's wait at 292 (35.0 h).
+
+| Configuration | Line hold (h) | Ceiling (rakes/yr) | Same-service (rakes/yr) | Extra vs 292 |
+|---|---|---|---|---|
+| Today | 19.12 | 458 | 292 | — |
+| A (24/7 + digital release) | 11.58 | 756 | 556 | +264 (+90 %) |
+| B (A + faster loading) | 10.83 | 809 | 613 | +321 (+110 %) |
+| C (B + precise loading) | 9.27 | 945 | 732 | +440 (+151 %) |
+| Today + 2nd line + 2nd crew | 18.89 | 928 | 710 | +418 (+143 %) |
+| A + 2nd line + 2nd crew | 11.63 | 1507 | 1262 | +970 (+332 %) |
+
+- **Line is the bottleneck** everywhere: at 292 line 0.64, crew 0.16, loco 0.07; at capacity crew ≤ 0.34,
+  loco ≤ 0.29. A second loco adds nothing first.
+- **Detention ≠ capacity:** a 2nd line + crew barely changes detention (E12: 0.58 h) but doubles the
+  ceiling; procedure (A) cuts both. Detention per rake is ~flat in traffic (today 17.0–17.5 h; A ≈ 9.6 h);
+  the queue before placement explodes instead (today: 87 h wait at 400, 424 h at 550 offered, throughput 448).
+- **Money:** A at 550 rakes/yr pays ₹1.12 cr demurrage vs today ₹2.66 cr at 292.
+- **Queueing check (K3):** with offices all open and line utilisation < 0.8, simulated wait / PK = 0.91–1.03;
+  as modelled 1.04–1.96 because office hours (M3 placement advice) bunch arrivals at the line.
+- 7 new checks in `tools/verify_extensions.py` → **107/107**. Commit `6e8104d` (Ayan as author).
+- **Final report:** `MTP1_Report_Final_Ayan_Ahmed.pdf` (41 pp; Ch 1 Introduction, Ch 2 Modelling incl.
+  formulation Eqs 2.1–2.17 and implementation/verification, Ch 3 Results incl. §3.7 Capacity, Ch 4
+  Conclusion); 3-paragraph abstract; 29 references; every number checked by `audit_numbers.py`
+  (122/122). Overleaf zip and a heading-only .docx outline also produced. Corrections found while
+  checking: Layer 4 is 10 reps × 25 rakes (gap 22 h); nine interventions (not ten); procedure/capital
+  = 15.5×; the "attribution sums to 100 %" check claim replaced with the real check names.
+
 ## 7. Numbers to quote (and which version they come from)
 
 ### 7.1 Exactly reproduced by the final code (safe to quote as model results)
@@ -656,6 +691,11 @@ Layer 7: ranking unchanged in 9/9 omitted-factor scenarios, procedure > capital 
   "Paid-unused capacity" (₹142,965 per rake) is a capacity gain (~159 t more per rake for the same
   freight), not cash. All package savings are gross (implementation costs not yet included).
   `docs/BREAKDOWN_REPORT.md` §9 traces every number of the 2-Nov email; §10 lists what is excluded.
-- **Pending:** scaling (R5); capital annuities for silo / 2nd line (R4);
-  **LaTeX/Overleaf thesis** — Ayan will provide reference documents for style/format; ask for them
-  before starting.
+- **Decided 11-Nov (final meeting):** capacity reported alongside cost; report has exactly 4
+  chapters (Intro / Modelling incl. implementation / Results / Conclusion) and a 3-paragraph abstract;
+  capacity measured as ceiling and same-service capacity (assumed-parameter results → rankings and
+  relations, not exact figures).
+- **Pending:** capital annuities for silo / 2nd line (R4); capacity for other commodities and staged
+  expansion (Part II); presentation deck;
+  MTP-1 LaTeX report **done** (11-Nov, BTP report format provided by Ayan); for the final (Part II)
+  thesis, ask Ayan for any new reference/format documents before starting.
