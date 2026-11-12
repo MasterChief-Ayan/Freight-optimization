@@ -320,7 +320,7 @@ definition; only queue, wagon time and capacity will.
 ## 8. Limits (state these with every number)
 
 - Paperwork durations (M1–M7) and rejection rates are ASSUMED. Rupee figures are orders of
-  magnitude; rankings and relations are the robust part (Layer 7: ranking stable in 9/9 stress
+  magnitude; rankings and relations are the robust part (Layer 7: ranking stable in 8/8 stress
   tests).
 - Damage rates, repair, detach and replacement times are ASSUMED scenarios.
 - Line capacity is a theoretical ceiling.
