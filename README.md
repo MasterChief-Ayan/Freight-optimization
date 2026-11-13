@@ -20,7 +20,7 @@ register: 220,395 consignments, 2022–26.
 |---|---|---|---|
 | 1 | The model reproduces real detention | **15.53 ± 0.33 h** per rake (TERI benchmark 14–17 h); physical work alone is only 4.05 h | `results/l1.log` |
 | 2 | Paperwork is the main cause, not track or equipment | admin **78%** of waiting (office hours 73%, rework 11%), sequencing ≤ 8%, irreducible 14% | `layer3_E11_decomposition.csv` |
-| 3 | Procedure beats capital | digitalising admin saves 8.98 h/rake; a 2nd line saves ≈ 0 h (−0.28 h) → **≈ 15×** | `layer4_E12_interventions.csv` |
+| 3 | Procedure beats capital | digitalising admin saves 8.98 h/rake; a 2nd line + 2nd crew saves 0.58 h → **≈ 15.5×**; a 2nd line alone does not help (+0.28 h, n.s.) | `layer4_E12_interventions.csv` |
 | 4 | The client pays for others' delay | rake time: terminal 73.5%, client 23.7%, railway 2.9%, yet the client pays the demurrage | `layer1_attribution.csv` |
 | 5 | Single biggest factor | terminal hours 8 → 24 h/day: **31.9 → 10.7 h**; each hour from today's 16 h: −1.2 h (diminishing); loading rate over its published range (payloader → silo) 17.7 → 11.1 h; all factors together: 3.5–51.4 h | `layer5_S1_bounds.csv`, `layer5b_hours_sweep.csv` |
 | 6 | Pricing changes the bill, not the time | free time / penal rate: ₹1.77 → 3.54 M, detention unchanged (0 h) | `layer4_E14_pricing.csv` |

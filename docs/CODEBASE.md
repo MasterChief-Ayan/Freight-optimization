@@ -229,7 +229,7 @@ cd presentation/mtp1 && node build_deck.js         # needs pptxgenjs; PPTX_SKILL
 | `tools/make_slide_charts.py` | slide figures | `slide_decomposition.png`, `slide_calibration.png`, `slide_procedural_vs_capital.png` |
 
 Operating points: L0/L1 use the default 50 rakes, 30 reps, arrival gap exp(30 h).
-L3, L4 and E11 use 25 rakes, gap 22 h (ρ ≈ 0.7, contended but stable). At 18 h the line saturates (ρ ≈ 1.07).
+L3, L4 and E11 use 25 rakes, gap 22 h (measured line hold 17.9 h, so ρ ≈ 0.8: contended but stable). At 18 h the line saturates (ρ ≈ 1.07).
 L5–L8 use 50 rakes (warm-up 5), 30 reps, gap exp(30 h) = 292 rakes/yr. L9 uses 200 rakes (warm-up 20), 30 reps, gap exp(8760/R) for R = 292 and 250–1600 rakes/yr.
 
 ---

@@ -65,7 +65,9 @@ terminal, and solutions for quick release of rolling stock.*
 ## 0. State of the project in a dozen lines
 
 1. A discrete-event simulation (Python/SimPy, package `rtsim`) of one private coal siding, built
-   in **5 verified layers**: physical → administrative → road-side → decision → scenario campaign.
+   in **10 verified layers**: L0 physical → L1 administrative → L2 road side → L3 decision → L4 scenario
+   campaign (all before mid-term) → L5 sensitivity → L6 commodities → L7 sufficiency → L8 breakdown
+   (+ wagon damage) → L9 capacity (after mid-term).
 2. **107 automated integrity checks** pass (70 model + 37 extensions); at mid-term it was 57.
 3. Charge rules are **CITED** from the MoR Demurrage/Wharfage Compendium (03.04.2024). Free time is
    8 h (5 + 2 + 1), demurrage is graded from ₹150/wagon/h, terminal hours are 06:00–22:00, and the
@@ -302,7 +304,7 @@ M1–M8 service times; M1–M8 rework 0.05–0.20; truck capacity 35 t; slots/pe
 | Loading-rate limits | **Done** — published norms (PIB 2024, bulk-handling sources, IR free times); Layer 5 range now 675–3,370 t/h; silo lever S3 (§6E) | Layer 5, Layer 6 |
 | All months in the analysis? | **Verified** — 56/56 months (Jan-2022–Aug-2026), every file 100 % inside its own month, 0 duplicate RRs across files | `tools/rr_register.py` |
 | Field data decoding | **Done** — all code columns, 49 charge heads and 15 rebate heads decoded with confidence grades; 16 commodity groups cover 97 % of tonnes (§6C) | `tools/rr_register.py`, `results/field/` |
-| Scaling (more ore) | **Not done** (only the L0 load sweep and the L5 arrival-gap range) | arrival-rate multiplier sweep with bottleneck detection |
+| Scaling (more ore) | **Done 11-Nov-2026** — Layer 9 capacity (coal): traffic sweep, ceiling, same-service capacity, utilisations (§6J) | `experiments/run_layer9_capacity.py` |
 | Wagon condition / life-cycle | **Not modelled**; wagon *type* per commodity now comes from data | terminal-side: sick-wagon detachment as an extra step |
 | Optimisation objective | **Time** (CP-SAT minimises waiting). Money is *measured* and used in COST/CNP bids, not optimised | `optimiser.py`, `accounting.py` |
 | Hypothesis / reverse engineering | **Dropped** on Ayan's instruction (too vague) | — |
@@ -339,8 +341,9 @@ drives detention and cost (with bounds). It ranks interventions by **net** benef
 ₹ spent) and says which resources must grow as traffic and commodity mix grow.
 
 ### Deliverables
-1. **Thesis** (LaTeX/Overleaf; Ayan will supply the reference style/format documents later —
-   ask for them before starting) with these chapters: problem and IR context → literature and selection logic →
+1. **Thesis** (LaTeX/Overleaf). MTP-1 used the supervisor's 4-chapter structure (Introduction /
+   Modelling incl. implementation / Results / Conclusion, `thesis/mtp1/`); for the final thesis ask Ayan
+   for any new format documents before starting. Content to cover: problem and IR context → literature and selection logic →
    formulation → model (5 layers) → verification and validation → results → sensitivity/bounds →
    cost–benefit → scaling and multi-commodity → recommendations → limitations/future work.
 2. **This code repository** (GitHub), reproducible with `bash run_all.sh`.
@@ -591,7 +594,8 @@ Evaluator's question: *how do you know the conditions/variables are sufficient?*
   none can remove them: +1/+3 h physical delay inside free time, +1/+3 h unmodelled paperwork,
   +50 % traffic, loading disruptions, error rates ×2, and all together.
 - *Result:* base detention rises 15.5 → 23.1 h, but the **order of the six interventions is
-  identical in 9/9 cases (Kendall τ = 1.00)**. Procedure beats capital by 3.6–6.6×, and a second
+  identical in all 8 stress tests and in the model as built (Kendall τ = 1.00)**. Best procedural /
+  best capital (faster loading) = 3.6–6.6×, and a second
   line without crew stays counter-productive.
 - *Conclusion:* the set is sufficient for ranking interventions (the thesis's purpose), not for
   predicting absolute hours at a named siding.
@@ -706,7 +710,7 @@ traffic 292 and 250–1600 rakes/yr). Two measures: **ceiling** Λ = 8760 / (lin
 | E8a control (calendars off) | CP-SAT bound 10.37 h ≤ COST 10.64 h (valid) |
 | E10 fairness (CNP ageing 0 → 0.5) | worst wait 161.2 ± 66.3 → 108.1 ± 30.6 h (−33%); mean 44.22 → 44.37 h |
 | E12 detention saved vs base 16.07 h | digitalise all 8.98 ± 0.56; M5 + M6 7.65 ± 0.69; terminal 24/7 5.28 ± 0.31; +50% load rate 2.08 ± 0.32; no rework 1.40 ± 0.45; 2nd line + crew 0.58 ± 0.22; 2nd loco 0.00; **2nd line alone −0.28 (worse, n.s.)** |
-| Procedure vs capital | 8.98 / 0.58 ≈ **15×** |
+| Procedure vs capital | 8.98 / 0.58 ≈ **15.5×** (vs 2nd line + crew); vs 50 % faster loading 8.98 / 2.08 ≈ 4.3× |
 | Breaches | 87% → 25% under full digitalisation |
 | E13/E14 pricing | detention fixed at 16.07 h; demurrage ₹1.77 M (8 h free time) vs ₹2.18 M (6 h); penal ×2 → ₹3.54 M |
 
@@ -734,7 +738,7 @@ rake; labour break-even ₹5.5/t (bulk) and ₹9/t (bagged) = 46 % / 10 % of tod
 Layer 7: ranking unchanged in all 8 stress tests (+ model as built; τ = 1.00); best procedural / best capital (faster loading) = 3.6–6.6×.
 
 ### 7.3 Results to report as nulls or open
-- E8b/E9: at ρ ≈ 0.7 no online rule beats FCFS significantly. Sequencing pays only above ~50%
+- E8b/E9: at ρ ≈ 0.8 (line hold 17.9 h, one rake every 22 h) no online rule beats FCFS significantly. Sequencing pays only above ~50%
   line utilisation (L0 load sweep).
 - E6 (truck-company MINMAX fairness): helps only at a loose quota (−4% worst-off cost at quota 20).
   At tight quotas it *raises* the worst-off company's cost (+15.5% at quota 8). Treat it as open.
