@@ -1,0 +1,180 @@
+\documentclass[12pt,a4paper]{report}
+
+% ------------------ Packages (as in the BTP report) ------------------
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{times}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    filecolor=black
+}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{parskip}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{subcaption}
+% added for this report: diagrams, compact tables
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, decorations.pathreplacing, calc}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=*}
+\captionsetup{font=small, labelfont=bf}
+\makeatletter\g@addto@macro\normalsize{\setlength{\abovedisplayskip}{6pt plus 2pt}\setlength{\belowdisplayskip}{6pt plus 2pt}\setlength{\abovedisplayshortskip}{2pt}\setlength{\belowdisplayshortskip}{4pt}}\makeatother
+% float placement: let figures and tables share pages with text
+\renewcommand{\topfraction}{0.9}\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}\renewcommand{\floatpagefraction}{0.85}
+\setcounter{topnumber}{3}\setcounter{totalnumber}{4}
+
+% ------------------ Formatting ------------------
+\onehalfspacing
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\raggedright}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt}
+
+% ------------------ Header/Footer ------------------
+\setlength{\headheight}{14.5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Ayan Ahmed}
+\lhead{MTP Report (Part I) 2026}
+\cfoot{\thepage}
+
+\newcommand{\Rs}{Rs~}
+
+% ======================================================================
+% FRONTMATTER
+% ======================================================================
+\begin{document}
+\pagenumbering{Alph}% title page: separate anchors from roman/arabic pages (avoids duplicate page.1)
+
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\bfseries Analysis of Operational, Commercial and Managerial Constraints at a Freight Terminal, and Solutions for Quick Release of Rolling Stock\\[1cm]}
+
+    \vspace{1.5cm}
+    {\Large A Thesis (Part I) Submitted by\\[0.3cm]
+    \textbf{Ayan Ahmed [22MF3IM04]}\\[0.2cm]
+    Under the Supervision of\\[0.5cm]
+    \textbf{Prof. Biswajit Mahanty}\\[0.7cm]
+    \textbf{Master of Technology in Industrial and Systems Engineering}\\[0.5cm]
+    \textbf{Indian Institute of Technology, Kharagpur}}
+
+    \vfill
+    \Large {12 November 2026}
+\end{titlepage}
+\pagenumbering{roman}
+
+% ---------------- Declaration ----------------
+\newpage
+\thispagestyle{empty}
+\section*{DECLARATION}
+\addcontentsline{toc}{chapter}{Declaration}
+\noindent I certify that
+\begin{enumerate}[leftmargin=2em, itemsep=4pt]
+    \item The work contained in this report is original and has been done by me under the guidance of my supervisor.
+    \item The work has not been submitted to any other Institute for any degree or diploma.
+    \item I followed the guidelines provided by the Institute when preparing the report.
+    \item I have conformed to the norms and guidelines given in the Ethical Code of Conduct of the Institute.
+    \item Whenever I used materials (data, theoretical analysis, figures, and text) from other sources, I gave due credit to them by citing them in the text of the report and giving their details in the references. Further, I have taken permission from the copyright owners of the sources, whenever necessary.
+\end{enumerate}
+
+\vspace{2.5cm}
+\noindent \textbf{Signature of the Student}\par
+\vspace{1cm}
+\noindent Ayan Ahmed \hfill Roll No.: 22MF3IM04
+
+% ---------------- Certificate ----------------
+\newpage
+\thispagestyle{empty}
+\section*{CERTIFICATE}
+\addcontentsline{toc}{chapter}{Certificate}
+\noindent This is to certify that the project report entitled, ``\textbf{Analysis of Operational, Commercial and Managerial Constraints at a Freight Terminal, and Solutions for Quick Release of Rolling Stock}'' submitted by Mr. Ayan Ahmed (Roll No. 22MF3IM04), Indian Institute of Technology Kharagpur, is a record of bonafide project work (Part I) carried out by him under my supervision and guidance, in partial fulfilment of the requirements for the degree of Master of Technology.
+
+\vspace{2cm}
+\noindent \textbf{Signature of Supervisor}\hfill Date: \rule{4cm}{0.4pt}\par
+\vspace{0.4cm}
+\noindent Biswajit Mahanty\par
+\noindent Professor, Department of Industrial and Systems Engineering\par
+\noindent Indian Institute of Technology Kharagpur
+
+% ---------------- Acknowledgements ----------------
+\newpage
+\thispagestyle{empty}
+\section*{ACKNOWLEDGEMENTS}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\noindent I express my sincere gratitude to my supervisor, Prof. Biswajit Mahanty, Department of Industrial and Systems Engineering, IIT Kharagpur, for his invaluable guidance, constructive feedback, and continuous support throughout this project. His insistence on building the model layer by layer, on seeing the individual effect of every factor, and on tracing every saving back to its source shaped this work.
+
+\vspace{1em}
+\noindent I would also like to thank the Department of Industrial and Systems Engineering, IIT Kharagpur, for enabling this study, and research scholar Mr. Ranit Senapati, who helped obtain the Eastern Railway freight register data used in this report. Special thanks to colleagues and friends who provided feedback and assistance during the project.
+
+\vspace{2em}
+\noindent Date: 12 November 2026 \hfill \textbf{Ayan Ahmed}
+
+% ------------------ Abstract ------------------
+\newpage
+% same look as the report-class abstract, but without resetting the page number
+\thispagestyle{plain}
+\null\vfil
+\begin{center}\bfseries Abstract\end{center}
+\addcontentsline{toc}{chapter}{Abstract}
+\noindent Rakes of Indian Railways are routinely detained at loading terminals well beyond the free time allowed by the rules. Published benchmarks put detention at 14--17\,h per rake, while mechanised loading of a rake takes about 5\,h or less. Detention costs the client demurrage, the Railway wagon time and the terminal line capacity. Its causes sit across four parties (terminal, Railway, client and road transporter) and are operational, commercial and managerial at once, so no single intervention can be judged in isolation, and siding-level time records were not available. The problem is to find which constraints detain rakes, by how much, and which interventions release them fastest, cheapest and with the most capacity gained.
+
+This work builds a discrete-event simulation of a private coal siding in ten verified layers: the physical chain; eight administrative steps (M1--M8) with office calendars and rework; the road side; dispatch rules with an optimisation bound; a scenario campaign; the individual effect of every factor with bounds; ten commodity profiles calibrated from 220,395 Eastern Railway freight records; an omitted-factor stress test; an exact breakdown of time and money; and a capacity study. The model is defined by a full mathematical formulation, charges follow the Ministry of Railways demurrage compendium (2024), every parameter is tagged as cited or assumed, 107 automated checks guard the code, and the simulated queue is checked against queueing theory.
+
+The calibrated siding detains a rake for 15.53\,h against 4.05\,h of physical work. In a congested test case, about 78\,\% of rake waiting is administrative (office hours and rework), at most 8\,\% is recoverable by optimal sequencing and 14\,\% is congestion. Procedural levers save about 15.5 times more detention than capital ones. For a coal siding, round-the-clock terminal paperwork with digital release reporting, which needs no construction, cuts detention from 17.0 to 9.5\,h and demurrage by 78\,\% (Rs 2.05 crore a year), and lets the same line take 556 rakes a year instead of 292 at today's waiting time (+90\,\%); with a second line and crew, 1,262. The ranking of interventions is unchanged in eight stress tests (Kendall $\tau = 1.00$). Rupee and capacity figures rest on assumed paperwork times and are read as directions and orders of magnitude until siding time logs are available.
+\vfil\null
+
+\newpage
+\tableofcontents
+\newpage
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\newpage
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\begin{tabular}{@{}ll@{}}
+BOXN, BOBRN & open and hopper wagon types \\
+CNP & Contract Net Protocol \\
+CP-SAT & constraint-programming solver of Google OR-Tools \\
+DES & discrete-event simulation \\
+FCFS, SPT & first-come-first-served, shortest processing time \\
+FOIS & Freight Operations Information System \\
+IR & Indian Railways \\
+M1--M8 & the eight administrative steps (Table~\ref{tab:steps}) \\
+MoR & Ministry of Railways \\
+POL & petroleum, oil and lubricants \\
+RR & railway receipt \\
+TERI & The Energy and Resources Institute \\
+H, D, P, L & levers: terminal hours 24/7, digital release, precise loading, faster loading \\
+A, B, C & packages: H+D, A+P, B+L \\
+\end{tabular}
+\newpage
+\pagenumbering{arabic}
+
+\input{ch1_introduction}
+\input{ch2_modelling}
+\input{ch3_results}
+\input{ch4_conclusion}
+
+% ======================================================================
+% REFERENCES
+% ======================================================================
+\input{references}
+
+\end{document}

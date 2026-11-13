@@ -1,0 +1,84 @@
+% ======================================================================
+% CHAPTER 1  INTRODUCTION
+% ======================================================================
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{Background}
+\label{sec:background}
+A \emph{rake} is a full train of freight wagons. Rakes earn money only while they move freight, and a large share of their time is spent standing at terminals. At a loading terminal the Railway places an empty rake on a loading line, the terminal loads it, and the Railway removes it once the terminal declares it released. The time between placement and release is the rake's \emph{detention}. Indian Railways (IR) allows a fixed \emph{free time} for it and charges \emph{demurrage} for every wagon-hour beyond it \cite{ircomp}.
+
+Detention at Indian terminals is long. The Energy and Resources Institute (TERI) puts it at 14--17\,h per rake and attributes 80--85\,\% of terminal restrictions to poor release of rakes \cite{teri}. Mechanised loading of a full rake, by contrast, takes about 5\,h or less with a payloader, and about an hour with a rapid loading system \cite{pib}. Most of a rake's detention is therefore not loading. Long detention costs all parties: the client pays demurrage, the Railway loses wagon time it could sell to other customers, and the terminal loses line capacity, because a rake that stands on the line blocks the next one.
+
+This project studies a \emph{private loading siding} in the Eastern Railway context, where most traffic is coal. Coal is 61\,\% of the tonnes in the Eastern Railway freight register used in this work (Section~\ref{sec:data}), so a coal siding is the base case, and the analysis is then extended to ten commodities.
+
+\section{The Loading Siding and the Charging Rules}
+\label{sec:rules}
+For coal loaded in open wagons at a private siding, the free time is 5\,h, plus 2\,h for a private siding, plus 1\,h when tarpaulins are used, i.e.\ 8\,h \cite{ircomp}. Demurrage is \emph{graded}: the rate per wagon-hour rises with the length of the excess (Table~\ref{tab:bands}), and penal demurrage can multiply it up to six times. Part-hours are charged as full hours in this model. Terminal working hours are 06:00--22:00 \cite{ircomp}. The free-time clock starts when the rake is placed and stops when the terminal reports release, so delays before placement (queueing, shunting) and after release (removal, railway receipt) are not billed, although they still hold wagons.
+
+\begin{table}[!htbp]
+\centering
+\caption[Graded demurrage on the excess over free time]{Graded demurrage on the excess over free time \cite{ircomp}.}
+\label{tab:bands}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Hours beyond free time} & 0--6 & 6--12 & 12--24 & 24--48 & 48--72 & $>$72 \\
+\midrule
+\textbf{Multiple of base rate} & 1.00 & 1.10 & 1.25 & 1.50 & 2.00 & 3.00 \\
+\textbf{Rs per wagon-hour} & 150 & 165 & 187.5 & 225 & 300 & 450 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Around the physical work sits a chain of documents. A wagon demand is registered and wagons are allotted; the client tenders a forwarding note; the siding receives a placement advice; the loaded rake is weighed and overloads are adjusted; release is reported; and the railway receipt (RR) is prepared and freight is paid. Each document is handled by an office of the terminal, the Railway or the client, and each office works its own hours. A short task that misses closing time waits for the next opening.
+
+\section{Literature Review}
+\label{sec:lit}
+
+\subsection{Terminal Performance and Dwell Time}
+Dwell-time studies separate the time cargo spends at a node into operational, transactional and discretionary parts. At the port of Douala, documentary and procedural time, not handling, dominated the total dwell \cite{refas}, and a six-country World Bank study found the same pattern across Sub-Saharan ports \cite{raballand}. The World Customs Organization's Time Release Study standardises the measurement of such time from arrival to release \cite{wco}. For Indian rail terminals, TERI documents long detention, the dominant role of release, the limited working hours of terminals, and labour that stops at sunset \cite{teri}. These studies measure \emph{how long} goods wait, but they do not separate the contributions of individual causes or price them under a rail tariff.
+
+\subsection{Terminal Coordination and Appointment Systems}
+Where many parties share a terminal, coordination mechanisms reduce waiting. Truck appointment systems smooth gate arrivals and cut truck waiting at container terminals \cite{guan}. Multi-agent approaches coordinate rail, road and vessel operations at marine terminals \cite{parmak}. The Contract Net Protocol is the classical negotiation scheme in which a manager announces a task and agents bid for it \cite{smith}. This project uses these mechanisms for the road side and for rake dispatch.
+
+\subsection{Scheduling with Availability Constraints}
+Placing rakes on a loading line is a single-machine sequencing problem with release dates, written $1|r_j|\sum C_j$ in the standard three-field notation \cite{graham}. Offices that close turn it into scheduling with machine non-availability, for which disjunctive and time-indexed formulations exist \cite{azem}; time-indexed formulations give the tightest bounds \cite{sousa}. A valid lower bound shows how much any sequencing rule could recover, which separates sequencing losses from losses no sequence can avoid.
+
+\subsection{Simulation, Sensitivity and Attribution Methods}
+Discrete-event simulation is the standard tool for systems whose interactions defeat closed-form analysis; its credibility rests on conceptual modelling \cite{robinson} and on verification and validation \cite{sargent}. Common random numbers and paired comparisons sharpen the comparison of scenarios \cite{law}. One-factor-at-a-time bounds, Morris elementary-effects screening \cite{morris, campolongo} and global methods \cite{saltelli} quantify parameter influence. When several improvements overlap, the Shapley value from cooperative game theory gives each one a fair share of the joint saving \cite{shapley}. Queueing results such as Little's law \cite{little} and the Pollaczek--Khinchine formula \cite{gross} give analytical checks of simulated queues.
+
+\subsection{Research Gap}
+The literature gives the benchmark (detention is long), the mechanisms (documents, office hours, coordination) and the tools (simulation, bounds, attribution). It does not provide, for an Indian loading siding, a model that (i) follows the IR charging rules exactly, (ii) separates physical, administrative, sequencing and congestion losses, (iii) gives the individual effect of every factor with bounds, and (iv) traces every hour, rupee and unit of capacity to a cause, a lever and a party. This project fills that gap.
+
+\section{Problem Statement}
+\label{sec:problem}
+The project asks: \emph{which operational, commercial and managerial constraints at a freight terminal detain rolling stock, by how much, and which interventions release it fastest, cheapest and with the most capacity gained?} The problem is hard for three reasons:
+\begin{enumerate}
+    \item \textbf{Coupled causes.} Paperwork, office calendars, loading speed, line capacity and charging rules interact, so the effect of one lever depends on the others.
+    \item \textbf{Four parties.} The terminal, the Railway, the client and the road transporter own different steps, and whoever causes a delay is not always whoever pays for it.
+    \item \textbf{Missing time data.} Siding-level placement and release times are not recorded in the available data, which hold money, tonnes, wagons and charges.
+\end{enumerate}
+
+\section{Objectives}
+\label{sec:objectives}
+\begin{enumerate}
+    \item Build a modular, verified simulation of a private loading siding, with IR charging rules cited from the source and every parameter tagged as cited or assumed.
+    \item Quantify where detention comes from: physical work, paperwork, rework, office hours, sequencing and congestion.
+    \item Rank procedural and capital interventions by detention saved, and give the individual effect of every factor with lower and upper bounds.
+    \item Extend the model to the commodities in the field data, and compare the cost of extra labour with the demurrage it avoids.
+    \item Break every saving down into hours, rupees, IR charge bands, levers and parties, and measure how many more rakes the siding can handle under each package of levers.
+    \item Test whether the chosen variables are sufficient, and add wagon damage as an optional scenario.
+\end{enumerate}
+
+\section{Scope and Key Assumptions}
+\label{sec:scope}
+\begin{itemize}
+    \item \textbf{Base case:} one private siding with one loading line, one loading crew and one shunting locomotive, loading coal into open (BOXN) wagons; ten commodity profiles in the extension.
+    \item \textbf{Boundary:} from wagon demand to the departure of the loaded rake. Line haul, unloading at destination and network-level wagon allocation are outside the scope.
+    \item \textbf{Material:} coal is assumed always available at the siding (relaxation A1; relaxing it adds about 2.9\,h).
+    \item \textbf{Assumed values:} durations and rejection rates of the eight administrative steps, the loading-rate base value and shunting times are assumed (no published data exist). They are tuned to the TERI benchmark and stress-tested; results that depend on them are reported as directions and rankings.
+\end{itemize}
+
+\section{Organisation of the Report}
+Chapter~\ref{ch:model} develops the model: the system, the selection of variables and data, the layered simulation, the mathematical formulation, the experimental design, and the implementation and verification. Chapter~\ref{ch:results} presents the results: where detention comes from, the ranking of interventions, the effect of every factor, materials and labour, the breakdown of time and money, the capacity of the siding, wagon damage and the sufficiency of the variables. Chapter~\ref{ch:conclusion} concludes with recommendations, limitations and the plan for Part II.

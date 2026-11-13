@@ -1,0 +1,1014 @@
+\documentclass[12pt,a4paper]{report}
+
+% ------------------ Packages ------------------
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{times}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    filecolor=black
+}
+\usepackage{amsmath, amssymb}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{parskip}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% ------------------ Formatting ------------------
+\onehalfspacing
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% Format chapter headings for a cleaner thesis look
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt}
+
+% ------------------ Header/Footer ------------------
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Ayan Ahmed}
+\lhead{Thesis 2026}
+\cfoot{\thepage}
+
+% ======================================================================
+% FRONTMATTER
+% ======================================================================
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\bfseries Spherical Clustering and Directional Anisotropy of Lunar Impact Craters: A Hyperspherical Framework\\[1cm]}
+
+    \vspace{2cm}
+    {\Large A Thesis Submitted by\\[0.3cm]
+    \textbf{Ayan Ahmed [22MF3IM04]}\\[0.2cm]
+    Under the Supervision of\\[0.5cm]
+    \textbf{Dr. Buddhananda Banerjee}\\[0.2cm]
+    \\[0.5cm]
+    \textbf{Bachelor of Technology in Mechanical Engineering}\\[0.5cm]
+    \textbf{Indian Institute of Technology, Kharagpur}}
+
+    \vfill
+    \Large {April 2026}
+\end{titlepage}
+
+% ---------------- Declaration ----------------
+\newpage
+\thispagestyle{empty}
+\section*{DECLARATION}
+\addcontentsline{toc}{chapter}{Declaration}
+\noindent I certify that
+\begin{enumerate}
+    \item The work contained in this report is original and has been done by me under the guidance of my supervisor.
+    \item The work has not been submitted to any other Institute for any degree or diploma.
+    \item I followed the guidelines provided by the Institute when preparing the report.
+    \item I have conformed to the norms and guidelines given in the Ethical Code of Conduct of the Institute.
+    \item Whenever I used materials (data, theoretical analysis, figures, and text) from other sources, I gave due credit to them by citing them in the text of the report and giving their details in the references. Further, I have taken permission from the copyright owners of the sources, whenever necessary.
+\end{enumerate}
+
+\vspace{2.5cm}
+\noindent \textbf{Signature of the Student}\par
+\vspace{1cm}
+\noindent Ayan Ahmed \hfill Roll No.: 22MF3IM04
+
+% ---------------- Certificate ----------------
+\newpage
+\thispagestyle{empty}
+\section*{CERTIFICATE}
+\addcontentsline{toc}{chapter}{Certificate}
+\noindent This is to certify that the Dissertation Report entitled, ``\textbf{Spherical Clustering and Directional Anisotropy of Lunar Impact Craters: A Hyperspherical Framework}'' submitted by Mr. Ayan Ahmed (Roll No. 22MF3IM04), Indian Institute of Technology Kharagpur, is a record of bonafide Project work carried out by him under my supervision and guidance and is worthy of consideration for the award of the degree of Bachelor of Technology.
+
+\vspace{2cm}
+\noindent \textbf{Signature of Supervisor}\hfill Date: \rule{4cm}{0.4pt}\par
+\vspace{0.4cm}
+\noindent Buddhananda Banerjee, Ph.D. (ISI Kolkata)\par
+\noindent Assistant Professor, Department of Mathematics\par
+\noindent Room N309A, Department of Mathematics, IIT Kharagpur
+
+% ---------------- Acknowledgements ----------------
+\newpage
+\thispagestyle{empty}
+\section*{ACKNOWLEDGEMENTS}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\noindent I express my sincere gratitude to my supervisor, Dr. Buddhananda Banerjee, Department of Mathematics, IIT Kharagpur, for his invaluable guidance, constructive feedback, and continuous support throughout this project. I am grateful for the opportunity to pursue this interdisciplinary project under the Mathematics department while being enrolled in Mechanical Engineering.
+
+\vspace{1em}
+\noindent I would also like to thank the Department of Mechanical Engineering, IIT Kharagpur for enabling this study and the facilities that supported the computational experiments. Special thanks to colleagues and friends who provided feedback and assistance during the thesis work.
+
+\vspace{2em}
+\noindent Date: April 2026 \hfill \textbf{Ayan Ahmed}
+
+
+% ------------------ Global Abstract ------------------
+\newpage
+
+\begin{abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+The spherical distribution of planetary impact craters provides a fundamental geological record of the inner solar system's bombardment history. However, traditional linear and Euclidean statistical methods inherently fail to capture the periodic, cyclical geometry of spherical planetary bodies, leading to significant projection distortions in global geodetic mapping. While this thesis first establishes a curvature-consistent geometric framework utilizing intrinsic spherical measures—specifically the Geometric Centroid Deviation (GCD) and the Square-Area Measure—and validates them against astrophysical phenomena, the primary culmination of this research is the macroscopic application of these directional statistics to lunar morphology.
+
+Utilizing the Robbins (2019) global lunar crater database, we conduct a rigorous spherical clustering analysis across multiple diametric thresholds (5 km, 10 km, 20 km, and 50 km), strictly segregating circular from elliptical impact structures. To determine the optimal number of spherical partitions without subjective bias, a discrete second-difference curvature heuristic is applied to the evaluation metrics. The mathematical optimization reveals a ubiquitous saturation at $k=2$, dictating that the global lunar crater distribution possesses a fundamental, dominant bimodal directional structure. Furthermore, benchmarking isotropic models (such as von Mises-Fisher) against the anisotropic Kent distribution highlights distinct clustering behaviors. The integration of the Kent model proves essential for deciphering non-uniform, elliptical crater groupings. Ultimately, these scale-dependent morphological variations mathematically validate that different celestial impactor populations—driven by varying strike velocities and oblique entry trajectories—leave geographically distinct footprints, demonstrating the absolute necessity of directional anisotropy modeling in modern planetary sciences.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ======================================================================
+% CHAPTER 1
+% ======================================================================
+\chapter{Determination of the Optimal Number of Clusters Using the Great Circle Distance (GCD) and Square Area Method}
+
+\section{Introduction}
+Clustering constitutes a fundamental unsupervised learning paradigm that partitions data into internally homogeneous and externally separated groups. In many real-world applications—such as text embedding, gene expression, and celestial source localization—data inherently lie on a unit hypersphere. The Euclidean distance metrics traditionally employed by algorithms like $k$-means are inadequate under such geometry, as they ignore curvature and directional constraints. This motivates the use of probabilistic models defined on the sphere, notably mixtures of von Mises–Fisher (vMF) distributions, which model concentration and mean direction explicitly.
+
+While generative vMF models capture the statistical structure of spherical data, they still rely on the pre-specification of the number of clusters, $k$, which governs both model complexity and interpretability. Choosing an optimal $k$ is a nontrivial problem: underestimation merges distinct modes, while overestimation fragments coherent ones. Conventional validation metrics—such as the Silhouette Index, Davies–Bouldin score, or the Bayesian Information Criterion (BIC)—are largely variance- or likelihood-based and fail to reflect geometric compactness intrinsic to curved manifolds.
+
+To address this gap, we investigate two curvature-preserving, geometry-driven validation measures:
+\begin{enumerate}
+    \item The \textbf{Geometric Centroid Deviation (GCD)}, which quantifies centroidal dispersion using great-circle distances and normalizes by inter-centroid separation.
+    \item The \textbf{Square-Area Measure ($A_S$)}, which employs spherical surface integration to evaluate the enclosed polygonal area formed by cluster centroids on $S^2$.
+\end{enumerate}
+Both formulations are intrinsically defined and remain invariant under rotation or scaling of the embedding space. Their behaviours across $k$ values—particularly saturation or convex transition points—serve as reliable indicators of cluster optimality. Experimental validation on synthetic vMF and real GRB datasets demonstrates that these geometric measures provide sharper and more interpretable signatures of optimality than classical metrics.
+
+% as a compact space thus optimality should be reached for some k
+\section{Problem Statement}
+Determining the optimal number of clusters ($k$) in spherical or directional data is a central challenge in clustering analysis. The underlying compactness of the hypersphere implies that as $k$ increases, there exists a natural equilibrium point where additional partitioning ceases to improve separation meaningfully. This equilibrium manifests as a trade-off between intra-cluster cohesion and inter-cluster dispersion.
+
+Let the dataset $\{\mathbf{x}_i\}_{i=1}^{N} \subset S^{d-1}$ be modeled using a mixture of $k$ vMF components. Each component $j$ is characterized by mean direction $\boldsymbol{\mu}_j$ and concentration $\kappa_j$, estimated through expectation–maximization (EM) updates. The challenge lies in identifying the value of $k$ for which the partitioning best reflects the true underlying structure of $\{\mathbf{x}_i\}$ without overfitting or under-segmentation.
+
+The objectives of this work are therefore threefold:
+\begin{enumerate}
+    \item To derive curvature-consistent geometric measures—GCD and $A_S$—for quantifying cluster compactness and separation on $S^{d-1}$.
+    \item To apply these formulations to both synthetic vMF mixtures and observational GRB datasets, replicating and extending the analysis of Ghosh et al. (2025).
+    \item To compare the geometric indicators with classical information-theoretic metrics such as BIC and log-likelihood, evaluating their consistency and interpretability.
+\end{enumerate}
+By interpreting clustering through the geometry of a compact manifold, the proposed framework ensures that the estimated optimal $k$ corresponds to a stable equilibrium between angular dispersion and centroidal alignment—consistent with the physical constraints of directional data.
+
+\section{Methodology}
+This research integrates a generative vMF mixture model with geometric diagnostics to assess clustering optimality.
+
+\subsection{Generative Modeling Framework}
+
+Each observation $x_i \in S^{d-1}$ on the unit hypersphere is assumed to arise from a finite mixture of von Mises–Fisher (vMF) components.  
+The full parameter set of the mixture model is denoted by
+\[
+\Theta = \Big\{\, \alpha_j,\; \mu_j,\; \kappa_j \;\Big|\; j = 1,\dots,k \Big\},
+\]
+where each symbol has the following meaning:
+
+\begin{itemize}
+    \item $\alpha_j$ — the mixing proportion of component $j$, satisfying  
+    \[
+    \alpha_j \ge 0, \qquad \sum_{j=1}^{k} \alpha_j = 1.
+    \]
+    \item $\mu_j$ — the mean direction (unit vector) of cluster $j$:  
+    \[
+    \mu_j \in S^{d-1}, \qquad \|\mu_j\| = 1.
+    \]
+    It represents the dominant orientation of points belonging to component $j$.
+
+    \item $\kappa_j$ — the concentration (dispersion) parameter of component $j$, controlling the spread around $\mu_j$:  
+    \[
+    \kappa_j \ge 0.
+    \]
+    Large $\kappa_j$ indicates a tightly concentrated cluster; small $\kappa_j$ corresponds to a diffuse, near-uniform distribution on the sphere.
+\end{itemize}
+
+Under these parameters, the likelihood of a point $x_i$ is
+\begin{equation}
+f(x_i \mid \Theta) = 
+\sum_{j=1}^{k} 
+\alpha_j \; c_d(\kappa_j)\;
+\exp\!\left( \kappa_j\, \mu_j^\top x_i \right),
+\end{equation}
+where $c_d(\kappa_j)$ is the vMF normalization constant ensuring the density integrates to $1$ over the sphere.
+
+Parameter estimation is performed using the Expectation–Maximization (EM) algorithm, alternating between computing posterior responsibilities and updating $(\alpha_j,\mu_j,\kappa_j)$ using closed-form or approximated updates for stable computation in high dimensions.
+
+\subsection{Geometric Centroid Deviation (GCD)}
+
+The Geometric Centroid Deviation (GCD) quantifies the angular dispersion of cluster centroids on the unit hypersphere $S^{d-1}$ using the \textit{great-circle distance} (GCD) as the intrinsic metric.  
+Let $\{\mathbf{m}_j\}_{j=1}^{k}$ denote the normalized mean directions of each cluster, obtained from hard or soft assignments under the von Mises–Fisher (vMF) mixture model.  
+The global mean direction, representing the resultant orientation of all clusters, is defined as
+\begin{equation}
+\bar{\mathbf{m}} = \frac{\sum_{j=1}^{k} n_j\,\mathbf{m}_j}{\Big\|\sum_{j=1}^{k} n_j\,\mathbf{m}_j\Big\|},
+\label{eq:global_mean_dir}
+\end{equation}
+where $n_j$ is the number (or weight) of samples assigned to cluster $j$.
+
+\paragraph{Deviation measure on the sphere.}
+On a curved manifold such as $S^{d-1}$, distances between centroids must be computed along the surface rather than through the Euclidean chord.  
+The \textit{great-circle distance}, equivalent to the central angle subtended between two unit vectors, is given by
+\begin{equation}
+\delta(\mathbf{a},\mathbf{b}) = \arccos\!\big(\mathbf{a}^{\top}\mathbf{b}\big), 
+\qquad \mathbf{a},\mathbf{b}\in S^{d-1}.
+\label{eq:gcd_angle}
+\end{equation}
+Using this intrinsic distance, the total centroidal deviation is expressed as
+\begin{equation}
+D(k) = \frac{1}{k}\sum_{j=1}^{k} \delta^{2}(\mathbf{m}_j,\bar{\mathbf{m}}),
+\label{eq:gcd_sum}
+\end{equation}
+which represents the mean squared great-circle deviation of all cluster centroids from the global mean direction.  
+For small angular separations, the approximation $\delta(\mathbf{a},\mathbf{b}) \approx \sqrt{2(1-\mathbf{a}^{\top}\mathbf{b})}$ recovers the Euclidean variance form used in Banerjee et al.~(2005), ensuring continuity between intrinsic and extrinsic formulations.
+
+\paragraph{Normalized Geometric Centroid Deviation.}
+To make the measure invariant to the number and spherical arrangement of clusters, a normalized version of GCD is defined as
+\begin{equation}
+\mathrm{GCD}(k) = 
+\frac{\sqrt{D(k)}}{\frac{1}{k(k-1)}\sum_{i<j}\delta(\mathbf{m}_i,\mathbf{m}_j)},
+\label{eq:gcd_norm}
+\end{equation}
+where the denominator denotes the mean pairwise great-circle distance among centroids, acting as a natural geometric scale factor.  
+For uniformly distributed, well-separated clusters, $\mathrm{GCD}(k)$ tends toward unity, while over-segmentation or centroid overlap results in decreasing $\mathrm{GCD}(k)$ values.  
+Thus, the point of stabilization or elbow in the $\mathrm{GCD}(k)$ curve indicates the optimal cluster number.
+
+\paragraph{Geometric interpretation.}
+The quantity $D(k)$ serves as the spherical analogue of the trace of the within-centroid covariance matrix.  
+If $C=\{\mathbf{m}_1,\dots,\mathbf{m}_k\}$ represents the set of centroids on $S^{d-1}$, then $\mathrm{GCD}(k)$ measures the normalized variance of $C$ around its resultant vector $\bar{\mathbf{m}}$.  
+In the limiting cases,
+\[
+\mathrm{GCD}(k)=0 \quad \text{when all centroids coincide,}
+\qquad
+\mathrm{GCD}(k)\to1 \quad \text{when centroids are maximally separated on } S^{d-1}.
+\]
+The progression of $\mathrm{GCD}(k)$ with $k$ typically exhibits a convex-to-saturated trend, analogous to the elbow criterion, marking the equilibrium between inter- and intra-cluster angular dispersion on the sphere.
+
+\subsection{Square Area Method (intrinsic spherical formulation)}
+Let the sphere of radius $r$ be parameterized by
+\begin{equation}
+X(\varphi,\theta) = \{\, r\sin\theta\cos\varphi,\; r\sin\theta\sin\varphi,\; r\cos\theta \,\},\qquad
+\varphi\in[0,2\pi),\; \theta\in[0,\pi).
+\end{equation}
+The intrinsic area element on the sphere is
+\begin{equation}
+\mathrm{d}A(S)=r^{2}\sin\theta\,\mathrm{d}\theta\,\mathrm{d}\varphi. \label{eq:area_element_sphere}
+\end{equation}
+(Equation and derivation follow the intrinsic geometry in the reference). 
+
+\paragraph{Area decomposition between two points.}
+For two parameter points $(\varphi_1,\theta_1)$ and $(\varphi_2,\theta_2)$ with
+$0<\varphi_1<\varphi_2<2\pi$ and $0<\theta_1<\theta_2<\pi$, the surface is partitioned into four regions $S_1,\dots,S_4$.
+The raw areas of these regions (integrating \eqref{eq:area_element_sphere}) are
+\begin{align}
+A_S^{(1)} &= r^{2}(\varphi_2-\varphi_1)\big(\cos\theta_1-\cos\theta_2\big), \label{eq:AS1}\\
+A_S^{(2)} &= r^{2}\big[2\pi-(\varphi_2-\varphi_1)\big]\big(\cos\theta_1-\cos\theta_2\big),\label{eq:AS2}\\
+A_S^{(3)} &= r^{2}(\varphi_2-\varphi_1)\big[2 + (\cos\theta_2-\cos\theta_1)\big],\label{eq:AS3}\\
+A_S^{(4)} &= r^{2}\big[2\pi-(\varphi_2-\varphi_1)\big]\big[2 + (\cos\theta_2-\cos\theta_1)\big].\label{eq:AS4}
+\end{align}
+(See reference for full derivation). 
+
+\paragraph{Proportionate (normalized) area on the sphere.}
+Define the \emph{proportionate area} between the two points as the smallest of the four region areas normalized by the total sphere area $4\pi r^{2}$:
+\begin{equation}
+A_S\big[(\varphi_1,\theta_1),(\varphi_2,\theta_2)\big] \;=\; 
+\frac{\min\{A_S^{(1)},A_S^{(2)},A_S^{(3)},A_S^{(4)}\}}{4\pi r^{2}} \in [0,\tfrac14].
+\label{eq:proportionate_area}
+\end{equation}
+This proportion removes dependence on $r$ and yields a dimensionless area measure suitable for comparisons across datasets. 
+
+\paragraph{Square of an angle and curved-variance.}
+Using the origin $(0,0)$ as reference, set
+\begin{equation}
+A^{(0)}(\varphi,\theta) := A_S\big[(0,0),(\varphi,\theta)\big].
+\end{equation}
+The \emph{square of an angle} for the sphere (used to generalize variance) is defined by
+\begin{equation}
+A^{(0)}_{C}(\theta) := A^{(0)}(\theta,\theta),
+\end{equation}
+and for a zero-centered circular random variable $\Theta$ the \emph{curved-variance} is
+\begin{equation}
+\mathrm{CVar}(\Theta) \;=\; \mathbb{E}\big[\,A^{(0)}_{C}(\Theta)\,\big],
+\end{equation}
+with sample estimators obtained by plug-in of the (circular) sample mean as needed. 
+
+\paragraph{Area-covariance and the curved dispersion matrix.}
+For two zero-centered angular random variables $\Phi,\Theta$ with joint density $f(\varphi,\theta)$ define the \emph{area-covariance} (ACov) as
+\begin{equation}
+\mathrm{ACov}(\Phi,\Theta)\;=\;\mathbb{E}_{f}\Big[\operatorname{sgn}(\varphi)\operatorname{sgn}(\theta)\sqrt{\,A^{(0)}_{C}(\varphi)\cdot A^{(0)}_{C}(\theta)\,}\,\Big],
+\end{equation}
+where $\operatorname{sgn}(\cdot)$ is the standard circular sign convention used to orient angles. The curved (area) dispersion matrix is then
+\begin{equation}
+\Sigma_{A} \;=\; 
+\begin{pmatrix}
+\mathrm{CVar}(\Phi) & \mathrm{ACov}(\Phi,\Theta)\\[4pt]
+\mathrm{ACov}(\Phi,\Theta) & \mathrm{CVar}(\Theta)
+\end{pmatrix},
+\end{equation}
+which is symmetric and positive semi-definite by construction (Cauchy–Schwarz argument), so it admits a proper Mahalanobis-type quadratic form on the curved geometry. 
+
+\paragraph{Practical use for clustering validation.}
+In practice we (i) compute centroid parameter pairs $(\varphi_j,\theta_j)$ for cluster centers on $S^2$, 
+(ii) evaluate proportionate areas $A^{(0)}(\cdot,\cdot)$ and the derived square-angle $A^{(0)}_C$ for centroid angular separations, and 
+(iii) use the saturation/elbow behaviour of the total normalized spherical area $A(k)$ or the behaviour of curved-variance / area-covariance–based ratios 
+(analogous to $I_1/T$ and $I_2/T$) as a geometric diagnostic for the optimal $k$. 
+The above intrinsic definitions ensure the method respects spherical curvature and yield consistent estimators under mild regularity.
+
+\subsection{Variance Decomposition on the Sphere}
+To quantify clustering effectiveness in terms of angular dispersion, the total scatter of the dataset 
+on the unit hypersphere $S^{d-1}$ can be decomposed into within-cluster and between-cluster components.  
+Let $\{\mathbf{x}_i\}_{i=1}^{N} \subset S^{d-1}$ be partitioned into $k$ clusters with centroids 
+$\{\mathbf{m}_j\}_{j=1}^{k}$, cluster sizes $\{n_j\}$, and overall mean direction $\bar{\mathbf{m}}$ 
+defined as in \eqref{eq:global_mean_dir}.  
+
+The total angular dispersion (or total sum of squares) is expressed intrinsically as
+\begin{equation}
+T = \sum_{i=1}^{N} \delta^{2}(\mathbf{x}_i, \bar{\mathbf{m}}),
+\label{eq:total_dispersion}
+\end{equation}
+where $\delta(\cdot,\cdot)$ denotes the great-circle distance on $S^{d-1}$ given by \eqref{eq:gcd_angle}.  
+
+This total dispersion decomposes into two orthogonal components:
+\begin{equation}
+T = I_1 + I_2,
+\label{eq:variance_decomp}
+\end{equation}
+where
+\begin{align}
+I_1 &= \sum_{j=1}^{k}\sum_{\mathbf{x}_i \in C_j} 
+\delta^{2}(\mathbf{x}_i, \mathbf{m}_j)
+\quad &\text{(intra-cluster angular variance)},  \label{eq:within_var}\\[4pt]
+I_2 &= \sum_{j=1}^{k} n_j\,\delta^{2}(\mathbf{m}_j, \bar{\mathbf{m}})
+\quad &\text{(inter-cluster angular variance)}. \label{eq:between_var}
+\end{align}
+
+The decomposition in \eqref{eq:variance_decomp} mirrors the Euclidean ANOVA framework, 
+but is defined intrinsically using geodesic distances, ensuring invariance to spherical curvature.  
+
+To obtain dimensionless and comparable indicators of clustering stability, the normalized ratios
+\begin{equation}
+\frac{I_1}{T} \quad \text{and} \quad \frac{I_2}{T}
+\label{eq:normalized_ratios}
+\end{equation}
+are computed for successive $k$ values.  
+
+Typically, $\frac{I_1}{T}$ decreases and $\frac{I_2}{T}$ increases as $k$ grows; 
+their convergence or saturation indicates the optimal number of clusters.  
+In particular, the convex or plateau behaviour of $\frac{I_2}{T}$ serves as a geometric indicator of 
+equilibrium between intra- and inter-cluster dispersion on the compact spherical manifold.
+
+\subsection{Evaluation Criteria}
+To ensure robustness and interpretability, clustering performance is evaluated using a combination of intrinsic geometric and statistical criteria:
+
+\begin{enumerate}
+    \item \textbf{Intrinsic geometric measures:}  
+    The proposed \textit{Geometric Centroid Deviation (GCD)} and \textit{Square-Area Measure ($A_S$)} are computed for each candidate $k$.  
+    Stabilization, convexity, or saturation in $\mathrm{GCD}(k)$ or $A_S(k)$ indicates an optimal number of clusters.  
+    These indices are curvature-aware and rotationally invariant, offering physically meaningful diagnostics on $S^{d-1}$.
+
+    \item \textbf{Variance ratios:}  
+    The normalized quantities $\frac{I_1}{T}$ and $\frac{I_2}{T}$ derived from \eqref{eq:variance_decomp} are monitored with increasing $k$.  
+    Their intersection or inflection point marks the equilibrium between intra- and inter-cluster variance, consistent with the compact-space hypothesis.
+
+    \item \textbf{Model-based statistical criteria:}  
+    For cross-verification, the Bayesian Information Criterion (BIC) is evaluated for the corresponding vMF mixture model:
+    \begin{equation}
+    \mathrm{BIC}(k) = -2\ln L_k + p_k \ln N,
+    \end{equation}
+    where $L_k$ is the maximized likelihood under $k$ components and $p_k$ is the number of free parameters.  
+    Agreement between the BIC minimum and geometric saturation points further strengthens the choice of optimal $k$.
+
+    \item \textbf{Visual and empirical diagnostics:}  
+    Angular scatterplots of centroids, ratio curves $\left(\frac{I_1}{T},\,\frac{I_2}{T}\right)$, and GCD–Area trajectories are analyzed for smoothness and convergence.  
+    A consistent elbow, plateau, or saturation across multiple geometric indicators constitutes empirical evidence of cluster optimality.
+\end{enumerate}
+
+Collectively, these evaluation criteria integrate geometric, probabilistic, and visual assessments to yield a unified, curvature-consistent strategy for determining the optimal number of clusters on the sphere.
+
+\section{Implementation}
+The experimental analysis is divided into two primary components — synthetic vMF data and real-world GRB datasets.
+
+\subsection{Simulation Study on Synthetic Directional Data}
+To assess the intrinsic geometric behaviour of the proposed methods under controlled conditions, synthetic datasets were generated using mixtures of three von Mises–Fisher (vMF) components on the unit sphere $S^2$. Each component was assigned equal prior weight, with concentration parameters $\kappa = 1$ and $\kappa = 16$ to simulate low- and high-coherence clusters, respectively.  
+Cluster means were placed orthogonally to one another along the Cartesian axes to ensure separability while preserving spherical uniformity.
+
+The spherical $k$-means algorithm employing angular distances (\texttt{sph\_kmeans}) was used to obtain centroids for successive $k$ values ($k = 1$ to $10$). For each configuration, three key quantities were computed:
+\begin{equation}
+T = \sum_i \delta^2(\mathbf{x}_i, \bar{\mathbf{m}}), \quad
+I_1 = \sum_{j}\sum_{\mathbf{x}_i \in C_j} \delta^2(\mathbf{x}_i, \mathbf{m}_j), \quad
+I_2 = \sum_j n_j\,\delta^2(\mathbf{m}_j, \bar{\mathbf{m}}),
+\end{equation}
+where $\delta(\cdot,\cdot)$ denotes the great-circle distance.  
+The normalized ratios $I_1/T$ and $I_2/T$ were then analyzed as functions of $k$.
+
+For both concentration regimes, the GCD and spherical area formulations produced consistent saturation patterns:
+\begin{itemize}
+    \item \textbf{High concentration ($\kappa = 16$):}  
+    Both metrics exhibited stable minima in $I_1/T$ and plateaued $I_2/T$ near $k = 3$, accurately recovering the true cluster count with negligible variance across runs.  
+    The GCD curve showed rapid convergence, while the area-based measure displayed mild oscillation due to local centroid ordering.
+
+    \item \textbf{Low concentration ($\kappa = 1$):}  
+    As dispersion increased, GCD maintained monotonic stability, whereas the area-based ratio $I_2/T$ displayed greater sensitivity to centroid geometry.  
+    Despite broader variance, both measures consistently indicated equilibrium around $k = 3$.
+\end{itemize}
+
+\subsection{Analysis on GRB (Astrophysical) Data}
+The proposed framework was subsequently applied to the Gamma-Ray Burst (GRB) data,
+replicating the analysis of Table~4 and Table~5 from Ghosh et al.~(2025). Right ascension (RA)
+and declination (Dec) coordinates were projected onto the unit sphere to construct the 
+directional dataset $\{\mathbf{x}_i\}_{i=1}^{N}$. Both the GCD and the intrinsic spherical 
+area formulations were evaluated across candidate cluster numbers $k = 1$ to $10$.
+
+\vspace{0.3cm}
+\noindent\textbf{Illustrative GRB density visualizations.}
+Figures~\ref{fig:grb_density_general} and \ref{fig:grb_density_vmf} provide density 
+representations of the Fermi GRB dataset, reproduced for illustration from  
+\textit{Reference [3]}.\footnote{Link to original source:\url{https://iopscience.iop.org/article/10.1088/1538-3873/adb2c1#paspadb2c1s5}}
+These serve as visual references for the spherical distribution and angular concentration
+behaviour of the GRB observations on the celestial sphere.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{z1.png}
+\caption{General density plot of the Fermi GRB dataset. Black dots represent observed GRB locations, 
+while the \textcolor{green}{green contours} indicate the nonparametric density estimated over the sphere. 
+Reproduced for illustration from Reference [3].}
+\label{fig:grb_density_general}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{y1.png}
+\caption{von Mises–Fisher (vMF) contour plot of the Fermi GRB dataset.
+Black dots denote observed GRBs, while the \textcolor{blue}{blue contours} represent fitted 
+vMF mixture density levels. Reproduced for illustration from Reference [3].}
+\label{fig:grb_density_vmf}
+\end{figure}
+
+
+\paragraph{GCD-based evaluation.}
+The $I_2/T$ curve exhibited a sharp rise from $k = 1$ to $k = 2$, followed by a stable 
+plateau near $I_2/T \approx 1.0$. This indicates that inter-cluster angular separation becomes 
+dominant beyond $k=2$. The behaviour aligns with the statistical optimality reported in 
+Ghosh et al., confirming that the GCD measure reliably captures the intrinsic angular 
+separation structure of the GRB populations.
+
+\paragraph{Square Area-based evaluation.}
+The spherical area metric showed strong nonlinearity for small $k$, with a prominent local
+maximum around $k=4$. This suggests partial centroidal convergence with moderate 
+residual angular variability. Despite its sensitivity to local centroid ordering, the 
+$A_S$-based indicator consistently identified the equilibrium region $3 \leq k \leq 4$, 
+supporting the geometric scale inferred from the mixture model analysis.
+
+\vspace{0.2cm}
+\noindent Overall, both GCD and $A_S$ converged within the same range of cluster solutions.  
+The agreement between curvature-aware geometry and the probabilistic vMF mixture model 
+demonstrates that spherical intrinsic metrics can accurately detect the inherent grouping 
+patterns of astrophysical directional data. The GCD metric provided smoother convergence 
+and robustness to centroid perturbations, while the area-based metric offered enhanced 
+geometric interpretability in terms of spherical surface coverage.
+
+
+\subsection{Comprehensive Observations}
+The combined experimental and analytical results across synthetic and astrophysical datasets reveal several consistent geometric and statistical behaviours:
+
+\begin{enumerate}
+    \item \textbf{Robustness of GCD under varying dispersion:}  
+    The Geometric Centroid Deviation (GCD) remained stable across different concentration regimes, accurately capturing the onset of equilibrium between inter- and intra-cluster dispersion.  
+    Its intrinsic reliance on great-circle distance ensures insensitivity to noise or centroid perturbations, yielding a reliable indicator of optimal $k$ even under low $\kappa$ conditions.
+
+    \item \textbf{Geometric interpretability of the Area-Based Method:}  
+    The intrinsic spherical area measure $A_S$ provided an alternative curvature-sensitive diagnostic that interprets cluster configuration through surface geometry.  
+    Although more sensitive to centroid ordering, it offers superior geometric intuition, particularly for astrophysical and spherical data distributed over a compact manifold.
+
+   \item \textbf{Variance ratio dynamics and equilibrium detection:}  
+    The normalized ratios $I_1/T$ (within-cluster) and $I_2/T$ (between-cluster) exhibited characteristic convex-to-saturation transitions as $k$ increased.  
+    The inflection region in $I_2/T$ consistently aligned with the minima in the GCD curve or the plateau in $A_S$, marking the point of structural equilibrium predicted by the compact-space hypothesis.
+
+
+    \item \textbf{Consistency across geometric and probabilistic domains:}  
+    Agreement between curvature-based indices (GCD, $A_S$) and statistical criteria (BIC) demonstrates a convergence between geometric optimality and probabilistic model selection.  
+    This synergy validates that curvature-aware geometric diagnostics can complement, and in some cases outperform, purely likelihood-driven methods for directional clustering.
+\end{enumerate}
+
+\section{Results}
+
+\subsection{Custom dataset — GCD}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{1d.png}
+\caption{GCD($k$) and ratio plots for the custom vMF dataset, optimality at $k=3$.}
+\end{figure}
+
+A summary of numerical findings for the custom synthetic dataset using the GCD metric: 
+at $k=3$ we observed $I_1/T \approx 0.2946$ and $I_2/T \approx 1.1358$, consistent with strong 
+inter-cluster separation and low within-cluster scatter for the chosen settings.
+
+\subsection{Custom dataset — Square Angle (Area)}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{2d.png}
+\caption{Square-Area($k$) and ratio plots for the custom vMF dataset, optimality at $k=5$.}
+\end{figure}
+
+Using the square-angle (area) measure on the same custom dataset with $n=10{,}000$, at $k=5$ the reported ratios 
+were $I_1/T \approx 0.02682$ and $I_2/T \approx 2.03595$, confirming optimality  
+with five true clusters.
+
+\subsection{Original (GRB) dataset — GCD}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{3c.png}
+\caption{GCD($k$) and ratio plots for the GRB dataset,  optimality at $k=2$.}
+\end{figure}
+
+For the GRB/original dataset replication, GCD produced at $k=2$ values 
+$I_1/T \approx 0.371$ and $I_2/T \approx 1.5274$, indicating a balance where between-cluster 
+variance dominates, matching the qualitative behaviour reported in the reference experiments.
+
+\subsection{Original (GRB) dataset — Square Angle (Area)}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{4c.png}
+\caption{Square-Area($k$) and ratio plots for the GRB dataset, optimality at $k=4$.}
+\end{figure}
+
+When measuring with the area-based method on the GRB dataset, the $k=4$ ratios are 
+$I_1/T \approx 0.14035$ and $I_2/T \approx 2.91489$, reflecting a larger spherical-area-based 
+inter-cluster signal compared to the GCD scalarization.
+
+\clearpage
+\subsection{Interpretation and compact-space remark}
+Following the supervisor's instruction, we emphasise that the data lie on a compact manifold 
+(the unit sphere); therefore, as $k$ varies an optimal point should exist where inter-cluster 
+separation and intra-cluster compactness (measured via GCD or square-angle area) reach an 
+equilibrium. The observed saturations/convexities in $I_2/T$ and the elbow in $A(k)$ across 
+these four experiments provide candidate $k$ values and corroborate that geometric metrics 
+are informative for model selection.
+
+\section{Conclusion}
+This study presented two curvature-aware geometric formulations—the \textit{Geometric Centroid Deviation} (GCD) and the \textit{Square-Area Method} ($A_S$)—for determining the optimal number of clusters on the unit hypersphere.  
+By incorporating intrinsic spherical geometry, these methods overcome the limitations of variance- and likelihood-based heuristics that rely on Euclidean assumptions.  
+The GCD formulation quantifies centroidal dispersion through great-circle distances, providing a stable equilibrium measure even under high angular variance.  
+The $A_S$ formulation complements this by interpreting centroid distribution in terms of normalized spherical area, offering a geometric visualization of inter-cluster separation.  
+
+Through extensive evaluation on both synthetic vMF datasets and astrophysical GRB observations, the proposed metrics demonstrated consistent convergence with theoretical expectations.  
+The observed saturation and convex transition patterns in $I_2/T$ ratios confirm the compact-space equilibrium principle, where increasing $k$ yields diminishing structural gain.  
+Together, these results establish that curvature-consistent geometric indices can serve as reliable, interpretable, and computationally efficient alternatives for model selection in directional clustering.
+
+\clearpage
+% ======================================================================
+% CHAPTER 2
+% ======================================================================
+\chapter{Astrophysical Applications: Gamma-Ray Bursts and Celestial Distributions}
+
+\section{Introduction}
+The mathematical frameworks established for hyperspherical clustering in the previous chapter provide a vital analytical lens for real-world astrophysical phenomena. Historically, celestial events—ranging from high-energy radiation bursts to planetary meteor strikes—were analyzed using planar projections and Euclidean spherical models. However, recent comparative studies in directional statistics have definitively shown that treating the celestial sphere and planetary bodies as pure geometric manifolds reveals distinct, non-uniform spherical groupings.
+
+This chapter transitions the theoretical spherical formulations to observational celestial datasets. We draw primary inferences from the spherical modeling of Gamma-Ray Bursts (GRBs) observed by the Fermi and BATSE missions, which necessitates the use of flexible spherical mixture models to account for complex radiation patterns. To establish a universal context for celestial bombardment, these astrophysical inferences are supplemented by comparative planetary studies analyzing the directional nature of meteor falls on Venus. Together, these spherical analyses validate the necessity of curvature-aware statistics for understanding celestial distributions.
+
+\section{Problem Statement}
+When analyzing high-energy astronomical events (such as GRBs) or the spherical distribution of planetary bombardments, identifying the true underlying spherical groupings is critical to understanding their physical origins. The inherent problem lies in applying appropriate directional statistical models to locate these optimal clusters on a sphere without being misled by Euclidean projection distortions. 
+
+While standard von Mises–Fisher (vMF) distributions serve as the spherical analogue to the isotropic Gaussian, they can struggle to capture highly complex or heavy-tailed spherical densities. The objective of this chapter is twofold:
+\begin{enumerate}
+    \item To detail the numerical thresholds and flexible spherical mixture models utilized in recent GRB analyses to capture complex spherical clusters that deviate from standard Euclidean assumptions.
+    \item To incorporate comparative findings from Venusian meteor falls, utilizing strict Bayesian Information Criterion (BIC) optimizations to prove that celestial bombardment is not a uniformly random process, but rather a structurally clustered phenomenon governed by directional constraints.
+\end{enumerate}
+
+\section{Methodology}
+To accurately model the spherical distribution of these celestial events, we look to the methodologies employed in the foundational astrophysical literature.
+
+\subsection{Flexible Spherical Mixture Models for GRBs}
+As demonstrated by Ghosh, Ghosh, and Chatterjee (2025), modeling GRB distributions requires flexible spherical mixture models capable of accounting for complex spherical clusters on the celestial sphere. Standard Euclidean clustering techniques often misclassify the boundary constraints of radiation bursts. 
+
+To resolve this, the methodology extends the standard mixture framework to incorporate a directional base distribution. This allows the model to dynamically adapt to varying levels of concentration and complex dispersion patterns on the sphere, providing a statistically superior fit compared to rigid isotropic assumptions. The mathematical optimization is governed strictly by minimizing the Bayesian Information Criterion (BIC), defined intrinsically for spherical domains.
+
+\subsection{Directional Statistics for Planetary Bombardment}
+To complement the high-energy GRB framework, we incorporate the spherical point process methodologies used to study physical celestial impacts. Chatterjee and Ghosh (2025) extended this spherical framework to the surface of Venus. By treating crater locations as a maximum entropic spherical process constrained by planetary geometry, they utilized spherical clustering to verify whether celestial falls exhibit directional preference. The methodology relies on evaluating goodness-of-fit via Watson's test to reject the null hypothesis of Spherical Complete Randomness (CSR) on the planetary sphere, ensuring a statistically robust approach free from projection biases.
+
+\sectionsection{Implementation}
+The implementation of these methodologies involves processing distinct geodetic and celestial datasets into three-dimensional Cartesian unit vectors.
+
+\subsection{Gamma-Ray Burst Data Processing}
+The primary inferences are drawn from the BATSE and Fermi GRB catalogs. The raw data provides celestial coordinates in the form of Right Ascension ($\alpha \in [0, 360^\circ)$) and Declination ($\delta \in [-90^\circ, 90^\circ]$). To apply spherical clustering, these coordinates are mapped to the unit sphere $S^2$ via:
+\begin{equation}
+\mathbf{x}_i = \begin{pmatrix} \cos(\delta_i) \cos(\alpha_i) \\ \cos(\delta_i) \sin(\alpha_i) \\ \sin(\delta_i) \end{pmatrix}.
+\end{equation}
+The flexible spherical mixture models are then fitted using an Expectation-Maximization (EM) algorithm to dynamically group the GRB events.
+
+\subsection{Comparative Planetary Datasets}
+For the comparative studies, Venusian crater coordinates were extracted from global planetary databases. Similar to the GRB processing, latitudes and longitudes were converted to Cartesian unit vectors. The datasets were then subjected to spherical clustering and CSR testing to mathematically isolate local density maximums and directional biases over the planetary surface.
+
+\section{Results and Analysis}
+The application of these curvature-aware methodologies yields critical numerical insights into the spherical behavior of astrophysical phenomena.
+
+\subsection{Spherical Clustering in Gamma-Ray Bursts}
+Applying flexible spherical mixture models to the BATSE and Fermi GRB catalogs reveals that radiation bursts are mathematically clustered across the celestial sky. The application of the BIC minimization technique allowed researchers to empirically determine the optimal number of mixture components without visual bias.
+
+For the comprehensive BATSE catalog, the structural equilibrium stabilized strictly at $k=2$. The optimization confirmed that a mixture of two spherical distributions provides an extremely robust fit for the entire spherical dataset, capturing the primary division between long ($> 2$s) and short ($< 2$s) bursts. 
+
+Furthermore, comparative studies evaluating BATSE data features (such as T90 duration and hardness) demonstrated the undeniable superiority of hyperspherical clustering over traditional linear methods. When establishing $k=3$ optimal clusters (corresponding to Long, Short, and Intermediate bursts), the spherical K-means and von Mises-Fisher models achieved an impressive Adjusted Rand Index (ARI) of $0.65$. This numerical validation confirms that GRBs exhibit complex clustering behaviors that can only be accurately mapped using advanced directional statistics.
+
+\subsection{Directional Nature of Venusian Impacts}
+The secondary inferences drawn from the Venusian crater studies corroborate the GRB findings on a macroscopic planetary scale. The spherical analysis systematically rejected the hypothesis of uniform spherical randomness via strict Watson's goodness-of-fit testing. 
+
+By fitting a mixture of Fisher–von Mises distributions and extracting BIC scores across a spectrum of partitions (evaluating up to $k=7$ structural clusters), the numerical optimization determined that the spherical distribution of Venusian impact craters is best modeled by a two-component ($k=2$) mixture. Despite Venus's thick atmosphere acting as a filter for smaller meteoroids, the macroscopic craters that do form exhibit statistically significant clustering. This $k=2$ structural saturation explicitly proves that extra-terrestrial bombardments leave geographically distinct, mathematically verifiable footprints that favor specific directional orientations.
+
+\section{Conclusion}
+This chapter successfully bridged the theoretical geometric formulations of the hypersphere to real-world observational astrophysics. By analyzing the spherical distribution of Gamma-Ray Bursts, we established the mathematical necessity of flexible spherical mixture models. The strict numerical convergence of the BATSE data at $k=2$, alongside the high ARI correlation ($0.65$) achieved by spherical models, proves that integrating directional statistics is critical for accurately capturing the complex groupings inherent to high-energy celestial events.
+
+Furthermore, by integrating comparative findings from Venusian meteor falls, we demonstrated a universal astrophysical principle: celestial objects—whether radiation bursts or physical meteorites—do not strike planetary or celestial surfaces uniformly. The optimization of Venusian crater distributions, which also stabilized fundamentally at a two-component ($k=2$) vMF mixture, confirms that macroscopic impacts exhibit profound spherical clustering constrained by orbital and geometric physics. 
+
+These collective, mathematically verified inferences establish a rigorous analytical foundation. Having proven via strict BIC scoring and goodness-of-fit testing that advanced spherical clustering is essential for mapping celestial events, we can now confidently scale this methodology to one of the most heavily bombarded bodies in the solar system. In the following chapter, we apply this comprehensive directional framework to the Moon to decode the complex spherical history of lunar bombardment.
+
+\clearpage
+% ======================================================================
+% CHAPTER 3
+% ======================================================================
+\chapter{Spherical Clustering and Directional Anisotropy of Lunar Impact Craters}
+
+\section{Introduction}
+The spherical distribution of impact craters on the Moon serves as a fundamental geological record of the inner solar system's bombardment history. Analyzing the geometrical distribution of these craters allows planetary scientists to distinguish between primary impacts, secondary ejecta, and the influence of internal lunar volcanism. However, representing crater locations on a two-dimensional plane inherently introduces projection distortions that skew spherical point pattern analyses at a global scale. 
+
+To overcome these geometric distortions, the study of planetary cratering necessitates the use of directional statistics, treating impact locations as vectors on a three-dimensional unit sphere \cite{mardia2000}. By applying the spherical clustering techniques established in Chapter 1, we can more accurately detect non-random spherical concentrations and anisotropies. This aligns with recent findings on the surface of Venus \cite{chatterjee2025} and Earth \cite{ghosh2024celestial}, where celestial impacts were proven to follow distinct directional trajectories.
+
+Historically, studies of lunar cratering have relied on nearest-neighbor analysis and standard K-means clustering defined in Euclidean space. While these methods are suitable for localized regional mapping, they are mathematically inadequate for global surface analysis due to the periodic boundaries of a sphere. Recent advancements in directional statistics have introduced models based on maximum-entropy principles, such as the von Mises-Fisher (vMF) distribution for isotropic spherical data \cite{hornik2014}. However, the application of models that account for rotational asymmetry—such as the Kent distribution \cite{kent1982}—remains vastly underutilized in planetary sciences, despite its high relevance to elliptical impact craters resulting from oblique strike angles.
+
+\section{Problem Statement}
+Determining the global spherical groupings of lunar impact craters is hindered by overlapping morphological features and the mathematical failure of Euclidean metrics on spherical bodies. The primary objective of this chapter is to implement and compare directional clustering algorithms to evaluate the spherical groupings of lunar impact craters. 
+
+The novelty of our approach lies in:
+\begin{enumerate}
+    \item \textbf{Morphological Segregation:} Distinctly analyzing circular versus elliptical craters to identify how impact angle and morphology correlate with global spherical clustering.
+    \item \textbf{Scale-Dependent Thresholding:} Running the clustering framework across four distinct crater diameter thresholds (5 km, 10 km, 20 km, and 50 km) to evaluate how spherical patterns evolve when filtering out micro-meteorite noise.
+    \item \textbf{Comparative Spherical Modeling:} Benchmarking standard isotropic models (vMF, Spherical K-Means, PKBC) against the anisotropic Kent distribution model.
+    \item \textbf{Mathematical Optimization:} Eliminating subjective visual estimates of the ``elbow'' in error curves by implementing a discrete second-difference curvature analysis, strictly pinpointing the optimal cluster count ($k$).
+\end{enumerate}
+
+\section{Methodology}
+
+\subsection{The Dataset and Filtering Criteria}
+This data is sourced from the comprehensive global lunar crater database compiled by Robbins, Stuart J. \cite{robbins2019}. The dataset natively provides location in Latitude and Longitude (degrees). For directional modeling, these coordinates were transformed into three-dimensional Cartesian unit vectors defined on the unit sphere $\mathbb{S}^2 \subset \mathbb{R}^3$. 
+
+To isolate major impact events and study scale-dependency, the dataset was rigorously filtered into subsets of $\ge 5$ km, $\ge 10$ km, $\ge 20$ km, and $\ge 50$ km. Furthermore, the dataset was strictly divided into circular and elliptical crater morphologies to evaluate directional anisotropy separately. Elliptical craters were defined mathematically by an ellipticity ratio $> 1.1$, and the size thresholds were applied to their respective diametric values.
+
+\subsection{Spherical Clustering Framework}
+To accurately capture the spherical distribution of these impact events, we evaluate the geodetic data using four distinct mathematical clustering algorithms, ranging from rigid isotropic models to flexible anisotropic distributions.
+
+\subsubsection{Von Mises-Fisher (vMF) Mixture Model}
+The von Mises-Fisher distribution serves as the natural extension of the circular von Mises distribution to the hypersphere $\mathbb{S}^{p-1}$, acting as the spherical analogue to the multivariate Gaussian. For three-dimensional spherical data residing on the unit sphere $\mathbb{S}^2$, the probability density function for a random unit vector $\mathbf{x}$ is defined as:
+\begin{equation}
+    f(\mathbf{x}; \boldsymbol{\mu}, \kappa) = C_3(\kappa) \exp(\kappa \boldsymbol{\mu}^\top \mathbf{x})
+\end{equation}
+where $\boldsymbol{\mu}$ represents the mean direction unit vector ($\|\boldsymbol{\mu}\| = 1$), $\kappa \ge 0$ is the concentration parameter controlling the isotropic dispersion around the mean, and $C_3(\kappa)$ is the normalization constant given by:
+\begin{equation}
+    C_3(\kappa) = \frac{\kappa}{4\pi \sinh(\kappa)}
+\end{equation}
+Under moment constraints, the vMF distribution maximizes spherical entropy, making it highly effective for modeling strictly perpendicular, circular impacts.
+
+\subsubsection{Spherical K-Means and Cosine Similarity}
+Standard K-Means clustering utilizes Euclidean distance, which mathematically cuts through the interior of the sphere, leading to projection distortions. Spherical K-Means operates strictly on the manifold surface by maximizing the Cosine Similarity between a data point $\mathbf{x}_i$ and a cluster centroid $\mathbf{c}_j$:
+\begin{equation}
+    \text{similarity}(\mathbf{x}_i, \mathbf{c}_j) = \frac{\mathbf{x}_i \cdot \mathbf{c}_j}{\|\mathbf{x}_i\| \|\mathbf{c}_j\|} = \cos(\theta)
+\end{equation}
+The objective function seeks to partition the dataset into $k$ sets by maximizing the sum of within-cluster cosine similarities, effectively grouping craters based on their angular proximity rather than linear distance.
+
+\subsubsection{Poisson Kernel-Based Clustering (PKBC)}
+The Poisson kernel offers a robust alternative to exponential family models, particularly suited for highly concentrated, localized angular distributions on $\mathbb{S}^2$. The density of a point $\mathbf{x}$ is modeled via the normalized Poisson kernel:
+\begin{equation}
+    f(\mathbf{x}; \boldsymbol{\mu}, \rho) = \frac{1 - \rho^2}{4\pi \|\mathbf{x} - \rho\boldsymbol{\mu}\|^3}
+\end{equation}
+where $\rho \in [0,1)$ acts as a concentration parameter. As $\rho \to 1$, the distribution becomes highly localized around the mean direction $\boldsymbol{\mu}$. The PKBC algorithm adapts iteratively to partition dense geodetic datasets using Log-Likelihood stopping rules, excelling in detecting densely packed secondary cratering events.
+
+\subsubsection{Kent Distribution (Fisher-Bingham)}
+While vMF assumes rotational symmetry, the Kent distribution generalizes spherical clustering by accommodating elliptical contours, which is mathematically vital for analyzing directional anisotropy caused by oblique crater strikes. The density function is given by:
+\begin{equation}
+    f(\mathbf{x}) = C(\kappa, \beta) \exp \left( \kappa \boldsymbol{\gamma}_1^\top \mathbf{x} + \beta \left[ (\boldsymbol{\gamma}_2^\top \mathbf{x})^2 - (\boldsymbol{\gamma}_3^\top \mathbf{x})^2 \right] \right)
+\end{equation}
+Here, $\kappa$ dictates the overall concentration, while $\beta$ controls the ellipticity (constrained by $0 \le 2|\beta| < \kappa$). The orthogonal unit vectors $\boldsymbol{\gamma}_1, \boldsymbol{\gamma}_2,$ and $\boldsymbol{\gamma}_3$ represent the mean direction, the major axis, and the minor axis of the elliptical dispersion, respectively. This structural flexibility makes it the premier model for isolating asymmetric impact clusters.
+
+\subsection{Mathematical Optimization: Second Difference Heuristic}
+A pervasive challenge in unsupervised clustering is determining the optimal number of clusters ($k$). To eliminate the subjective visual bias of estimating the ``elbow'' in evaluation curves (such as BIC or Log-Likelihood), we implemented a discrete second-difference curvature analysis.
+
+Let $f(k)$ represent the objective evaluation metric for a given $k$. The first difference, representing the slope of improvement (or information gain), is $\Delta f(k) = f(k) - f(k-1)$. The second difference, which calculates the discrete mathematical curvature, is defined as:
+\begin{equation}
+    \Delta^2 f(k) = \Delta f(k+1) - \Delta f(k) = f(k+1) - 2f(k) + f(k-1)
+\end{equation}
+The optimal number of spherical partitions occurs at the point of maximum geometric bend in the evaluation curve, formally extracted via:
+\begin{equation}
+    k_{\text{optimal}} = \arg\max_k |\Delta^2 f(k)|
+\end{equation}
+This ensures that our identified lunar provinces are strictly data-driven and structurally optimal.
+
+\section{Implementation and Results}
+We systematically applied our framework to both the circular and elliptical subsets of the lunar crater database across all four diametric thresholds. To avoid subjective bias, we utilized the second difference (curvature) of the evaluation metrics to locate the exact optimal $k$ for each algorithm.
+
+\subsection{Spherical Clustering of Circular Craters}
+This section details the statistical evaluation metrics and corresponding curvature optimization grids for circular lunar craters.
+
+\subsubsection{Threshold: $\ge 50$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{C50.png}
+    \caption{Combined Elbow and Curvature grid for Circular Craters ($\ge 50$ km).}
+    \label{fig:circ_50km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Circular Craters ($\ge 50$ km).}
+\label{tab:circ_50km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -148.3926 & 0.0000 & 0.000 & 0.0000 \\
+2 & -250.9137 & 629.0745 & -4360.679 & -2965.8198 \\
+3 & -255.7760 & 427.4967 & -4333.060 & -2325.5708 \\
+4 & -268.3327 & 320.0143 & -4319.168 & -1932.0449 \\
+5 & -255.0735 & 256.3109 & -4305.154 & -1576.8053 \\
+6 & -242.5313 & 218.1734 & -4293.097 & -1306.3405 \\
+7 & -214.7091 & 190.6372 & -4287.711 & -1103.4170 \\
+8 & -189.7352 & 165.7029 & -4279.705 & -899.9555 \\
+9 & -182.3329 & 146.1668 & -4271.991 & -697.9293 \\
+10 & -155.7230 & 130.8963 & -4265.624 & -533.0260 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Threshold: $\ge 20$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{C20.png}
+    \caption{Combined Elbow and Curvature grid for Circular Craters ($\ge 20$ km).}
+    \label{fig:circ_20km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Circular Craters ($\ge 20$ km).}
+\label{tab:circ_20km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -568.0831 & 0.0000 & 0.00 & 0.000 \\
+2 & -970.4240 & 2871.9199 & -19622.94 & -13466.737 \\
+3 & -1104.4591 & 1972.1068 & -19528.73 & -10769.835 \\
+4 & -1235.5416 & 1465.1826 & -19465.15 & -8844.162 \\
+5 & -1215.1986 & 1186.8468 & -19421.95 & -7272.646 \\
+6 & -1221.5882 & 1014.6537 & -19381.11 & -6279.629 \\
+7 & -1245.3266 & 886.1301 & -19344.51 & -5199.411 \\
+8 & -1256.6529 & 771.9570 & -19343.05 & -4289.535 \\
+9 & -1178.2190 & 680.0021 & -19306.70 & -3417.189 \\
+10 & -1210.1926 & 611.2993 & -19277.63 & -2572.056 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Threshold: $\ge 10$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{C10.png}
+    \caption{Combined Elbow and Curvature grid for Circular Craters ($\ge 10$ km).}
+    \label{fig:circ_10km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Circular Craters ($\ge 10$ km).}
+\label{tab:circ_10km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -3792.934 & 0.000 & 0.00 & 0.000 \\
+2 & -5995.303 & 9526.634 & -67576.93 & -45788.574 \\
+3 & -6565.575 & 6504.606 & -67342.98 & -36442.142 \\
+4 & -6885.948 & 4944.947 & -67105.91 & -30086.374 \\
+5 & -6976.646 & 4110.792 & -66973.89 & -24963.541 \\
+6 & -7071.884 & 3372.357 & -66831.27 & -20539.397 \\
+7 & -7413.546 & 2946.935 & -66726.84 & -16954.579 \\
+8 & -7373.982 & 2564.170 & -66653.35 & -13754.367 \\
+9 & -7229.958 & 2268.307 & -66600.11 & -10681.272 \\
+10 & -7249.175 & 2055.773 & -66509.84 & -8075.984 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Threshold: $\ge 5$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{C5.png}
+    \caption{Combined Elbow and Curvature grid for Circular Craters ($\ge 5$ km).}
+    \label{fig:circ_5km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Circular Craters ($\ge 5$ km).}
+\label{tab:circ_5km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -13248.29 & 0.000 & 0.0 & 0.00 \\
+2 & -20859.22 & 31889.768 & -230242.3 & -155236.03 \\
+3 & -21706.87 & 22712.411 & -229640.7 & -125182.91 \\
+4 & -23534.03 & 16920.751 & -228938.1 & -103149.56 \\
+5 & -23697.36 & 13912.182 & -228402.9 & -86093.00 \\
+6 & -24518.27 & 11535.117 & -227959.9 & -70823.52 \\
+7 & -24490.35 & 10036.916 & -227636.6 & -58532.00 \\
+8 & -24453.75 & 8788.584 & -227404.0 & -47222.33 \\
+9 & -24360.22 & 7926.746 & -227147.1 & -38438.74 \\
+10 & -24662.92 & 7137.059 & -226947.0 & -29945.51 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+\subsection{Spherical Clustering of Elliptical Craters}
+This section details the statistical evaluation metrics and corresponding optimization grids for elliptical lunar craters, highlighting anisotropic impact clustering.
+
+\subsubsection{Threshold: $\ge 50$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{E50.png}
+    \caption{Combined Elbow and Curvature grid for Elliptical Craters ($\ge 50$ km).}
+    \label{fig:elli_50km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Elliptical Craters ($\ge 50$ km).}
+\label{tab:elli_50km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -134.5810 & 0.0000 & 0.000 & 0.0000 \\
+2 & -243.4642 & 566.0305 & -3960.689 & -2683.8282 \\
+3 & -243.8747 & 385.6715 & -3935.823 & -2101.0382 \\
+4 & -249.2390 & 291.3304 & -3923.036 & -1761.2781 \\
+5 & -233.8910 & 232.9849 & -3910.684 & -1435.1865 \\
+6 & -221.6030 & 198.4444 & -3901.691 & -1194.9795 \\
+7 & -167.9513 & 172.5549 & -3898.824 & -990.6455 \\
+8 & -172.8153 & 150.3136 & -3892.546 & -814.5910 \\
+9 & -155.3733 & 132.8736 & -3885.290 & -630.6739 \\
+10 & -120.0219 & 119.4605 & -3882.007 & -478.7005 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Threshold: $\ge 20$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{E20.png}
+    \caption{Combined Elbow and Curvature grid for Elliptical Craters ($\ge 20$ km).}
+    \label{fig:elli_20km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Elliptical Craters ($\ge 20$ km).}
+\label{tab:elli_20km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -539.7502 & 0.0000 & 0.00 & 0.000 \\
+2 & -882.7959 & 2600.3008 & -17729.23 & -12188.261 \\
+3 & -992.1388 & 1792.0433 & -17633.77 & -9729.378 \\
+4 & -1100.8839 & 1321.6699 & -17580.10 & -7986.198 \\
+5 & -1127.2231 & 1077.2194 & -17537.72 & -6604.998 \\
+6 & -1111.7996 & 922.9707 & -17522.68 & -5703.865 \\
+7 & -1077.4899 & 803.7708 & -17483.52 & -4709.544 \\
+8 & -1053.4624 & 700.2968 & -17464.63 & -3912.878 \\
+9 & -1022.2627 & 612.9245 & -17444.37 & -3068.810 \\
+10 & -1032.0836 & 549.9723 & -17421.91 & -2378.365 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Threshold: $\ge 10$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{E10.png}
+    \caption{Combined Elbow and Curvature grid for Elliptical Craters ($\ge 10$ km).}
+    \label{fig:elli_10km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Elliptical Craters ($\ge 10$ km).}
+\label{tab:elli_10km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -3107.568 & 0.000 & 0.00 & 0.000 \\
+2 & -4984.395 & 8504.657 & -59897.41 & -40670.012 \\
+3 & -5535.138 & 5773.630 & -59668.18 & -32341.053 \\
+4 & -5858.750 & 4395.861 & -59473.12 & -26711.450 \\
+5 & -5946.298 & 3646.564 & -59357.44 & -22182.977 \\
+6 & -6160.705 & 2996.151 & -59224.03 & -18285.588 \\
+7 & -6191.609 & 2618.188 & -59127.16 & -14955.998 \\
+8 & -6146.939 & 2275.263 & -59069.76 & -12218.220 \\
+9 & -6127.250 & 2010.618 & -59002.33 & -9527.558 \\
+10 & -6226.019 & 1813.988 & -58915.68 & -7096.894 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Threshold: $\ge 5$ km}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{E5.png}
+    \caption{Combined Elbow and Curvature grid for Elliptical Craters ($\ge 5$ km).}
+    \label{fig:elli_5km_plot}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Metric scores for Elliptical Craters ($\ge 5$ km).}
+\label{tab:elli_5km}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{k} & \textbf{vMF (BIC)} & \textbf{Spherical K-Means} & \textbf{PKBC (LogLik)} & \textbf{Kent (LogLik)} \\ \midrule
+1 & -12192.82 & 0.000 & 0.0 & 0.00 \\
+2 & -18677.62 & 28224.273 & -202720.2 & -137098.87 \\
+3 & -19374.73 & 19948.237 & -202288.2 & -110162.85 \\
+4 & -20886.80 & 14924.051 & -201656.1 & -91019.02 \\
+5 & -20688.66 & 12364.797 & -201275.0 & -76557.83 \\
+6 & -21127.51 & 10245.066 & -200862.7 & -62904.39 \\
+7 & -21170.03 & 8889.481 & -200626.0 & -51587.54 \\
+8 & -21876.54 & 7755.096 & -200401.4 & -41558.47 \\
+9 & -21687.13 & 6955.893 & -200233.3 & -33625.03 \\
+10 & -21724.61 & 6318.419 & -200146.1 & -26822.17 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+\section{Conclusion}
+This thesis established a robust, curvature-consistent geometric framework for clustering directional data on the unit hypersphere, demonstrating the critical need for circular and directional data analysis in interpreting celestial and planetary spherical data. Traditional linear and Euclidean methods consistently fail to accurately represent the periodic, cyclical geometry of planetary bodies. By developing and applying the Geometric Centroid Deviation (GCD) and Square-Area Measure ($A_S$), we overcame the limitations of variance- and likelihood-based heuristics, providing highly stable equilibrium measures for directional clustering.
+
+The transition from theoretical formulations to astrophysical observations confirmed the necessity of these advanced spherical statistics. Analyses of Gamma-Ray Bursts revealed that high-energy celestial events exhibit complex spherical densities that cannot be accurately mapped using rigid models. This was corroborated by comparative studies on terrestrial and Venusian meteor falls, which established that celestial objects strike planetary bodies with profound directional anisotropies rather than exhibiting spherical complete randomness.
+
+Scaling this methodology to macroscopic planetary morphology, we evaluated the Robbins (2019) global lunar crater database across multiple diametric thresholds, strictly segregating circular from elliptical impact structures. The implementation of the discrete second-difference methodology removed visual subjectivity from parameter selection, confirming mathematically distinct clustering behaviors. The numerical results yielded a ubiquitous saturation at $k=2$ across the Kent, Spherical K-Means, and PKBC algorithms, dictating that the global lunar crater distribution possesses a fundamental, dominant bimodal directional structure.
+
+Crucially, by comparing distinct clustering algorithms, we observed that while isotropic models (such as vMF) perform adequately for highly randomized, perpendicular circular impacts, the introduction of the anisotropic Kent distribution yields refined insights into non-uniform, elliptical crater grouping. These scale-dependent morphological variations confirm that different impactor populations, or significantly varying strike velocities and oblique entry angles, have left distinctly different geographical footprints on the lunar surface. Ultimately, curvature-consistent geometric indices serve as highly reliable, interpretable, and computationally robust tools for decoding the spherical structures of planetary bombardment.
+
+\clearpage
+% ======================================================================
+% FUTURE WORK
+% ======================================================================
+\chapter*{Future Work}
+\addcontentsline{toc}{chapter}{Future Work}
+
+While the present formulations establish a solid geometric foundation for cluster validation on spherical manifolds, several research avenues remain open for future development:
+
+\begin{itemize}
+    \item \textbf{Planetary Age-Dating Integration:} Future research should aim to correlate these statistically identified, morphology-based clusters with recognized lunar geological epochs (e.g., Copernican, Eratosthenian, Imbrian). Integrating isotopic age-dating alongside directional models using Bayesian hierarchical priors could establish a complete, continuous spatio-temporal history of lunar bombardment beyond rigid morphological classifications.
+    \item \textbf{Hybrid geometric–statistical indices:} Develop composite validation measures that integrate curvature-aware metrics (GCD, $A_S$) with information-theoretic criteria such as BIC or AIC for improved generalization across highly dispersed spherical data modalities.
+    \item \textbf{Extension to non-spherical manifolds:} Adapt the proposed framework to data residing on hyperbolic or toroidal manifolds \cite{biswas2025}, requiring alternative intrinsic distance and area formulations for complex topological applications.
+    \item \textbf{Automated centroidal geometry inference:} Design algorithms for dynamic centroid ordering and spherical polygon estimation that minimize dependency on manual initialization and human intervention.
+    \item \textbf{Scalability and real-time celestial applications:} Implement efficient parallelized variants suitable for high-dimensional and streaming directional datasets, directly expanding the Earth, Venus, and astrophysical mapping frameworks for real-time observational analysis.
+\end{itemize}
+
+\clearpage
+% ======================================================================
+% REFERENCES
+% ======================================================================
+\renewcommand{\bibname}{References}
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{References}
+
+\bibitem{banerjee2005}
+Banerjee, A., Dhillon, I., Ghosh, J., Sra, S. (2005). Clustering on the Unit Hypersphere Using von Mises–Fisher Distributions. \textit{Journal of Machine Learning Research}, 6, 1345–1382.
+
+\bibitem{biswas2025}
+Biswas, S., Banerjee, B., Laha, A.K. (2025). Angular Co-variance using Intrinsic Geometry of Torus: Non-parametric Change Points Detection in Meteorological Data. \textit{Available at arXiv:2409.08838}.
+
+\bibitem{chatterjee2025}
+Chatterjee, D., \& Ghosh, P. (2025). On the directional nature of the fall of celestial objects on the surface of Venus. \textit{Planetary and Space Science}, 266, 106167.
+
+\bibitem{chatterjee2024mercury}
+Chatterjee, D., \& Ghosh, P. (2024). Mercury’s meteorite mysteries: A directional statistical guide to Mercury’s north pole. \textit{Publications of the Astronomical Society of the Pacific}, 136(11), 114509.
+
+\bibitem{ghosh2024celestial}
+Ghosh, P., Chatterjee, D., \& Banerjee, A. (2024). On the directional nature of celestial object's fall on the Earth (Part 1: Distribution of fireball shower, meteor fall \& crater on Earth’s surface). \textit{Monthly Notices of the Royal Astronomical Society}, 532(2), 2315-2331.
+
+\bibitem{ghosh2025flexible}
+Ghosh, P., Ghosh, S., \& Chatterjee, D. (2025). A flexible spherical mixture model for Gamma-ray burst patterns obtained from BATSE and FERMI mission. \textit{Publications of the Astronomical Society of the Pacific}, 137(2), 024503.
+
+\bibitem{hornik2014}
+Hornik, K., \& Grün, B. (2014). movMF: An R package for fitting mixtures of von Mises-Fisher distributions. \textit{Journal of Statistical Software}, 58(10), 1-31.
+
+\bibitem{kent1982}
+Kent, J. T. (1982). The Fisher-Bingham distribution on the sphere. \textit{Journal of the Royal Statistical Society: Series B (Methodological)}, 44(1), 71-80.
+
+\bibitem{mardia2000}
+Mardia, K. V., \& Jupp, P. E. (2000). \textit{Directional Statistics} (Vol. 2). John Wiley \& Sons.
+
+\bibitem{robbins2019}
+Robbins, S. J. (2019). A new global database of lunar impact craters $>$1--2 km: 1. Crater locations and sizes, comparisons with published databases, and global analysis. \textit{Journal of Geophysical Research: Planets}, 124(4), 871-892.
+
+\end{thebibliography}
+
+\end{document}

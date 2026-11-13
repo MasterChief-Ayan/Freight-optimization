@@ -1,0 +1,44 @@
+% ======================================================================
+% CHAPTER 4  CONCLUSION
+% ======================================================================
+\chapter{Conclusion}
+\label{ch:conclusion}
+
+\section{Summary of Findings}
+This report set out to find which operational, commercial and managerial constraints detain rolling stock at a freight terminal, and which interventions release it fastest, cheapest and with the most capacity gained. A layered, verified discrete-event simulation of a private coal siding was built, with IR charging rules cited from the source, every parameter tagged as cited or assumed, commodity attributes taken from 220,395 Eastern Railway freight records, and 107 automated checks. The main findings are:
+\begin{enumerate}
+    \item \textbf{Detention is mainly an administrative and managerial problem.} The calibrated siding detains a rake for 15.53\,h against 4.05\,h of physical work. About 78\,\% of rake waiting comes from office hours and rejected documents; better sequencing can recover at most 8\,\%, and 14\,\% is irreducible congestion.
+    \item \textbf{Procedure beats capital for speed.} Digitalising the paperwork saves about 15.5 times more detention than a second line with a second crew (8.98\,h against 0.58\,h). A second line without a crew, a second shunting locomotive and pricing changes do not shorten detention.
+    \item \textbf{One calendar decision dominates.} The hours a day the terminal's own paperwork runs move detention by 21.2\,h, more than all physical parameters together, and the first extra two hours give 43\,\% of the round-the-clock gain.
+    \item \textbf{Money falls faster than time.} For a coal siding, round-the-clock terminal paperwork with digital release (package A, no construction) cuts detention from 17.0 to 9.5\,h (44\,\%) but demurrage by 78\,\%, Rs 2.05 crore a year, because the graded tariff charges the last hours most. Precise loading adds Rs 4.20 crore a year of avoided overload and unused-capacity loss, mostly as capacity.
+    \item \textbf{Procedure also adds capacity; a second line adds more.} Package A lets the same line take 556 rakes a year at today's waiting time instead of 292 (+90\,\%); package C takes 732 (+151\,\%). A second line with a crew, which barely changes detention, lifts capacity to 710 rakes a year, and combined with package A to 1,262, 4.3 times today's traffic. The line is the bottleneck throughout; the crew and the locomotive stay below 34\,\% and 29\,\% utilisation.
+    \item \textbf{The findings are general and robust.} The same general levers rank first for all ten commodities, while silo and precise loading are bulk-specific. The ranking of interventions is unchanged in eight omitted-factor stress tests (Kendall $\tau = 1.00$), and the simulated queue matches queueing theory when offices are open.
+    \item \textbf{Damaged wagons should be detached, not the rake returned.} Returning the rake costs the Railway about 2.3--2.6 times the wagon time of detaching the bad wagons.
+\end{enumerate}
+
+\section{Recommendations}
+\begin{itemize}
+    \item \textbf{Terminal (siding owner):} run placement advice, weighment and release reporting round the clock, or at least extend the day from 16 to 18\,h as a first step; report release digitally; load to the permissible carrying capacity to avoid overload rework and penalties. This is the cheapest route to both lower demurrage and more rakes.
+    \item \textbf{Capacity planning:} if traffic must grow beyond what package C can take (about 730 rakes a year at today's wait), add a second line \emph{with} its crew, after the procedural package; a second line without a crew, or a second locomotive, adds nothing first.
+    \item \textbf{Railway:} support electronic placement advice and release reporting at the serving station, so the free-time clock reflects work rather than office hours; detach damaged wagons at the siding instead of returning the rake.
+    \item \textbf{Client:} use electronic railway receipts and payment, which the data show are already the norm for coal, so the loaded rake is not held after removal.
+\end{itemize}
+
+\section{Limitations}
+\begin{itemize}
+    \item \textbf{Calibration, not validation.} Paperwork durations and rejection rates are assumed and tuned to TERI's 14--17\,h band, because no siding time logs were available. Rupee and capacity figures are therefore orders of magnitude; rankings and relations are the robust result.
+    \item \textbf{Gross savings.} The cost of round-the-clock staffing, digital systems, weigh-controlled loading, silos or a second line is not yet subtracted, so no package has a payback figure yet.
+    \item \textbf{Assumed scenarios.} Wagon damage rates and times are assumed, and damage is measured in time only, without a repair price.
+    \item \textbf{Railway receipt basis.} The model's office-hours railway receipt (M7) conflicts with the data (electronic for 99.7\,\% of coal). This changes wagon time and attribution, not detention, demurrage or capacity; both bases are reported.
+    \item \textbf{Scope.} One siding with one line is modelled; locomotive breakdowns, train-engine availability, line haul and network-level wagon allocation are outside the model.
+\end{itemize}
+
+\section{Future Work (MTP Part II)}
+\begin{enumerate}
+    \item \textbf{Validation on time logs:} fit the M4--M6 and loading times to siding placement--release logs (requested) and validate detention instead of calibrating it.
+    \item \textbf{Net benefit and payback:} add implementation costs and rank packages by net benefit, payback period and cost per extra rake of capacity.
+    \item \textbf{Capacity planning in depth:} extend Layer 9 to other commodities and to staged expansion (when to add the second line), and test traffic peaks and seasonality.
+    \item \textbf{Railway receipt and paperwork:} recalibrate M7 to the electronic receipt and payment shares in the data, and add commodity-specific paperwork.
+    \item \textbf{Wagon damage and the locomotive:} damage rates and repair costs by wagon type and material, and locomotive availability and breakdowns, with the supervisor's input on times and prices.
+    \item \textbf{A tighter sequencing bound} through a time-indexed formulation \cite{sousa}.
+\end{enumerate}

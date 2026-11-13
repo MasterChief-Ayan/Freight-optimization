@@ -9,3 +9,14 @@ data/processed/
 
 # data/raw/ (ER RR register, not confidential) IS committed
 # results/ is committed so charts and CSVs are viewable on GitHub
+
+# LaTeX build files (thesis/ sources and PDFs are committed)
+*.aux
+*.lof
+*.lot
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+thesis/**/*.log

@@ -1,0 +1,421 @@
+% ======================================================================
+% CHAPTER 2  MODELLING
+% ======================================================================
+\chapter{Modelling}
+\label{ch:model}
+
+\section{Modelling Approach}
+\label{sec:approach}
+The siding is a stochastic system with resources (lines, crew, locomotive), documents that gate physical events, offices that open and close, rejections that send documents back, and a tariff that charges by bands. These interactions have no closed-form solution, so the system is modelled as a \emph{discrete-event simulation} (DES) with next-event time advance, written in Python with SimPy \cite{simpy}. Every event (a rake arriving, a document cleared, a line freed) is logged with its time, its type and the party that owns it, and every result is computed from that event log.
+
+The model was built in layers, following the supervisor's guidance to start from a simple, fundamental version and add realism one step at a time. Each layer was verified before the next was added, and switching a layer off reproduces the layer below exactly. Figure~\ref{fig:layers} shows the ten layers (L0--L9). L0--L4 form the core model and its scenario campaign; L5--L9 are the analyses built on it.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize, >={Stealth[length=2mm]},
+  lay/.style={draw=black!50, rounded corners=2pt, minimum height=9mm, text width=46mm, align=center, inner sep=2.5pt},
+  ana/.style={draw=black!50, fill=black!6, rounded corners=2pt, minimum height=9mm, text width=46mm, align=center, inner sep=2.5pt},
+  node distance=2.8mm and 6mm]
+  \node[lay] (l0) {\textbf{L0} Physical chain\\lines, loco, crew, IR charges};
+  \node[lay, below=of l0] (l1) {\textbf{L1} Administrative chain\\M1--M8, calendars, rework};
+  \node[lay, below=of l1] (l2) {\textbf{L2} Road side\\trucks, gate, appointments};
+  \node[lay, below=of l2] (l3) {\textbf{L3} Decision\\dispatch rules, CP-SAT bound};
+  \node[lay, below=of l3] (l4) {\textbf{L4} Scenario campaign\\nine interventions};
+  \foreach \a/\b in {l0/l1, l1/l2, l2/l3, l3/l4} \draw[->, thick] (\a) -- (\b);
+  \node[ana, right=16mm of l0] (l5) {\textbf{L5} Sensitivity and bounds\\(L5b: hours per day)};
+  \node[ana, below=of l5] (l6) {\textbf{L6} Ten commodities\\field data, labour cost};
+  \node[ana, below=of l6] (l7) {\textbf{L7} Sufficiency\\omitted-factor stress test};
+  \node[ana, below=of l7] (l8) {\textbf{L8} Breakdown of time and money; wagon damage};
+  \node[ana, below=of l8] (l9) {\textbf{L9} Capacity\\more rakes per year?};
+  \draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick] ([xshift=-3mm]l0.north west) -- ([xshift=-3mm]l4.south west)
+       node[midway, left=6pt, align=center] {core\\model};
+  \draw[decorate, decoration={brace, amplitude=5pt}, thick] ([xshift=3mm]l5.north east) -- ([xshift=3mm]l9.south east)
+       node[midway, right=6pt, align=center] {analyses\\on the\\model};
+  \coordinate (bus) at ($(l4.east)+(8mm,0)$);
+  \draw[thick, black!60] (l4.east) -- (bus);
+  \draw[thick, black!60] (bus) -- (bus |- l5.west);
+  \foreach \x in {l5, l6, l7, l8, l9} \draw[->, thick, black!60] (bus |- \x.west) -- (\x.west);
+\end{tikzpicture}
+\caption[Layered construction of the model]{Layered construction of the model. Each core layer (left) is verified before the next is added; the analyses (right, shaded) run on the verified core.}
+\label{fig:layers}
+\end{figure}
+
+\section{System Description}
+\label{sec:system}
+Figure~\ref{fig:system} shows the modelled siding. A rake is booked, wagons are allotted, and the empty rake travels to the serving station (\emph{arrival}). It waits for the loading line and the shunting locomotive, is placed on the line (\emph{placement}: the free-time clock starts), is loaded, weighed and reported released (\emph{release}: the clock stops), is removed from the siding (\emph{removal}), and departs once the railway receipt is ready and freight is paid. Only the time from placement to release is billed.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize, >={Stealth[length=2mm]},
+  phys/.style={draw=black!45, fill=white, rounded corners=2pt, minimum height=10mm, text width=17.5mm, align=center, inner sep=2pt},
+  adm/.style={draw=none, rounded corners=2pt, minimum height=11mm, text width=18.5mm, align=center, inner sep=2pt, text=white},
+  node distance=3.9mm]
+  \definecolor{term}{HTML}{4A90D9}\definecolor{rail}{HTML}{7B8794}
+  \definecolor{clie}{HTML}{B07F1F}\definecolor{tran}{HTML}{3F8A6E}
+  \node[phys] (arr) {Rake arrives};
+  \node[phys, right=of arr] (wait) {Waits for the line};
+  \node[phys, right=of wait] (plc) {Placement (shunting in)};
+  \node[phys, right=of plc, fill=black!6] (ld) {Loading};
+  \node[phys, right=of ld, fill=black!6] (rel) {Weighment and release};
+  \node[phys, right=of rel] (rem) {Removal (shunting out)};
+  \node[phys, right=of rem] (dep) {Departs};
+  \foreach \a/\b in {arr/wait, wait/plc, plc/ld, ld/rel, rel/rem, rem/dep} \draw[->, thick] (\a) -- (\b);
+  \draw[decorate, decoration={brace, amplitude=4pt}, thick] ([yshift=2mm]ld.north west) -- ([yshift=2mm]rel.north east)
+     node[midway, above=3pt, align=center] {\textbf{billed window: detention $D_r$}\\free time 8\,h, then demurrage};
+  \node[adm, fill=rail, below=8mm of arr] (m1) {M1 demand $\to$ allotment (Railway)};
+  \node[adm, fill=tran, below=8mm of wait] (m8) {M8 truck gate (transporter)};
+  \node[adm, fill=clie, below=8mm of plc] (m3) {M3 forwarding note (client)};
+  \node[adm, fill=term, below=8mm of ld] (m24) {M2 stacking (Rly) + M4 placement advice};
+  \node[adm, fill=term, below=8mm of rel] (m56) {M5 weighment, M6 release report};
+  \node[adm, fill=clie, below=8mm of dep] (m7) {M7 RR + freight payment (client)};
+  \foreach \g/\p in {m1/arr, m3/plc, m24/ld, m56/rel, m7/dep} \draw[->, dashed, thick, black!60] (\g) -- (\p);
+  \draw[->, dotted, thick, black!60] (m8.north) -- ++(0,3mm) -| ([xshift=-3mm]ld.south);
+\end{tikzpicture}
+\caption[The modelled siding]{The modelled siding. Top: physical chain (shaded: IR billed window). Bottom: administrative steps by owner (blue terminal, grey Railway, brown client, green transporter); dashed arrows are gates (the event waits for the document) and the dotted arrow is the road-side supply of material.}
+\label{fig:system}
+\end{figure}
+
+The twenty-one procedural steps documented in IR rules (five for booking, nine at the siding, four at the truck gate and three at destination) were compressed into the eight administrative steps M1--M8 of Table~\ref{tab:steps}. A step was kept only if it lies on the critical path to placement or release, has a documented approval or rejection loop, and can be traced to an IR rule. Each step has an owner, an office calendar, a lognormal working time and a rejection probability.
+
+\begin{table}[!htbp]
+\centering
+\caption[The eight administrative steps]{The eight administrative steps. Working times and rejection probabilities are assumed (no published data exist) and tuned to the TERI benchmark; office hours for the terminal shift are cited \cite{ircomp}.}
+\label{tab:steps}
+\small
+\begin{tabularx}{\textwidth}{@{}l X l l c c@{}}
+\toprule
+\textbf{Step} & \textbf{Task} & \textbf{Owner} & \textbf{Office hours} & \textbf{Mean $\pm$ sd (h)} & \textbf{Rejected} \\
+\midrule
+M1 & Demand registration to wagon allotment & Railway & 10--17, Mon--Sat & 10.0 $\pm$ 7.0 & 10\,\% \\
+M2 & Advance stacking permission & Railway & 10--17, Mon--Sat & 2.0 $\pm$ 1.5 & 15\,\% \\
+M3 & Forwarding note acceptance & client & 09--18, Mon--Sat & 1.5 $\pm$ 1.0 & 20\,\% \\
+M4 & Placement advice and acknowledgement & terminal & 06--22, daily & 0.5 $\pm$ 0.35 & 5\,\% \\
+M5 & Weighment and overload adjustment & terminal & 06--22, daily & 1.8 $\pm$ 1.4 & 18\,\%$^{\dagger}$ \\
+M6 & Release reporting & terminal & 06--22, daily & 3.6 $\pm$ 2.8 & 10\,\% \\
+M7 & Railway receipt and freight payment & client & 10--17, Mon--Sat & 4.0 $\pm$ 3.0 & 12\,\% \\
+M8 & Truck gate verification & transporter & 24/7 & 0.25 $\pm$ 0.12 & 8\,\% \\
+\bottomrule
+\end{tabularx}
+\par\smallskip\raggedright\footnotesize $^{\dagger}$ In the commodity profiles (Layers 6, 8, 9) the M5 rejection rate equals the overload incidence observed in the freight register (30.4\,\% for coal in open wagons).
+\end{table}
+
+The physical resources are one loading line, one loading crew and one shunting locomotive, which is needed for placement, removal and detaching wagons. Placement and removal take 1.0 $\pm$ 0.3\,h each (assumed). The road side (Layer 2) brings coal by truck through a gate and a one-way access lane under a truck appointment system; in the base case coal is assumed always available at the siding.
+
+\section{Selection of Variables}
+\label{sec:selection}
+A candidate factor entered the model only if it passed four filters (Table~\ref{tab:filters}). Twenty-three candidate factors from the literature, the IR rules and the supervisor's guidance were traced through these filters; Table~\ref{tab:factors} summarises where each one sits.
+
+\begin{table}[!htbp]
+\centering
+\caption[The four filters a factor had to pass to enter the model]{The four filters a factor had to pass to enter the model.}
+\label{tab:filters}
+\small
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+\textbf{Filter} & \textbf{Question} & \textbf{Reason} \\
+\midrule
+F1 Relevance & Does it act on the billed interval (placement to release), or gate its start? & The performance measure is fixed by the Railway's own definition. \\
+F2 Evidence & Is it named as a delay cause in TERI, the IR compendium or the dwell-time literature? & No invented mechanisms. \\
+F3 Control & Can one of the four parties, or a rule, change it? & The study ranks actions. \\
+F4 Measurability & Can it be measured, or bounded by a rule or physical limit? & Every parameter is tagged cited, derived or assumed. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption[Traceability of the twenty-three candidate factors]{Traceability of the twenty-three candidate factors.}
+\label{tab:factors}
+\small
+\begin{tabularx}{\textwidth}{@{}X p{5.0cm}@{}}
+\toprule
+\textbf{Candidate factors} & \textbf{Status in the model} \\
+\midrule
+Rake arrival uncertainty; loading time; line availability; crew availability; locomotive and shunting; office working hours; documents and approvals (M1--M8); weighment and overloading; release reporting; order and payment processing; free time, demurrage and penal rules; road side (trucks, lane, gate); material availability & included (13) \\
+Dealing with officials (represented through calendars and rejection rates) & partial (1) \\
+Wagon examination and sick-wagon detachment; commodity-specific paperwork; traffic growth; weather and labour absenteeism; higher error rates & left out of the base model, added in the stress test of Layer 7 (5); wagon damage is also an optional module (Layer 8) and traffic growth is studied in Layer 9 \\
+Contracts, demurrage pooling and waivers (change the bill, not the time); rake--line length mismatch (acts like a wagon-examination delay); signalling (outside the terminal); wagon life cycle (separate study) & out of scope (4) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The variable set is judged sufficient if the factors it leaves out would not change its conclusions \cite{robinson, sargent}. This is tested directly in Layer 7 (Section~\ref{sec:res_suff}).
+
+\section{Field Data}
+\label{sec:data}
+The field data are the Eastern Railway inward freight register on the railway-receipt (RR) base: 56 monthly exports from the Freight Operations Information System (FOIS), January 2022 to August 2026 \cite{errr}. After 338 sub-total rows were removed, the register holds 220,395 RRs and 508.5\,Mt. All code columns and charge heads were decoded. The decoding was checked against the charge rules: the terminal charge is exactly Rs 20 per tonne, the busy-season charge is 15\,\%, and coal is exempt from it after 1 October 2022. 220 commodity codes were mapped to 16 groups covering 97\,\% of the tonnes; coal is 61\,\% and iron ore 11\,\%.
+
+The register holds money, tonnes, wagons, wagon type, overloading and charges, but \emph{no placement or release times}. It is therefore used for what it measures: wagons and payload per rake, overload incidence, punitive charges, paid-but-unused capacity, freight per tonne and the arrival pattern. Daily rake arrivals at the 15 largest sidings have a variance-to-mean ratio of 0.7--1.7, close to the value of 1 for a Poisson process, which supports the model's Poisson bookings. Table~\ref{tab:commodities} lists the ten commodity profiles built from the register.
+
+\begin{table}[!htbp]
+\centering
+\caption[Commodity profiles]{Commodity profiles (Layer 6). Wagons, payload and overload incidence are register medians and shares; free time follows the IR rules; loading rates are assumed by handling method.}
+\label{tab:commodities}
+\small
+\begin{tabular}{@{}lrrlrrr@{}}
+\toprule
+\textbf{Commodity} & \textbf{Wagons} & \textbf{t/wagon} & \textbf{Loading} & \textbf{t/h} & \textbf{Free time (h)} & \textbf{Overloaded} \\
+\midrule
+Coal (open BOXN) & 58 & 67.2 & mechanised & 900 & 8 & 30.4\,\% \\
+Coal (hopper BOBRN) & 58 & 61.3 & mechanised & 900 & 7 & 40.5\,\% \\
+Iron ore & 58 & 68.2 & mechanised & 900 & 7 & 3.7\,\% \\
+Clinker & 58 & 68.7 & mechanised & 900 & 7 & 21.4\,\% \\
+Cement (bagged) & 42 & 65.7 & manual & 350 & 9 & 1.4\,\% \\
+Foodgrains & 42 & 64.9 & manual & 300 & 9 & 0.8\,\% \\
+Fertiliser & 42 & 63.8 & manual & 300 & 9 & 1.0\,\% \\
+Iron and steel (crane) & 58 & 63.0 & crane & 450 & 9 & 5.3\,\% \\
+Containers & 45 & 36.9 & reach-stacker & 600 & 5 & 1.9\,\% \\
+POL (tank) & 49 & 54.3 & pumping & 600 & 10 & 0.4\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------
+\section{Mathematical Formulation}
+\label{sec:form}
+The siding is a tandem stochastic system: an administrative stage produces the release dates of a single-machine sequencing problem on the loading line ($1|r_j|\sum C_j$ in the notation of \cite{graham}, with random, calendar-dependent release dates $r_j$). It has no closed-form solution, so the equations below define exactly what the simulation computes, event by event. Table~\ref{tab:notation} lists the main symbols.
+
+\begin{table}[!htbp]
+\centering
+\caption[Main notation]{Main notation.}
+\label{tab:notation}
+\small
+\begin{tabularx}{\textwidth}{@{}l X l X@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} & \textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$r$ & rake index & $N_w$, $q$, $Q$ & wagons, payload per wagon, tonnes per rake \\
+$b_r$, $a_r$ & booking, arrival time & $\lambda$, $R$ & arrival rate (per hour), rakes a year \\
+$s_r$, $p_r$ & placement start, placed (clock starts) & $\ell_r$, $e_r$ & loading start, loading end \\
+$u_r$ & released (clock stops) & $m_r$, $\delta_r$ & removed (line freed), departed \\
+$D_r$, $W_r$ & detention, wait before placement & $H_r$, $\Gamma_r$ & line hold, cycle (arrival to departure) \\
+$F$ & free time (8\,h) & $E_r$ & billed excess over free time \\
+$T_k(t)$ & completion of step $k$ started at $t$ & $\Phi_k(t,d)$ & calendar operator of step $k$ \\
+$\rho_k$ & rejection probability of step $k$ & $K$ & number of loading lines \\
+$g_b$, $U_b$ & demurrage rate and upper limit of band $b$ & $\kappa$ & penal multiplier \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Inputs and Distributions}
+Rakes $r = 1,\dots,n$ carry $N_w$ wagons of payload $q$, i.e.\ $Q = N_w q$ tonnes. Bookings form a Poisson stream, $b_r = b_{r-1} + X_r$ with $X_r \sim \mathrm{Exp}(\bar X)$; with $\bar X = 30$\,h the siding receives $R = 8760/\bar X = 292$ rakes a year. Every positive, right-skewed duration (transit $\tau_r$, placement $P_r$, removal $R_r$, loading rate $\mu_r$, paperwork $d_{kr}$) is lognormal and is specified by its real-scale mean $m$ and standard deviation $s$:
+\begin{equation}
+Y \sim \mathrm{LN}(m,s) \iff \ln Y \sim \mathcal{N}(\mu, \sigma^2), \qquad \sigma^2 = \ln\!\left(1 + s^2/m^2\right), \quad \mu = \ln m - \sigma^2/2 .
+\label{eq:logn}
+\end{equation}
+The loading time is $L_r = Q / \max(\mu_r, \mu_{\min})$, where the floor $\mu_{\min}$ (300\,t/h in the base model) keeps an unlucky draw from producing an impossible loading time. The base model uses the BOXN wagon specification (58 wagons of 58.08\,t); the commodity profiles use the register medians (Table~\ref{tab:commodities}).
+
+\subsection{Office Calendars}
+Step $k \in \{\mathrm{M1},\dots,\mathrm{M8}\}$ is worked only while its office is open, $\mathbf{1}_k(t) = 1$. Work of $d$ hours started at time $t$ pauses at closing and resumes at the next opening, so it ends at
+\begin{equation}
+\Phi_k(t, d) = \min\Big\{ C \ge t : \int_t^{C} \mathbf{1}_k(\tau)\, d\tau = d \Big\}.
+\label{eq:cal}
+\end{equation}
+This operator is the main delay mechanism of the model: a 0.5\,h task started 15 minutes before closing ends the next morning, about 8.5\,h later for the terminal shift. A digitalised or round-the-clock step has $\mathbf{1}_k \equiv 1$, so $\Phi_k(t,d) = t + d$.
+
+\subsection{Rework}
+Each submission of step $k$ is rejected with probability $\rho_k$ and redone with a fresh working time. Starting from $C^{(0)} = t$, attempt $j$ ends at $C^{(j)} = \Phi_k\big(C^{(j-1)}, d^{(j)}_{kr}\big)$. The number of attempts $J_{kr}$ is geometric, truncated at five:
+\begin{equation}
+P(J_{kr} = j) = \rho_k^{\,j-1}(1-\rho_k), \quad j = 1,\dots,4, \qquad P(J_{kr} = 5) = \rho_k^{\,4}, \qquad T_k(t) = C^{(J_{kr})} .
+\label{eq:rework}
+\end{equation}
+Because every attempt passes through the calendar again, a rejection late in the day costs a night, not just the working time of the repeat.
+
+\subsection{Event Recursion (Gates)}
+Physical events wait for the documents that gate them. With $\vartheta^{\text{crew}}_r$ and $\vartheta^{\text{loco}}_r$ the times at which the crew and the locomotive become free for rake $r$, the event times are:
+\begin{equation}
+\begin{aligned}
+a_r &= T_{\mathrm{M1}}(b_r) + \tau_r && \text{arrival}\\
+s_r &\ge T_{\mathrm{M3}}(a_r) && \text{placement start (dispatch rule, line and loco free)}\\
+p_r &= s_r + P_r && \text{placed: IR free-time clock starts}\\
+\ell_r &= \max\{T_{\mathrm{M4}}(p_r),\; T_{\mathrm{M2}}(b_r),\; \vartheta^{\text{crew}}_r\} && \text{loading start}\\
+e_r &= \ell_r + L_r && \text{loading end}\\
+u_r &= T_{\mathrm{M6}}\big(T_{\mathrm{M5}}(e_r)\big) && \text{released: clock stops}\\
+m_r &= \max\{u_r, \vartheta^{\text{loco}}_r\} + R_r && \text{removed: line freed}\\
+\delta_r &= \max\{m_r,\; T_{\mathrm{M7}}(e_r)\} && \text{departure (RR and payment done)}
+\end{aligned}
+\label{eq:chain}
+\end{equation}
+M2 starts at booking and M7 at loading end, in parallel with the physical chain. The capacity constraint is that at most $K$ of the intervals $[s_r, m_r)$ overlap at any time ($K = 1$ line in the base case).
+
+\subsection{Performance Measures and IR Charges}
+For each rake, detention, waiting, line hold and cycle time are
+\begin{equation}
+D_r = u_r - p_r, \qquad W_r = s_r - a_r, \qquad H_r = m_r - s_r, \qquad \Gamma_r = \delta_r - a_r .
+\label{eq:kpi}
+\end{equation}
+The billed excess is $E_r = \lceil D_r - F \rceil^{+}$ with free time $F = 5 + 2 + 1 = 8$\,h, and demurrage per rake is the graded charge \cite{ircomp}
+\begin{equation}
+\mathrm{Dem}_r = \kappa\, N_w \sum_{b=1}^{6} g_b \big[\min(E_r, U_b) - U_{b-1}\big]^{+},
+\label{eq:dem}
+\end{equation}
+with band limits $U = (0, 6, 12, 24, 48, 72, \infty)$\,h, rates $g_b = 150 \times (1, 1.1, 1.25, 1.5, 2, 3)$ Rs per wagon-hour (Table~\ref{tab:bands}) and penal multiplier $\kappa$ (1 in the base case, up to 6). Because $g_b$ rises with $b$, Eq.~\eqref{eq:dem} is piecewise linear and convex in $E_r$: the last hour of detention is the dearest, so a cut in hours removes demurrage more than proportionally. The share of rakes over free time is the mean of $\mathbf{1}[E_r > 0]$.
+
+Three further measures convert hours into wagons and money:
+\begin{equation}
+\Delta W = \frac{R\, N_w\, \Delta\bar\Gamma}{8760}, \qquad
+\Theta = \theta_{\text{ov}}\, C_{\text{pun}} + Q_{\text{u}}\, f, \qquad
+B = -\frac{\Delta\overline{\mathrm{Dem}}}{Q} .
+\label{eq:derived}
+\end{equation}
+$\Delta W$ is the number of wagons returned to the fleet when the mean cycle falls by $\Delta\bar\Gamma$ (Little's law \cite{little}: wagons tied up = arrival rate $\times$ time in system), valued at Rs 1,140 crore / 2,583 per wagon from a recent wagon order \cite{wagonvalue}. $\Theta$ is the loss per rake measured in the register: overload incidence $\theta_{\text{ov}}$ times the punitive charge $C_{\text{pun}}$, plus paid-but-unused tonnes $Q_{\text{u}}$ times freight $f$ per tonne. $B$ is the labour break-even per tonne: the most that can be spent per tonne on 50\,\% faster loading before it costs more than the demurrage it avoids. Each segment of $\Gamma_r$ is owned by one party (Figure~\ref{fig:system}), and a party's share is the sum of its segments over the total.
+
+\subsection{Capacity of the Siding}
+With $K$ lines, each held $\bar H$ hours per rake, the most rakes the siding can turn round in a year is the \emph{capacity ceiling}
+\begin{equation}
+\Lambda_K = \frac{K \cdot 8760}{\bar H} .
+\label{eq:ceiling}
+\end{equation}
+At the ceiling the lines are busy 100\,\% of the time and the queue grows without limit, so the ceiling is never a workable traffic level. The workable level is measured by raising the offered traffic $R$ and recording the mean wait $\bar W(R)$. The \emph{same-service capacity} of a configuration is the largest traffic it can accept while keeping the wait no longer than the siding's wait today:
+\begin{equation}
+R^{*} = \max\big\{ R : \bar W(R) \le \bar W_{\text{today}}(292) \big\},
+\label{eq:samesvc}
+\end{equation}
+found by linear interpolation between simulated traffic levels. No new threshold is assumed: today's service is the yardstick. The utilisation of each resource at traffic $R$ shows what saturates first: line $\rho_{\text{line}} = R \bar H / (K \cdot 8760)$, crew $R \bar L / (c \cdot 8760)$ for $c$ crews, and locomotive $R(\bar P + \bar R)/8760$.
+
+The single-line queue is checked against queueing theory. For Poisson arrivals at rate $\lambda$ and line holds $S$ with $\rho = \lambda E[S] < 1$, the Pollaczek--Khinchine formula gives the mean wait in queue \cite{gross}
+\begin{equation}
+W_q = \frac{\lambda\, E[S^2]}{2(1 - \rho)} .
+\label{eq:pk}
+\end{equation}
+
+\subsection{Dispatch and Optimisation}
+When a line frees at time $t$, the waiting rake with the lowest priority index is placed, $r^* = \arg\min_{r \in \mathcal{W}(t)} \pi(r, t)$, ties broken by rake number. First-come-first-served (FCFS) uses $\pi = a_r$ and shortest processing time (SPT) uses $\pi = L_r$. The Contract Net bid \cite{smith} is the rake's expected demurrage plus its line-blocking cost ($c_I$, an assumed idle cost of Rs 3,000 per hour) minus an ageing credit that prevents starvation; the cost rule is the same bid without ageing ($\alpha = 0$):
+\begin{equation}
+\pi_{\text{CNP}}(r,t) = g_1 N_w (P_r + L_r - F)^{+} + c_I (P_r + L_r + R_r) - \alpha\, c_I\, (t - a_r), \qquad \alpha = 0.5 .
+\label{eq:cnp}
+\end{equation}
+The offline benchmark, solved with the CP-SAT solver \cite{ortools} in integer minutes, knows every arrival and line hold $h_r$ in advance:
+\begin{equation}
+\min \sum_{r} (S_r - a_r) \quad \text{s.t.} \quad S_r \ge a_r \;\; \forall r, \qquad \textsc{NoOverlap}\big\{[S_r,\, S_r + h_r)\big\}_r ,
+\label{eq:cpsat}
+\end{equation}
+with \textsc{Cumulative} $\le K$ in place of \textsc{NoOverlap} for $K > 1$ lines. For a valid lower bound $LB$ on the mean wait of any policy, $h_r$ is replaced by $\underline{h}_r$, the hold of rake $r$ with every calendar open and no rework (a closure or a rejection never shortens a step), and the solver's proven bound divided by $n$ is reported. Waiting is then split with counterfactual runs without calendars, without rework, and without both (``flat''):
+\begin{equation}
+\underbrace{1 - \tfrac{\bar W_{\text{flat}}}{\bar W}}_{\text{administrative}} \;+\; \underbrace{\tfrac{\bar W_{\text{flat}} - LB}{\bar W}}_{\le\ \text{sequencing}} \;+\; \underbrace{\tfrac{LB}{\bar W}}_{\text{irreducible}} = 1,
+\label{eq:wsplit}
+\end{equation}
+with office hours alone $1 - \bar W_{\text{nocal}}/\bar W$ and rework alone $1 - \bar W_{\text{norw}}/\bar W$.
+
+\subsection{Statistical Design and Analysis}
+Each random stream is seeded by a BLAKE2b hash of the replication seed and a name keyed on the rake and the step (for example, the M5 working time of rake 17). Every scenario therefore sees the same rakes with the same draws (common random numbers), and a change in one scenario cannot reshuffle the draws of other rakes. A scenario is compared with its base by the paired difference over $n_R$ replications,
+\begin{equation}
+\bar\Delta \pm 1.96\, \frac{s_\Delta}{\sqrt{n_R}},
+\label{eq:ci}
+\end{equation}
+and is called significant when the interval excludes zero \cite{law}. For bounds, factor $i$ is set alone to each level $x_i^{(l)}$ of its range (the rule's own range for cited parameters, published limits for the loading rate, $\pm 50$\,\% for assumed ones) and its swing is $\max_l \bar y(x_i^{(l)}) - \min_l \bar y(x_i^{(l)})$; a best/worst envelope sets all factors at their favourable or unfavourable ends at once. Morris screening \cite{morris, campolongo} uses the unit cube with four levels, step $\Delta = 2/3$ and $R_M = 20$ trajectories:
+\begin{equation}
+EE_i = \frac{y(\mathbf{x} + \Delta \mathbf{e}_i) - y(\mathbf{x})}{\Delta}, \qquad \mu_i^{*} = \frac{1}{R_M}\sum |EE_i|, \qquad \sigma_i = \mathrm{sd}(EE_i),
+\label{eq:morris}
+\end{equation}
+where $\mu^*$ measures importance and $\sigma$ interaction or non-linearity. Detention is split by cause through counterfactual runs; the terms telescope, so the split is exact:
+\begin{equation}
+\bar D = \underbrace{\bar L}_{\text{loading}} + \underbrace{(\bar D_{\text{flat}} - \bar L)}_{\text{paperwork time}} + \underbrace{(\bar D_{\text{nocal}} - \bar D_{\text{flat}})}_{\text{rework}} + \underbrace{(\bar D - \bar D_{\text{nocal}})}_{\text{waiting for office}} .
+\label{eq:dsplit}
+\end{equation}
+Levers in a package overlap, so lever $i$ of a package $N$ with $n$ levers receives its Shapley value \cite{shapley}, its average marginal saving over all orders of introduction, computed from a full factorial of simulated lever sets. The shares add up exactly to the package's saving, $\sum_i \phi_i = v(N)$:
+\begin{equation}
+\phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|!\,(n - |S| - 1)!}{n!} \big[v(S \cup \{i\}) - v(S)\big], \qquad v(S) = \bar D_{\text{today}} - \bar D(S),
+\label{eq:shapley}
+\end{equation}
+Sufficiency is judged by Kendall's rank correlation $\tau_a = (n_c - n_d)/\binom{m}{2}$ between the ranking of the $m$ interventions in a stress scenario and in the model as built \cite{kendall}, where $n_c$ and $n_d$ are the concordant and discordant pairs.
+
+\subsection{Wagon Damage (Optional Module)}
+At placement $N^{\text{def}}_r \sim \mathrm{Bin}(N_w, p)$ wagons are found defective; each is minor, repairable or unfit with probabilities 0.6, 0.3 and 0.1. Repairs (each $\mathrm{LN}(1.5, 0.75)$\,h) and the detaching of $k_r = \min(N^{\text{unfit}}_r, N_w - 1)$ unfit wagons ($\mathrm{LN}(1.5, 0.5)$\,h, needs the locomotive) run beside M4, so loading starts at the latest of $T_{\mathrm{M4}}(p_r)$, $T_{\mathrm{M2}}(b_r)$ and $p_r + \sum_i H_{ir} + G_r$, and lasts $L_r (N_w - k_r)/N_w$. Under the \emph{return} policy a rake with unfit wagons is sent back before its clock starts and replaced after an $\mathrm{LN}(24, 12)$\,h lead time (at most three attempts). Damage during loading, $\mathrm{Bin}(N_w, p')$, is repaired ($\mathrm{LN}(1.0, 0.5)$\,h each) beside M5--M6, so $u_r = \max\{T_{\mathrm{M6}}(T_{\mathrm{M5}}(e_r)),\; e_r + \sum_i H'_{ir}\}$. All damage rates and times are assumed; the module is off by default and changes nothing when off.
+
+% ----------------------------------------------------------------------
+\section{Parameters and Calibration}
+\label{sec:params}
+Every parameter carries a provenance tag: 18 are \emph{cited}, 1 is \emph{derived} and 10 are \emph{assumed} (Table~\ref{tab:prov}). Results that depend only on cited and derived values are quoted as figures; results that touch an assumed value are reported as directions and rankings.
+
+\begin{table}[!htbp]
+\centering
+\caption[Provenance of the main parameters]{Provenance of the main parameters.}
+\label{tab:prov}
+\small
+\begin{tabularx}{\textwidth}{@{}p{4.4cm} X p{4.2cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Status / source} \\
+\midrule
+Free time, coal, private siding & 5\,h + 2\,h siding + 1\,h tarpaulin = 8\,h & derived from \cite{ircomp} \\
+Graded demurrage; penal & Rs 150--450 per wagon-h by band; up to $6\times$ & cited \cite{ircomp} \\
+Terminal working hours & 06:00--22:00 & cited \cite{ircomp} \\
+Rake (BOXN), base model & 58 wagons $\times$ 58.08\,t & cited (wagon specification) \\
+Detention benchmark & 14--17\,h per rake (calibration target) & cited \cite{teri} \\
+Commodity profiles & wagons, payload, overloading, freight & field data \cite{errr} \\
+Loading rate & 900\,t/h (range 675--3,370\,t/h) & assumed; range published \cite{pib} \\
+Placement, removal & 1.0 $\pm$ 0.3\,h each & assumed \\
+M1--M8 working times; rework & Table~\ref{tab:steps} & assumed (no published data) \\
+Idle cost, engine-hour cost, shunting charge & Rs 3,000/h; Rs 6,000/h; Rs 25,000 & assumed (cost rule only; not in demurrage) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The assumed working times of M1--M8 were tuned so that the calibrated base lands inside TERI's 14--17\,h band. This is \emph{calibration}, not validation: the band was a target, so agreement with it is weak evidence. The model was, however, checked against facts it was not tuned to: Poisson arrivals and the charge rules in the field data (Section~\ref{sec:data}), and queueing theory (Section~\ref{sec:res_capacity}).
+
+% ----------------------------------------------------------------------
+\section{Experimental Design}
+\label{sec:design}
+Unless stated otherwise, each scenario runs 50 rakes (the first 5 discarded as warm-up) in each of 30 replications, with common random numbers and FCFS dispatch. Layers 3 and 4 use a more congested operating point, so that sequencing has something to act on: 25 rakes per replication arriving every 22\,h on average (line utilisation about 0.7), with 10 replications (12 for the waiting split). The capacity study uses 200 rakes per replication (first 20 discarded), so that long queues can build up. Table~\ref{tab:experiments} lists the experiments.
+
+\begin{table}[!htbp]
+\centering
+\caption[Experiments by layer]{Experiments by layer. Every output file is regenerated by code (\texttt{run\_all.sh}).}
+\label{tab:experiments}
+\small
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+\textbf{Layer} & \textbf{Question} & \textbf{Design} \\
+\midrule
+L0--L1 & What does the base siding do, and who owns each hour? & calibrated base; attribution by owner \\
+L3 & Can better sequencing help? & FCFS, SPT, cost rule, Contract Net, CP-SAT lower bound; waiting split, Eq.~\eqref{eq:wsplit} \\
+L4 & Which interventions save most? & nine interventions, paired against the base \\
+L5, L5b & What is the individual effect of every factor? & 39 parameters and 27 conditions alone; Morris; envelope; every terminal day length from 8 to 24\,h \\
+L6 & Do the levers hold for other commodities, and does labour pay? & ten commodity profiles; labour break-even, Eq.~\eqref{eq:derived} \\
+L7 & Is the variable set sufficient? & eight omitted-factor scenarios; Kendall $\tau$ \\
+L8 & Where do the hours and the rupees come from? & packages Today, A, B, C; cause split; IR bands; $2^5$ factorial; Shapley; parties; wagon damage \\
+L9 & How many more rakes can the siding take? & six configurations $\times$ traffic from 250 to 1,600 rakes a year; ceiling, same-service capacity, utilisations; Pollaczek--Khinchine check \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The packages of Layers 8 and 9 combine four levers: \textbf{H}, terminal paperwork (M4--M6) round the clock; \textbf{D}, digital release reporting (M6 with no office hours, no rejections and half the working time); \textbf{P}, precise loading (no overloading, hence no weighment rework); and \textbf{L}, loading 50\,\% faster. Package \textbf{A} = H + D needs no construction; \textbf{B} = A + P; \textbf{C} = B + L.
+
+% ----------------------------------------------------------------------
+\section{Implementation and Verification}
+\label{sec:impl}
+The model is implemented as the Python package \texttt{rtsim} (SimPy for the event engine, pandas and NumPy for analysis, OR-Tools CP-SAT for the bound, Matplotlib for charts) with one runner script per layer. The code, the decoded data and every result table are kept in a version-controlled repository; a single script, \texttt{run\_all.sh}, regenerates every result from scratch, and results are never edited by hand.
+
+\begin{table}[!htbp]
+\centering
+\caption[Main code modules]{Main code modules.}
+\label{tab:code}
+\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Module} & \textbf{Role} \\
+\midrule
+\texttt{config.py}, \texttt{calibration.py} & all parameters with their provenance tags \\
+\texttt{distributions.py}, \texttt{experiment.py} & lognormal and other draws; entity-keyed random streams; replications \\
+\texttt{terminal.py}, \texttt{admin.py} & physical chain, gates, M1--M8, calendars and rework, Eqs.~\eqref{eq:cal}--\eqref{eq:chain} \\
+\texttt{accounting.py} & detention, demurrage by band and attribution, Eqs.~\eqref{eq:kpi}--\eqref{eq:dem} \\
+\texttt{policies.py}, \texttt{optimiser.py} & dispatch rules, Contract Net and CP-SAT, Eqs.~\eqref{eq:cnp}--\eqref{eq:cpsat} \\
+\texttt{trucks.py}, \texttt{damage.py} & road side and the optional wagon-damage module \\
+\texttt{experiments/run\_layer*.py} & one runner per layer (Table~\ref{tab:experiments}) \\
+\texttt{tools/rr\_register.py} & decoding of the freight register \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Verification follows the standard practice of checking that the model does what it is meant to do \cite{sargent}. One hundred and seven automated checks run after every change, and all pass. They include:
+\begin{itemize}
+    \item \textbf{Invariants:} every rake that arrives also leaves; events of every rake occur in order; the line is never over capacity; physical durations do not depend on the dispatch rule; every event carries a party owner; Little's law holds within 5\,\%; no dispatch rule beats the CP-SAT lower bound.
+    \item \textbf{Layer consistency:} switching a layer off reproduces the layer below exactly; the damage module with zero damage reproduces the model exactly.
+    \item \textbf{Exact sums:} the cause split adds up to detention; demurrage by band adds up to demurrage per rake; Shapley shares add up to each package's saving.
+    \item \textbf{Directions:} longer terminal hours never increase detention; more damage never shortens it; the queue never shrinks when more rakes are offered; a second line roughly doubles the capacity ceiling.
+    \item \textbf{Field data:} no sub-total rows remain; tonnage is conserved; the decoded charges equal the rules.
+    \item \textbf{Theory:} with all offices open, the simulated queue matches the Pollaczek--Khinchine formula, Eq.~\eqref{eq:pk}.
+\end{itemize}
+A refactor is accepted only if it reproduces every earlier result table exactly.
