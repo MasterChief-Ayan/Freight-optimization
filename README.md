@@ -131,7 +131,9 @@ calibrate detention hours; for that we are waiting on terminal time logs. See `d
 - `docs/VARIABLE_SELECTION.md`: why these variables, where each candidate factor is, and the sufficiency test.
 - `docs/BREAKDOWN_REPORT.md`: where every hour and rupee comes from, wagon damage, engine assessment.
 - `docs/WORKFLOW.md`: branches, tags, how to save changes.
+- `thesis/mtp1/`: the MTP Part I report (LaTeX, 41 pages, signed 12-Nov-2026), figure and number-audit scripts, errata.
+- `presentation/mtp1/`: the MTP-1 final deck (13-Nov-2026), its generator, and the script and Q&A bank.
 
 Milestone tags: `v1.0-midterm-model` (Layers 0–4) · `v1.1-sensitivity-commodities` (Layers 5–6 + field data).
 
-**Next:** scaling study, unloading side, validation against time logs, LaTeX thesis.
+**Next (MTP Part II):** validation against siding time logs, implementation cost and payback, capacity for other commodities, final thesis (fix the MTP-1 errata).

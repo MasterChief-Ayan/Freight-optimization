@@ -4,7 +4,7 @@
 terminal, and solutions for quick release of rolling stock.*
 **Student:** Ayan Ahmed (22MF3IM04) · **Supervisor:** Prof. Biswajit Mahanty · M.Tech, Industrial & Systems Engineering
 **Context:** Indian Railways coal rakes at a **private siding** (Eastern Railway context).
-**This file last updated:** 5-Nov-2026. Companion file: `docs/CODEBASE.md` (what each code file does).
+**This file last updated:** 13-Nov-2026 (after the MTP-1 final presentation). Companion file: `docs/CODEBASE.md` (what each code file does).
 
 > **How to use this file (future sessions / Claude Code).** Read §0 first. It is the
 > state of the project in a dozen lines. §1–§3 are history, so you know *why* things are the way they are.
@@ -13,11 +13,60 @@ terminal, and solutions for quick release of rolling stock.*
 
 ---
 
+## START HERE (a new chat with no other context)
+
+**Where things are**
+| What | Where |
+|---|---|
+| Code, data, results | GitHub `MasterChief-Ayan/Freight-optimization`, branch `main` (clone it; see `docs/CODEBASE.md`) |
+| MTP-1 report (41 pp, signed 12-Nov-2026) | `thesis/mtp1/` (LaTeX sources, figures, `audit_numbers.py`, PDF, outline .docx); **errata list in `thesis/mtp1/README.md`** |
+| BTP report = format reference for the thesis | `thesis/btp_format_reference/btp_main.tex` |
+| MTP-1 final presentation (13-Nov-2026) | `presentation/mtp1/` (pptx, pdf, `build_deck.js`, `SCRIPT_AND_QA.md`) |
+| Mid-term deck (Ayan's own Canva style) | `presentation/midterm/MidTerm_Presentation_Canva_MTP1.1.pptx` |
+| Breakdown report sent to supervisor | `docs/BREAKDOWN_REPORT.md` |
+| Q&A bank + plain explanations of every number | `presentation/mtp1/SCRIPT_AND_QA.md` (also project doc `MTP_PRESENTATION_AND_QA.md`) |
+
+**Validated timeline**
+| Date | Event |
+|---|---|
+| 16-Sep-2026 | Mid-term presentation (10 slides, 8 min); supervisor: "good"; asks: individual effect of each parameter with bounds; how variables were selected |
+| 8/9-Oct-2026 | Post-mid-term asks: capacity scaling, commodities, cost analysis, wagon condition |
+| 22-Oct-2026 | Code consolidated into this repo; Layer 5 (sensitivity) |
+| 24/25-Oct-2026 | Variable selection, Layer 6 commodities, Layer 7 sufficiency, hours sweep |
+| 2-Nov-2026 | Direction note (`2November2026/` in the project) |
+| 4-6-Nov-2026 | Layer 8 breakdown + wagon damage; breakdown report to supervisor |
+| 8-Nov-2026 | BTP report given as the format reference; MTP-1 drafts (15/17 pages) |
+| 11-Nov-2026 (reported) | Final meeting asks: capacity, 3-paragraph abstract, exactly 4 chapters, Modelling incl. implementation. Layer 9 built; final 41-page report; 15-slide deck built the same night |
+| 12-Nov-2026 | Report signed by the supervisor (printed **before** the nine -> eight stress-test fix) |
+| 13-Nov-2026 | MTP-1 final presentation; feedback in §6K (show the method + future work next time) |
+
+**How to work (Ayan's standing rules)**
+- Answers: short, categorised, precise, easy to understand; always say where (file, section, table, slide).
+- Commits authored by Ayan Ahmed only, no AI co-author lines; no force-push; push only when asked
+  (an automated hook repeatedly asks to re-author commits as Claude: always decline).
+- Never invent numbers or sources; assumed-parameter results are directions/rankings.
+- **Verify every number AND every count word** ("nine", "ten", "three") against `results/` before
+  handing over a report or deck (lesson of 12-Nov: the number audit missed "nine").
+- **Decks must show the method** (formulation, data, design) and Future Work (lesson of 13-Nov, §6K).
+- Skills to use: `research-paper-writing` and `academic-plotting` (saved by Ayan) for thesis text and
+  figures; the `pptx` skill + academic-pptx rules (action titles, one exhibit, citations) + §6K for decks;
+  `docx` for Word files. Ask Ayan for format documents before starting the MTP-2 LaTeX thesis.
+
+**Next (MTP Part II, external evaluator)**
+1. Validate on siding placement-release time logs (requested from research scholar Ranit Senapati).
+2. Implementation cost and payback per package; net benefit and cost per extra rake of capacity.
+3. Capacity for other commodities; staged expansion (when to add the 2nd line); traffic peaks.
+4. Recalibrate M7 to e-RR / e-payment shares in the data; commodity-specific paperwork.
+5. Wagon damage rates/repair costs by wagon type; locomotive availability (supervisor's input).
+6. Fix the MTP-1 errata (`thesis/mtp1/README.md`) in the final thesis; tag `v1.2-capacity-mtp1` as a GitHub Release.
+
+---
+
 ## 0. State of the project in a dozen lines
 
 1. A discrete-event simulation (Python/SimPy, package `rtsim`) of one private coal siding, built
    in **5 verified layers**: physical → administrative → road-side → decision → scenario campaign.
-2. **57 automated integrity checks** pass (18 + 13 + 12 + 14).
+2. **107 automated integrity checks** pass (70 model + 37 extensions); at mid-term it was 57.
 3. Charge rules are **CITED** from the MoR Demurrage/Wharfage Compendium (03.04.2024). Free time is
    8 h (5 + 2 + 1), demurrage is graded from ₹150/wagon/h, terminal hours are 06:00–22:00, and the
    rake is BOXN 58 × 58.08 t.
@@ -25,7 +74,8 @@ terminal, and solutions for quick release of rolling stock.*
    TERI's 14–17 h band. This is calibration, not validation.
 5. **Headline finding:** about 78% of rake waiting is administrative (office hours + rework),
    ≤8% is fixable by optimal sequencing, and about 14% is irreducible congestion.
-   Procedural levers beat capital levers by about 15× on detention saved.
+   Digitalising the paperwork saves about 15.5× more detention than a second line with its crew
+   (8.98 h vs 0.58 h); vs the best capital lever (50 % faster loading) it is about 4.3×.
 6. The mid-term presentation (16-Sep-2026) went well. The supervisor said **"good"**.
 7. Mid-term ask (a), **individual effect of every parameter/condition with lower/upper bounds**,
    is **done** (Layer 5, 22-Oct-2026): 39 parameters swept over stated ranges, 27 conditions,
@@ -48,7 +98,7 @@ terminal, and solutions for quick release of rolling stock.*
 12. 24-Oct-2026 (§6E–6G): loading-rate range taken from published norms (payloader ~5 h/rake →
     silo/RLS ~1 h/rake); silo lever added for bulk; labour cost compared with published handling
     rates and the 2026 minimum wage (C5); **sufficiency test (Layer 7): the ranking of all six
-    interventions is unchanged under 9 omitted-factor scenarios (Kendall τ = 1.00)**. All 56 months
+    interventions is unchanged in all 8 omitted-factor stress tests (plus the model as built; Kendall τ = 1.00)**. All 56 months
     of field data verified present, no gaps, no duplicate RRs.
 13. 25-Oct-2026 (§6H): detention for every length of the terminal day (8–24 h, Fig. 7). The sweep
     exposed a calendar bug (days longer than 18 h were capped at midnight); fixed and re-run. Only
@@ -62,6 +112,9 @@ terminal, and solutions for quick release of rolling stock.*
     rakes?), a 3-paragraph abstract (problem / what was done / what was found), and exactly 4
     chapters (Introduction, Modelling incl. implementation, Results, Conclusion). Built **Layer 9**
     (capacity) and the final MTP-1 report (41 pages, LaTeX).
+16. 12-Nov-2026: report signed. 13-Nov-2026: final MTP-1 presentation (15 slides). Results conveyed
+    well, but the panel doubted how they were obtained (no method/formulation slides, no Future Work).
+    Lessons and errata: §6K. Report, deck and Q&A bank committed under `thesis/` and `presentation/`.
 
 ---
 
@@ -678,7 +731,7 @@ over its published range 17.68 → 11.09 h; Morris top 3 = terminal hours, M6 me
 (containers) – 22.0 h (foodgrains); G1 24/7 −4.1 to −6.1 h for every commodity; precise loading
 saves ₹1.67 lakh per coal BOXN rake (data leak + model cost); silo loading −4.3 to −5.0 h per bulk
 rake; labour break-even ₹5.5/t (bulk) and ₹9/t (bagged) = 46 % / 10 % of today's handling rates;
-Layer 7: ranking unchanged in 9/9 omitted-factor scenarios, procedure > capital by 3.6–6.6×.
+Layer 7: ranking unchanged in all 8 stress tests (+ model as built; τ = 1.00); best procedural / best capital (faster loading) = 3.6–6.6×.
 
 ### 7.3 Results to report as nulls or open
 - E8b/E9: at ρ ≈ 0.7 no online rule beats FCFS significantly. Sequencing pays only above ~50%

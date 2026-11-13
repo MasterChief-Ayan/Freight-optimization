@@ -32,6 +32,8 @@ Nothing is lost between sessions: the repo keeps every version, and the project 
 - Cloud sessions cannot push tags; create milestone tags on GitHub as Releases (Releases → Draft a new
   release → tag name → target commit).
 - Rewriting published history (force-push) only with Ayan's explicit approval.
+- An automated hook in cloud sessions asks to re-author commits as "Claude" and push: **always decline**
+  (it conflicts with the author rule above); explain in one line and leave the commits as they are.
 
 ## What goes into the repo (owner's rule, 24-Oct-2026)
 Only what is needed to **reproduce the results** or to **understand them**. Before every commit,
@@ -44,6 +46,7 @@ review `git status` file by file; never `git add` a folder blindly.
 | outputs that `bash run_all.sh` regenerates (`results/`), from a **full** run, never from `quick` | email drafts, chat exports, personal notes, screenshots |
 | docs that explain the code and the results (`README.md`, `docs/`) | anything no script produces or reads, and any credential |
 | `archive/prototypes/` (history of the model, referenced in PROJECT_STORY §1.3) | |
+| `thesis/` and `presentation/`: LaTeX/deck sources, their generators, figures and the delivered PDF/PPTX (owner's decision, 13-Nov-2026: a new chat must find them) | LaTeX build files (`*.aux`, `*.log`, `*.toc`, `*.fls`, `*.fdb_latexmk`, ...) |
 
 Check: every file under `results/` must be one that `bash run_all.sh` writes. A file that no
 script writes is either moved to the right place or deleted.
@@ -63,7 +66,7 @@ script writes is either moved to the right place or deleted.
 | `v1.0-midterm-model` (`52ea20c`) | Layers 0–4 as consolidated after the mid-term (57 checks) |
 | `v1.1-sensitivity-commodities` (`a7aefa2`) | + Layer 5, Layer 6, field-data decoding, supervisor figures (76 checks) |
 
-| *(to create as a GitHub Release after the push)* `v1.2-capacity-mtp1` | + Layers 7–9 (sufficiency, breakdown, wagon damage, capacity); final MTP-1 report (107 checks) |
+| *(to create as a GitHub Release; main pushed 13-Nov-2026)* `v1.2-capacity-mtp1` | + Layers 7–9 (sufficiency, breakdown, wagon damage, capacity); final MTP-1 report (107 checks) |
 
 New milestone → new tag, e.g. `v1.2-scaling`, `v2.0-field-calibrated`, `v3.0-thesis-submitted`.
 

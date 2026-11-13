@@ -58,15 +58,27 @@ Freight-optimization/
 │   ├── make_prof_charts.py    results/prof/Fig1-10: one-message figures for supervisor updates
 │   ├── rr_register.py         FIELD DATA: load + clean + DECODE the FOIS RR register (code tables, confidence grades)
 │   ├── analyse_rr_register.py FIELD DATA: commodity profiles, charge structure, terminals, arrivals -> results/field/
-│   └── verify_extensions.py   30 integrity checks for Layers 5-8 and the decoding
+│   └── verify_extensions.py   37 integrity checks for Layers 5-9 and the decoding
 │
 ├── results/                   GENERATED - charts (layer*_results.png), CSVs (layer*_E*.csv), logs (l*.log)
 │   └── field/                 GENERATED from field data - commodity-level aggregates only (F0-F5, field_results.png)
 ├── archive/prototypes/        Phase-1 siding_sim v1/v2/v3 (superseded, kept for the record)
 ├── docs/
-│   ├── PROJECT_STORY.md       history, current state, target, data plan, numbers to quote
+│   ├── PROJECT_STORY.md       START HERE section, history, current state, numbers to quote, lessons, errata
 │   ├── CODEBASE.md            this file
-│   └── WORKFLOW.md            saving, branching, tags, session routine
+│   ├── WORKFLOW.md            saving, branching, tags, session routine
+│   ├── BREAKDOWN_REPORT.md    breakdown of time/money/parties sent to the supervisor (Layer 8)
+│   └── VARIABLE_SELECTION.md  selection filters and the 23-factor traceability table
+├── thesis/
+│   ├── mtp1/                  MTP Part I report (LaTeX, 41 pp, signed 12-Nov-2026): main.tex + ch1-ch4 +
+│   │                          references.tex, figures/gen_figs.py (Figs 3.1-3.6 from results/),
+│   │                          audit_numbers.py (122 number checks), PDF, outline/ (.docx + generator),
+│   │                          README.md (build steps + ERRATA of the printed copy)
+│   └── btp_format_reference/  Ayan's BTP main.tex (format the report follows)
+├── presentation/
+│   ├── mtp1/                  final MTP-1 deck (13-Nov-2026): pptx, pdf, build_deck.js (pptxgenjs),
+│   │                          assets/, SCRIPT_AND_QA.md (script, Q&A bank, plain explanations), README.md
+│   └── midterm/               Ayan's mid-term Canva deck (style reference)
 └── data/
     └── README.md              dataset description; raw/ committed, processed/ is a git-ignored cache
 ```
@@ -75,7 +87,7 @@ Freight-optimization/
 policies, experiment` · L1 administrative = `admin` · L2 road side = `trucks` · L3 decision =
 `optimiser` (+ `policies.cnp`) · L4 scenarios = `experiments/run_layer4.py` only (config changes,
 no new model code) · L5 sensitivity and L6 commodities = experiment scripts only (no model change) ·
-field data = `tools/rr_register.py`, `tools/analyse_rr_register.py` · cross-cutting = `calibration`,
+L7 sufficiency, L8 breakdown, L9 capacity = experiment scripts (+ optional `damage` module for L8) · field data = `tools/rr_register.py`, `tools/analyse_rr_register.py` · cross-cutting = `calibration`,
 `verify_*`, `tools/verify_extensions.py`.
 
 ---
@@ -189,6 +201,13 @@ python -m rtsim.calibration        # parameter provenance
 This repo was itself checked this way against the replayed original code (§7).
 
 ---
+
+### Rebuilding the report and the deck
+```bash
+cd thesis/mtp1 && python figures/gen_figs.py ../../results && python audit_numbers.py ../../results \
+  && latexmk -pdf main.tex                         # 41 pages, 122/122 numbers
+cd presentation/mtp1 && node build_deck.js         # needs pptxgenjs; PPTX_SKILL_DIR=<pptx skill> also applies the theme
+```
 
 ## 5. Experiment → output map
 
