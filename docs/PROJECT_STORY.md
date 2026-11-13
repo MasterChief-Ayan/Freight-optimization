@@ -618,6 +618,30 @@ traffic 292 and 250–1600 rakes/yr). Two measures: **ceiling** Λ = 8760 / (lin
   checking: Layer 4 is 10 reps × 25 rakes (gap 22 h); nine interventions (not ten); procedure/capital
   = 15.5×; the "attribution sums to 100 %" check claim replaced with the real check names.
 
+### 6K. Final MTP-1 presentation (13-Nov-2026): outcome and lessons for MTP-2
+- Report signed 12-Nov (printed before the "nine → eight stress tests" fix). 15-slide deck
+  (dark Canva style, 8-min slot) presented 13-Nov. Results were conveyed well, but the panel
+  found it **doubtful how the results were obtained**: the deck showed results, not method.
+  The supervisor said the talk focused only on results. The deck also had **no Future Work slide**.
+- **Rules for the next deck (MTP-2, external evaluator, "production level"):**
+  1. A **methodology block** before results: system + model diagram, **key formulation**
+     (detention, graded demurrage, office-calendar gate, rework, capacity), data and calibration,
+     **experimental design** (runs, replications, paired comparison, what is varied).
+  2. **Every result slide says how it was obtained**: layer, what was changed, runs × rakes,
+     the measure, and the comparison base, in one line under the title.
+  3. Define every number before it is used (e.g. today's 35 h wait, "round the clock",
+     same-service capacity, Kendall τ, the queueing check) and give the meaning of each term.
+  4. A **Limitations + Future Work** slide (Part II plan) before the conclusion.
+  5. Formulation and method details can go to backup slides only if the main deck still
+     shows the method; a slot limit is not a reason to drop the method.
+- **Errata in the signed/printed MTP-1 report** (fix in the MTP-2 thesis):
+  "nine" stress tests → eight (abstract, Table 2.7, §3.9, §4.1; fixed in the source after printing);
+  abstract "15.5× more than capital ones" → "than a second line with its crew" (vs faster
+  loading it is 4.3×); §2.7 Layers 3/4 line utilisation "about 0.7" → about 0.8 (hold 17.9 h / 22 h);
+  §4.1 finding 4 reason → money falls faster mainly because the first 8 h are free (billed hours
+  9.6 → 2.2 per rake, −77 %); the graded bands add ~1 point; minor: M8 is Erlang, not lognormal;
+  "15 largest sidings" includes 2 goods sheds; Table 3.8 "all together" excludes +50 % traffic.
+
 ## 7. Numbers to quote (and which version they come from)
 
 ### 7.1 Exactly reproduced by the final code (safe to quote as model results)
@@ -695,7 +719,8 @@ Layer 7: ranking unchanged in 9/9 omitted-factor scenarios, procedure > capital 
   chapters (Intro / Modelling incl. implementation / Results / Conclusion) and a 3-paragraph abstract;
   capacity measured as ceiling and same-service capacity (assumed-parameter results → rankings and
   relations, not exact figures).
+- **Decided 13-Nov:** next deck must show method (formulation, data, design) and Future Work (§6K).
 - **Pending:** capital annuities for silo / 2nd line (R4); capacity for other commodities and staged
-  expansion (Part II); presentation deck;
+  expansion (Part II); fix the MTP-1 errata (§6K) in the MTP-2 thesis;
   MTP-1 LaTeX report **done** (11-Nov, BTP report format provided by Ayan); for the final (Part II)
   thesis, ask Ayan for any new reference/format documents before starting.
