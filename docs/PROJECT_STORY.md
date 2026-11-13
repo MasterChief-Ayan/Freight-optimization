@@ -24,6 +24,7 @@ terminal, and solutions for quick release of rolling stock.*
 | MTP-1 final presentation (13-Nov-2026) | `presentation/mtp1/` (pptx, pdf, `build_deck.js`, `SCRIPT_AND_QA.md`) |
 | Mid-term deck (Ayan's own Canva style) | `presentation/midterm/MidTerm_Presentation_Canva_MTP1.1.pptx` |
 | Breakdown report sent to supervisor | `docs/BREAKDOWN_REPORT.md` |
+| Map of the MTP-1 report (every section, table, figure, equation -> source) | `docs/REPORT_MAP.md` |
 | Q&A bank + plain explanations of every number | `presentation/mtp1/SCRIPT_AND_QA.md` (also project doc `MTP_PRESENTATION_AND_QA.md`) |
 
 **Validated timeline**
@@ -51,6 +52,17 @@ terminal, and solutions for quick release of rolling stock.*
 - Skills to use: `research-paper-writing` and `academic-plotting` (saved by Ayan) for thesis text and
   figures; the `pptx` skill + academic-pptx rules (action titles, one exhibit, citations) + §6K for decks;
   `docx` for Word files. Ask Ayan for format documents before starting the MTP-2 LaTeX thesis.
+
+**Supervisor (Prof. Biswajit Mahanty) and panel: what they asked for, liked and disliked**
+| When | Asked for / liked | Disliked / criticised |
+|---|---|---|
+| Early (§1.2-1.4, §2.1) | profit/cost objective, siding first; charges included; probabilistic results with CIs; terminal focus with four parties; administrative steps (his port example: ~150 steps cause ~50 % of delay); build layer by layer with 100 % integrity, modular, neither too specific nor too general | — |
+| Mid-term 16-Sep | "good" for the broad overview; asked for the individual effect of each parameter with lower/upper bounds; another professor asked where the constraints came from and how the subset was selected | — |
+| 8/9-Oct | scaling ("more ore -> what else must grow", hostel/security analogy); wagons; each variable's effect and where extra money pays most; labour vs demurrage; multiple materials; qualitative analysis where no data | — |
+| 2/4-Nov | full breakdown of how time and money savings arise; wagon damage; engines | — |
+| Final meeting (reported 11-Nov) | capacity as well as cost ("can we increase the rake count?"); abstract in 3 paragraphs (problem / what we did / what we found); a Modelling chapter that includes implementation; exactly 4 chapters numbered chapter-wise; more detail (no upper page limit) | a custom chapter name ("Rake Detention ..."); a report that was too short |
+| Presentation 13-Nov | results conveyed well | the talk showed only results, not how they were obtained (no formulation/method slides); no Future Work slide; the panel found results doubtful without the method |
+Full report map (section/table/figure/equation -> source): `docs/REPORT_MAP.md` (project doc `MTP_REPORT_MAP.md`).
 
 **Next (MTP Part II, external evaluator)**
 1. Validate on siding placement-release time logs (requested from research scholar Ranit Senapati).

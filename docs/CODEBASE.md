@@ -68,6 +68,7 @@ Freight-optimization/
 │   ├── CODEBASE.md            this file
 │   ├── WORKFLOW.md            saving, branching, tags, session routine
 │   ├── BREAKDOWN_REPORT.md    breakdown of time/money/parties sent to the supervisor (Layer 8)
+│   ├── REPORT_MAP.md          MTP-1 report section/table/figure/equation -> content -> source file
 │   └── VARIABLE_SELECTION.md  selection filters and the 23-factor traceability table
 ├── thesis/
 │   ├── mtp1/                  MTP Part I report (LaTeX, 41 pp, signed 12-Nov-2026): main.tex + ch1-ch4 +
