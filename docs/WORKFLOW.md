@@ -1,6 +1,7 @@
 # WORKFLOW — how changes are saved, versioned and branched
 
-Repository: **github.com/MasterChief-Ayan/Freight-optimization** (private).
+Repository: **github.com/MasterChief-Ayan/Freight-optimization** (**public**, checked 26-Nov-2026; anyone can read
+the code, the raw RR register and the results, so treat every committed file as published).
 GitHub is the single source of truth for code and results. The MTP project on claude.ai holds the
 two context docs (`MTP_PROJECT_STORY.md`, `MTP_CODEBASE.md`), refreshed at the end of every session.
 
@@ -65,6 +66,9 @@ script writes is either moved to the right place or deleted.
 |---|---|
 | `v1.0-midterm-model` (`52ea20c`) | Layers 0–4 as consolidated after the mid-term (57 checks) |
 | `v1.1-sensitivity-commodities` (`a7aefa2`) | + Layer 5, Layer 6, field-data decoding, supervisor figures (76 checks) |
+
+Check of 26-Nov-2026: `git ls-remote --tags origin` returns no tags and the Releases page is empty, so the two
+tags above exist only in the history notes. Create all three as GitHub Releases on the commits named.
 
 | *(to create as a GitHub Release; main pushed 13-Nov-2026)* `v1.2-capacity-mtp1` | + Layers 7–9 (sufficiency, breakdown, wagon damage, capacity); final MTP-1 report (107 checks) |
 

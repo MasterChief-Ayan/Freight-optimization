@@ -9,8 +9,9 @@ loading takes. Where does that time go, who causes it, what does it cost, and wh
 
 **Method.** We built a discrete-event simulation (Python + SimPy) of a coal loading siding. It
 follows IR rules exactly (MoR Demurrage Compendium, 03.04.2024). It is built in layers, and every
-layer is checked before the next is added. It is calibrated on Eastern Railway's inward freight
-register: 220,395 consignments, 2022–26.
+layer is checked before the next is added. Detention is calibrated to TERI's 14–17 h benchmark
+(calibrated, not yet validated: siding time logs are awaited). Commodity profiles come from Eastern
+Railway's inward freight register: 220,395 consignments, Jan 2022 – Aug 2026.
 
 ---
 
@@ -18,7 +19,7 @@ register: 220,395 consignments, 2022–26.
 
 | # | Finding | Number | Where |
 |---|---|---|---|
-| 1 | The model reproduces real detention | **15.53 ± 0.33 h** per rake (TERI benchmark 14–17 h); physical work alone is only 4.05 h | `results/l1.log` |
+| 1 | The calibrated model lands in the published detention band | **15.53 ± 0.33 h** per rake (TERI benchmark 14–17 h); physical work alone is only 4.05 h | `results/l1.log` |
 | 2 | Paperwork is the main cause, not track or equipment | admin **78%** of waiting (office hours 73%, rework 11%), sequencing ≤ 8%, irreducible 14% | `layer3_E11_decomposition.csv` |
 | 3 | Procedure beats capital | digitalising admin saves 8.98 h/rake; a 2nd line + 2nd crew saves 0.58 h → **≈ 15.5×**; a 2nd line alone does not help (+0.28 h, n.s.) | `layer4_E12_interventions.csv` |
 | 4 | The client pays for others' delay | rake time: terminal 73.5%, client 23.7%, railway 2.9%, yet the client pays the demurrage | `layer1_attribution.csv` |
@@ -27,7 +28,7 @@ register: 220,395 consignments, 2022–26.
 | 7 | General vs material-specific levers | 24/7 terminal and digital release help **all 10 materials** (−4 to −6 h); precise loading and silo loading (−4.3 to −5.0 h) matter only for bulk | `layer6_C2_levers.csv` |
 | 8 | When extra labour pays | 50% faster loading is worth **₹10.5k–35.6k per rake** in demurrage = ₹5.5/t (bulk), ₹9/t (bagged): pays if labour is paid per tonne; per full shift only bulk ≈ breaks even | `layer6_C4_…`, `layer6_C5_labour_vs_demurrage.csv` |
 | 9 | Fair dispatch is free | Contract-Net ageing cuts the worst-case wait by 33% (161 → 108 h) at ≈ 0 cost to the mean | `layer3_E10_fairness.csv` |
-| 10 | The variable set is sufficient for ranking | adding 9 omitted-factor scenarios (extra delays, +50% traffic, disruptions, errors ×2): ranking of all 6 interventions unchanged (Kendall τ = 1.00) | `layer7_O2_rank_stability.csv`, `docs/VARIABLE_SELECTION.md` |
+| 10 | The variable set is sufficient for ranking | 8 omitted-factor stress tests (extra delays, +50% traffic, disruptions, errors ×2, all together): ranking of all 6 interventions unchanged (Kendall τ = 1.00) | `layer7_O2_rank_stability.csv`, `docs/VARIABLE_SELECTION.md` |
 | 11 | Where the 17 h come from (coal) | 4.7 loading + 5.9 paperwork work + 1.1 rework + **5.4 waiting for the office to open**; package A (24/7 + digital release) → 9.5 h, demurrage ₹89.8k → ₹19.7k per rake | `layer8_B2_cause_split.csv`, `layer8_B3_money.csv` |
 | 12 | Damaged wagon: detach, don't return | sending the whole rake back ties up 2.3–2.6× the wagon time of detaching the bad wagon (damage rates ASSUMED) | `layer8_B7_damage.csv` |
 | 13 | Procedure also adds capacity; a second line adds more | at today's 35 h wait the coal siding takes **292 rakes/yr today, 556 with package A (+90 %, no construction)**, 732 with C, 710 with a 2nd line + crew, 1,262 with A + 2nd line; the line is the bottleneck throughout (crew ≤ 34 %, loco ≤ 29 %); simulated queue matches Pollaczek–Khinchine (0.91–1.03) when offices are open | `layer9_K2_capacity.csv`, `layer9_K3_queue_check.csv` |
@@ -76,7 +77,7 @@ archive/        Phase-1 prototypes (history only, not used)
 | `run_layer1.py` | Add paperwork: baseline 15.53 h, ablation, digitalisation, attribution |
 | `run_layer2.py` | Add trucks: lane, appointments, fairness, stochastic rakes |
 | `run_layer3.py` + `decompose.py` | Optimiser ladder, disruption, fairness, waiting decomposition (E11) |
-| `run_layer4.py` | Ten interventions, terminal types, pricing levers (E12–E14) |
+| `run_layer4.py` | Nine interventions, terminal types, pricing levers (E12–E14) |
 | `run_layer5b_hours_sweep.py` | Detention for every length of the terminal day, 8–24 h (Fig. 7) |
 | `run_layer5_sensitivity.py` | Each of 39 parameters and 27 conditions alone: bounds, Morris screening, envelope |
 | `run_layer6_commodities.py` | 10 materials from field data: which levers are general vs material-specific; labour break-even and labour cost (C5) |
@@ -90,7 +91,7 @@ archive/        Phase-1 prototypes (history only, not used)
 |---|---|
 | `rr_register.py` | Loads, cleans (rules C1–C5) and decodes the FOIS register; code tables graded A/B/C |
 | `analyse_rr_register.py` | Per-commodity profiles and model parameters → `results/field/F0–F5` |
-| `verify_extensions.py` | 30 checks on Layers 5–8 and the field data |
+| `verify_extensions.py` | 37 checks on Layers 5–9 and the field data |
 | `make_slide_charts.py` | Mid-term slide figures |
 | `make_prof_charts.py` | Ten supervisor figures (Fig1–Fig10) → `results/prof/` |
 | `compare_outputs.py` | Proves a refactor changed no number (`ALL IDENTICAL`) |
